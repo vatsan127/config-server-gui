@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Button,
   Menu,
@@ -29,6 +29,7 @@ const CreateFileButton = ({ onCreateFile, onCreateFolder }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [createType, setCreateType] = useState('file');
   const [name, setName] = useState('');
+  const nameInputRef = useRef(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -63,6 +64,13 @@ const CreateFileButton = ({ onCreateFile, onCreateFolder }) => {
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       handleCreate();
+    }
+  };
+
+  // Handle auto-focus when dialog opens
+  const handleDialogEntered = () => {
+    if (nameInputRef.current) {
+      nameInputRef.current.focus();
     }
   };
 
@@ -117,13 +125,16 @@ const CreateFileButton = ({ onCreateFile, onCreateFolder }) => {
         onClose={handleDialogClose}
         maxWidth="sm"
         fullWidth
+        TransitionProps={{
+          onEntered: handleDialogEntered
+        }}
       >
         <DialogTitle>
           Create New {createType === 'file' ? 'File' : 'Folder'}
         </DialogTitle>
-        <DialogContent>
-          <Box sx={{ mt: 2 }}>
-            <TextField
+        <DialogContent sx={{ pt: 3 }}>
+          <TextField
+              inputRef={nameInputRef}
               autoFocus
               fullWidth
               label={`${createType === 'file' ? 'File' : 'Folder'} Name`}
@@ -133,7 +144,6 @@ const CreateFileButton = ({ onCreateFile, onCreateFolder }) => {
               placeholder={createType === 'file' ? 'config.properties' : 'new-folder'}
               variant="outlined"
             />
-          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} color="inherit">

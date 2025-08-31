@@ -3,33 +3,45 @@ import { Card, CardContent, Typography, Box } from '@mui/material';
 import { COLORS, SIZES } from '../../theme/colors';
 
 const NamespaceCard = ({ namespace, onClick }) => {
-  const getNamespaceWord = (namespace) => {
+  const getNamespaceIcon = (namespace) => {
     const firstWord = namespace.split('-')[0];
     return firstWord.toUpperCase();
+  };
+
+  const getNamespaceInitials = (namespace) => {
+    const words = namespace.split(/[-_\s]+/).filter(word => word.length > 0);
+    if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return namespace.substring(0, 2).toUpperCase();
   };
 
   return (
     <Card 
       sx={{ 
-        height: '100%',
+        width: 150,
+        height: 120,
         display: 'flex',
         flexDirection: 'column',
         cursor: 'pointer',
         bgcolor: COLORS.background.paper,
         border: `1px solid ${COLORS.grey[200]}`,
-        borderRadius: '0px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        transform: 'translateY(0px)',
+        borderRadius: `${SIZES.borderRadius.large}px`,
+        boxShadow: SIZES.shadow.base,
+        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         '&:hover': {
-          borderColor: COLORS.primary.light,
-          boxShadow: '0 12px 32px rgba(33, 150, 243, 0.15)',
-          transform: 'translateY(-4px)',
-          bgcolor: '#fbfdff'
+          borderColor: COLORS.primary.main,
+          boxShadow: SIZES.shadow.lg,
+          transform: 'translateY(-2px)',
+          bgcolor: COLORS.grey[25],
+          '& .namespace-icon': {
+            transform: 'scale(1.1)',
+            color: COLORS.primary.main,
+          }
         },
         '&:active': {
           transform: 'translateY(-1px)',
-          boxShadow: '0 6px 16px rgba(0, 0, 0, 0.12)'
+          boxShadow: SIZES.shadow.md,
         }
       }}
       elevation={0}
@@ -37,50 +49,42 @@ const NamespaceCard = ({ namespace, onClick }) => {
     >
       <CardContent sx={{ 
         flexGrow: 1, 
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
         textAlign: 'center',
-        p: SIZES.spacing.md,
-        '&:last-child': { pb: SIZES.spacing.md }
+        p: 1.5,
+        '&:last-child': { pb: 1.5 }
       }}>
         <Box
           sx={{
-            minWidth: SIZES.icon.namespace,
-            height: SIZES.icon.namespace,
+            minWidth: 40,
+            height: 30,
+            px: 1,
             background: `linear-gradient(135deg, ${COLORS.primary.main} 0%, ${COLORS.primary.light} 100%)`,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
             mx: 'auto',
-            mb: SIZES.spacing.sm,
-            borderRadius: '0px',
-            boxShadow: '0 4px 16px rgba(33, 150, 243, 0.25)',
-            position: 'relative',
-            px: 2,
-            '&::after': {
-              content: '""',
-              position: 'absolute',
-              inset: '2px',
-              borderRadius: '0px',
-              background: 'rgba(255, 255, 255, 0.1)',
-              zIndex: 1
-            }
+            mb: 1,
+            borderRadius: `${SIZES.borderRadius.xl}px`,
+            boxShadow: SIZES.shadow.md,
+            fontSize: SIZES.icon.large,
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
+          className="namespace-icon"
         >
-          <Typography 
-            variant="body1" 
-            sx={{ 
-              color: COLORS.text.white, 
-              fontWeight: 700,
-              fontSize: '1rem',
-              position: 'relative',
-              zIndex: 2,
-              textShadow: '0 1px 2px rgba(0, 0, 0, 0.2)',
-              lineHeight: 1,
-              letterSpacing: '0.02em',
-              padding: '2px'
-            }}
-          >
-            {getNamespaceWord(namespace)}
-          </Typography>
+          <Box sx={{ 
+            color: COLORS.text.white,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '0.7rem',
+            fontWeight: 600
+          }}>
+            {getNamespaceIcon(namespace)}
+          </Box>
         </Box>
         <Typography 
           variant="h6" 
@@ -88,22 +92,12 @@ const NamespaceCard = ({ namespace, onClick }) => {
           sx={{ 
             fontWeight: 600,
             color: COLORS.text.primary,
-            fontSize: '1.125rem',
-            mb: 1,
+            fontSize: '0.9rem',
+            mb: 0.5,
             letterSpacing: '-0.01em'
           }}
         >
           {namespace}
-        </Typography>
-        <Typography 
-          variant="body2" 
-          sx={{ 
-            color: COLORS.text.secondary,
-            fontSize: '0.875rem',
-            opacity: 0.8
-          }}
-        >
-          Configuration namespace
         </Typography>
       </CardContent>
     </Card>

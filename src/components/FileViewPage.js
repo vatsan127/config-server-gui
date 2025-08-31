@@ -26,7 +26,6 @@ import Editor from '@monaco-editor/react';
 import { apiService, setNotificationHandler } from '../services/api';
 import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
 import { normalizePath } from '../utils';
-import FilesSidebar from './common/FilesSidebar';
 
 const FileViewPage = () => {
   const { namespace } = useParams();
@@ -75,13 +74,6 @@ const FileViewPage = () => {
     navigate(`/namespace/${namespace}/files`);
   };
 
-  const handlePathChange = (path) => {
-    navigate(`/namespace/${namespace}/files`);
-  };
-
-  const handleRefresh = () => {
-    fetchFileContent();
-  };
 
   const handleCopy = async () => {
     try {
@@ -143,7 +135,7 @@ const FileViewPage = () => {
 
   if (loading) {
     return (
-      <Box sx={{ p: SIZES.spacing.lg }}>
+      <Box sx={{ p: SIZES.spacing.xs }}>
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
           <CircularProgress />
         </Box>
@@ -153,8 +145,8 @@ const FileViewPage = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: SIZES.spacing.lg }}>
-        <Box mb={SIZES.spacing.md}>
+      <Box sx={{ p: SIZES.spacing.md }}>
+        <Box mb={2}>
           <Button 
             startIcon={<ArrowBackIcon />}
             onClick={handleBackToFiles}
@@ -169,23 +161,15 @@ const FileViewPage = () => {
   }
 
   return (
-    <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
-      <FilesSidebar
-        currentPath={normalizedPath}
-        onPathChange={handlePathChange}
-        onRefresh={handleRefresh}
-        namespace={namespace}
-      />
-      
-      <Box sx={{ 
-        flex: 1, 
-        display: 'flex', 
-        flexDirection: 'column',
-        marginLeft: `${SIZES.sidebar.width}px`,
-        p: SIZES.spacing.sm
-      }}>
-      <Box mb={SIZES.spacing.sm}>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', mb: SIZES.spacing.sm }}>
+    <Box sx={{ 
+      flex: 1, 
+      display: 'flex', 
+      flexDirection: 'column',
+      p: SIZES.spacing.xs,
+      bgcolor: 'background.default',
+      minHeight: '100vh'
+    }}>
+        <Box mb={2}>
           <Button 
             startIcon={<ArrowBackIcon />}
             onClick={handleBackToFiles}
@@ -194,9 +178,6 @@ const FileViewPage = () => {
             Back to Files
           </Button>
         </Box>
-
-
-      </Box>
 
       <Paper 
         sx={{ 
@@ -208,37 +189,38 @@ const FileViewPage = () => {
       >
         <Box 
           sx={{ 
-            p: SIZES.spacing.md,
+            p: 2,
             bgcolor: COLORS.grey[50],
             borderBottom: `1px solid ${COLORS.grey[300]}`,
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center'
+            alignItems: 'center',
+            minHeight: '36px'
           }}
         >
-          <Typography variant="subtitle1" sx={{ color: COLORS.text.primary, fontWeight: 600 }}>
+          <Typography variant="body1" sx={{ color: COLORS.text.primary, fontWeight: 600, fontSize: '0.9rem' }}>
             {fileName}
           </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <Box sx={{ display: 'flex', gap: 0.5 }}>
             {!isEditing ? (
               <>
                 <Tooltip title="Edit">
-                  <IconButton onClick={handleEdit} size="small" sx={{ color: COLORS.text.secondary }}>
+                  <IconButton onClick={handleEdit} size="small" sx={{ color: COLORS.text.secondary, p: 0.5 }}>
                     <EditIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Refresh">
-                  <IconButton onClick={fetchFileContent} size="small" sx={{ color: COLORS.text.secondary }}>
+                  <IconButton onClick={fetchFileContent} size="small" sx={{ color: COLORS.text.secondary, p: 0.5 }}>
                     <RefreshIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Copy">
-                  <IconButton onClick={handleCopy} size="small" sx={{ color: COLORS.text.secondary }}>
+                  <IconButton onClick={handleCopy} size="small" sx={{ color: COLORS.text.secondary, p: 0.5 }}>
                     <ContentCopyIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Download">
-                  <IconButton onClick={handleDownload} size="small" sx={{ color: COLORS.text.secondary }}>
+                  <IconButton onClick={handleDownload} size="small" sx={{ color: COLORS.text.secondary, p: 0.5 }}>
                     <DownloadIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
@@ -253,7 +235,8 @@ const FileViewPage = () => {
                       disabled={!hasChanges || saving}
                       sx={{ 
                         color: hasChanges ? COLORS.primary.main : COLORS.text.disabled,
-                        '&.Mui-disabled': { color: COLORS.text.disabled }
+                        '&.Mui-disabled': { color: COLORS.text.disabled },
+                        p: 0.5
                       }}
                     >
                       <SaveIcon fontSize="small" />
@@ -261,7 +244,7 @@ const FileViewPage = () => {
                   </span>
                 </Tooltip>
                 <Tooltip title="Cancel editing">
-                  <IconButton onClick={handleCancel} size="small" sx={{ color: COLORS.text.secondary }}>
+                  <IconButton onClick={handleCancel} size="small" sx={{ color: COLORS.text.secondary, p: 0.5 }}>
                     <CancelIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
@@ -272,7 +255,7 @@ const FileViewPage = () => {
         
         <Box 
           sx={{ 
-            height: '70vh',
+            height: '75vh',
             border: 'none'
           }}
         >

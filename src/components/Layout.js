@@ -9,32 +9,21 @@ import {
   Button,
   TextField,
   InputAdornment,
+  alpha,
 } from '@mui/material';
 import { 
-  Settings as SettingsIcon,
   Search as SearchIcon,
   Logout as LogoutIcon
 } from '@mui/icons-material';
 import { theme } from '../theme/theme';
 import { COLORS, SIZES } from '../theme/colors';
-import { UI_CONSTANTS } from '../constants';
+import { UI_CONSTANTS, DOM_IDS } from '../constants';
+import { useSearchShortcut } from '../hooks/useKeyboardShortcut';
 import ErrorBoundary from './common/ErrorBoundary';
 
 
 const Layout = ({ children, onSearchChange, searchQuery, onSearchFocus, searchPlaceholder }) => {
-  const handleKeyDown = (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-      e.preventDefault();
-      onSearchFocus?.();
-    }
-  };
-
-  React.useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
+  useSearchShortcut(onSearchFocus);
 
   return (
     <ThemeProvider theme={theme}>
@@ -49,69 +38,74 @@ const Layout = ({ children, onSearchChange, searchQuery, onSearchFocus, searchPl
         <AppBar 
           position="static" 
           sx={{ 
-            bgcolor: COLORS.background.sidebar,
-            boxShadow: 'none',
-            borderBottom: `1px solid ${COLORS.grey[300]}`,
+            bgcolor: alpha(COLORS.background.sidebar, 0.95),
+            backdropFilter: 'blur(20px)',
+            boxShadow: SIZES.shadow.sm,
+            borderBottom: `1px solid ${alpha(COLORS.grey[300], 0.5)}`,
           }}
         >
-          <Toolbar sx={{ px: 3, py: 1 }}>
-            {/* Left side - Logo and Title */}
-            <Box sx={{ display: 'flex', alignItems: 'center', mr: 3 }}>
-              <Box sx={{
-                width: 36,
-                height: 36,
-                bgcolor: COLORS.primary.main,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                mr: 2
-              }}>
-                <SettingsIcon sx={{ color: COLORS.text.white, fontSize: 20 }} />
-              </Box>
+          <Toolbar sx={{ px: 2, py: 2, minHeight: '40px !important', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            {/* Left side - Title */}
+            <Box>
               <Typography variant="h6" sx={{ 
                 fontWeight: 600, 
                 color: COLORS.text.white,
-                fontSize: '1.25rem'
+                fontSize: '1.1rem',
+                letterSpacing: '-0.01em'
               }}>
-                Configuration
+                Config Server
               </Typography>
             </Box>
 
-            {/* Center - Search Bar */}
-            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', mx: 4 }}>
+            {/* Center - Search Bar (absolutely positioned) */}
+            <Box sx={{ 
+              position: 'absolute', 
+              left: '50%', 
+              top: '50%', 
+              transform: 'translate(-50%, -50%)',
+              width: '320px'
+            }}>
               <TextField
-                id="global-search"
+                id={DOM_IDS.GLOBAL_SEARCH}
                 placeholder={searchPlaceholder || UI_CONSTANTS.SEARCH.PLACEHOLDER}
                 value={searchQuery || ''}
                 onChange={(e) => onSearchChange?.(e.target.value)}
+                fullWidth
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon sx={{ color: COLORS.text.secondary }} />
+                      <SearchIcon sx={{ color: COLORS.text.muted, fontSize: 20 }} />
                     </InputAdornment>
                   ),
                 }}
                 sx={{
-                  maxWidth: 400,
-                  width: '100%',
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: 1,
-                    bgcolor: COLORS.background.paper,
-                    height: 40,
+                    borderRadius: `${SIZES.borderRadius.xl}px`,
+                    bgcolor: alpha(COLORS.background.paper, 0.9),
+                    height: 32,
+                    border: `1px solid ${alpha(COLORS.grey[300], 0.5)}`,
+                    backdropFilter: 'blur(10px)',
+                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                     '& fieldset': {
-                      borderColor: COLORS.grey[300],
+                      border: 'none',
                     },
-                    '&:hover fieldset': {
+                    '&:hover': {
+                      bgcolor: COLORS.background.paper,
                       borderColor: COLORS.grey[400],
+                      transform: 'scale(1.01)',
                     },
-                    '&.Mui-focused fieldset': {
+                    '&.Mui-focused': {
+                      bgcolor: COLORS.background.paper,
                       borderColor: COLORS.primary.main,
-                      borderWidth: 2
+                      borderWidth: 2,
+                      transform: 'scale(1.01)',
+                      boxShadow: `0 0 0 4px ${alpha(COLORS.primary.main, 0.1)}`,
                     }
                   },
                   '& .MuiOutlinedInput-input': {
                     padding: '8px 12px',
-                    fontSize: '0.875rem'
+                    fontSize: '0.85rem',
+                    fontWeight: 400,
                   }
                 }}
               />
@@ -120,7 +114,7 @@ const Layout = ({ children, onSearchChange, searchQuery, onSearchFocus, searchPl
             {/* Right side - Logout Button */}
             <Box>
               <Button 
-                startIcon={<LogoutIcon />}
+                startIcon={<LogoutIcon sx={{ fontSize: 18 }} />}
                 onClick={() => {
                   // TODO: Implement logout functionality when backend supports it
                   console.log('Logout clicked - functionality to be implemented');
@@ -129,13 +123,16 @@ const Layout = ({ children, onSearchChange, searchQuery, onSearchFocus, searchPl
                   color: COLORS.text.white,
                   px: 2,
                   py: 1,
-                  borderRadius: 1,
+                  borderRadius: `${SIZES.borderRadius.medium}px`,
                   textTransform: 'none',
                   fontWeight: 500,
-                  fontSize: '0.875rem',
+                  fontSize: '0.8rem',
+                  border: `1px solid ${alpha(COLORS.text.white, 0.2)}`,
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                   '&:hover': {
-                    bgcolor: COLORS.hover.sidebar,
-                    color: COLORS.text.white
+                    bgcolor: alpha(COLORS.text.white, 0.1),
+                    borderColor: alpha(COLORS.text.white, 0.3),
+                    transform: 'translateY(-1px)',
                   }
                 }}
               >
@@ -150,7 +147,7 @@ const Layout = ({ children, onSearchChange, searchQuery, onSearchFocus, searchPl
           component="main"
           sx={{
             flexGrow: 1,
-            minHeight: 'calc(100vh - 64px)',
+            minHeight: 'calc(100vh - 40px)',
             position: 'relative',
             overflow: 'auto'
           }}

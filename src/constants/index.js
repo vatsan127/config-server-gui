@@ -66,3 +66,18 @@ export const VALIDATION = {
     }
   }
 };
+
+// Performance & UI Constants
+export const PERFORMANCE_CONFIG = {
+  DEBOUNCE_DELAY: 300,
+  API_TIMEOUT: 5000,
+  NOTIFICATION_DURATION: {
+    SUCCESS: 4000,
+    ERROR: 6000
+  }
+};
+
+// DOM Element IDs
+export const DOM_IDS = {
+  GLOBAL_SEARCH: 'global-search'
+};

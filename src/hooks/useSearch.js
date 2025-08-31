@@ -1,4 +1,6 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import { useSearchShortcut } from './useKeyboardShortcut';
+import { DOM_IDS } from '../constants';
 
 /**
  * Custom hook for managing search functionality
@@ -7,20 +9,14 @@ export const useSearch = (items = [], searchKeys = []) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Global keyboard shortcut handler
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        const searchInput = document.getElementById('global-search');
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+  const focusSearch = useCallback(() => {
+    const searchInput = document.getElementById(DOM_IDS.GLOBAL_SEARCH);
+    if (searchInput) {
+      searchInput.focus();
+    }
   }, []);
+
+  useSearchShortcut(focusSearch);
 
   // Filter items based on search query
   const filteredItems = useMemo(() => {

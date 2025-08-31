@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Typography,
@@ -24,10 +24,12 @@ import { useDialog } from '../hooks/useDialog';
 import { validateNamespace } from '../utils/validation';
 import NamespaceCard from './common/NamespaceCard';
 import EmptyState from './common/EmptyState';
+import { DashboardSkeletonLoader } from './common/SkeletonLoader';
 
 const Dashboard = ({ searchQuery = '' }) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const nameInputRef = useRef(null);
   
   // Custom hooks for state management
   const { 
@@ -52,6 +54,13 @@ const Dashboard = ({ searchQuery = '' }) => {
   useEffect(() => {
     setNotificationHandler(enqueueSnackbar);
   }, [enqueueSnackbar]);
+
+  // Handle auto-focus when dialog opens
+  const handleDialogEntered = () => {
+    if (nameInputRef.current) {
+      nameInputRef.current.focus();
+    }
+  };
 
   // Handle namespace creation
   const handleCreateNamespace = async (formData) => {
@@ -79,58 +88,41 @@ const Dashboard = ({ searchQuery = '' }) => {
   // Memoized components
   const namespaceCards = useMemo(() => 
     filteredNamespaces.map((namespace) => (
-      <Grid item xs={12} sm={6} md={4} key={namespace}>
-        <NamespaceCard 
-          namespace={namespace}
-          onClick={() => handleCardClick(namespace)}
-        />
-      </Grid>
+      <NamespaceCard 
+        key={namespace}
+        namespace={namespace}
+        onClick={() => handleCardClick(namespace)}
+      />
     )), [filteredNamespaces, handleCardClick]
   );
 
   if (loading) {
     return (
-      <Box sx={{ p: SIZES.spacing.lg }}>
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-          <CircularProgress />
-        </Box>
+      <Box sx={{ p: SIZES.spacing.xs, bgcolor: 'background.default', minHeight: '100vh' }}>
+        <DashboardSkeletonLoader count={8} />
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Box sx={{ p: SIZES.spacing.lg }}>
-        <Box mt={SIZES.spacing.lg}>
-          <Alert severity="error">{error}</Alert>
-        </Box>
+      <Box sx={{ p: SIZES.spacing.xs }}>
+        <Alert severity="error">{error}</Alert>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ p: SIZES.spacing.lg, bgcolor: 'background.default', minHeight: '100vh' }}>
-      <Box mb={SIZES.spacing.lg} sx={{ 
-        bgcolor: COLORS.background.paper, 
-        p: SIZES.spacing.md, 
-        borderLeft: `4px solid ${COLORS.primary.main}` 
-      }}>
-        <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 1, color: 'text.primary' }}>
-          Configuration Server Dashboard
-        </Typography>
-        <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
-          Manage your configuration namespaces
-        </Typography>
-      </Box>
-
+    <Box sx={{ p: SIZES.spacing.xs, bgcolor: 'background.default', minHeight: '100vh' }}>
       {usingMockData && (
         <Alert 
           severity="warning" 
           sx={{ 
-            mb: SIZES.spacing.lg,
+            mb: SIZES.spacing.xs,
             bgcolor: COLORS.warning.background,
-            borderLeft: `4px solid ${COLORS.warning.border}`,
-            color: 'text.primary',
+            border: `1px solid ${COLORS.warning.border}`,
+            borderRadius: `${SIZES.borderRadius.medium}px`,
+            color: COLORS.warning.text,
             '& .MuiAlert-icon': { color: COLORS.warning.border }
           }}
         >
@@ -138,13 +130,19 @@ const Dashboard = ({ searchQuery = '' }) => {
         </Alert>
       )}
 
-
-      <Grid container spacing={SIZES.spacing.md}>
+      <Box 
+        sx={{ 
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 1,
+        }}
+      >
         {namespaceCards}
-      </Grid>
+      </Box>
 
       {namespaces.length === 0 && (
         <EmptyState 
+          type="create"
           title={UI_CONSTANTS.MESSAGES.EMPTY_NAMESPACES}
           description={UI_CONSTANTS.MESSAGES.EMPTY_NAMESPACES_DESC}
         />
@@ -152,6 +150,7 @@ const Dashboard = ({ searchQuery = '' }) => {
 
       {namespaces.length > 0 && filteredNamespaces.length === 0 && searchQuery && (
         <EmptyState 
+          type="search"
           title={UI_CONSTANTS.MESSAGES.NO_SEARCH_RESULTS}
           description={`No namespaces found matching "${searchQuery}"`}
         />
@@ -163,31 +162,43 @@ const Dashboard = ({ searchQuery = '' }) => {
         aria-label="add"
         sx={{ 
           position: 'fixed', 
-          bottom: 24, 
-          right: 24,
+          bottom: SIZES.spacing.lg, 
+          right: SIZES.spacing.lg,
           bgcolor: COLORS.primary.main,
+          boxShadow: SIZES.shadow.lg,
+          width: 56,
+          height: 56,
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           '&:hover': {
-            bgcolor: COLORS.primary.dark
+            bgcolor: COLORS.primary.dark,
+            boxShadow: SIZES.shadow.xl,
+            transform: 'scale(1.05)',
+          },
+          '&:active': {
+            transform: 'scale(0.98)',
           }
         }}
         onClick={openCreateDialog}
       >
-        <AddIcon />
+        <AddIcon sx={{ fontSize: 24 }} />
       </Fab>
 
       {/* Create Namespace Dialog */}
       <Dialog 
         open={createDialogOpen} 
         onClose={closeCreateDialog} 
-        maxWidth="sm" 
+        maxWidth="xs" 
         fullWidth
+        TransitionProps={{
+          onEntered: handleDialogEntered
+        }}
         PaperProps={{
           sx: {
             bgcolor: COLORS.background.paper,
-            border: `1px solid ${COLORS.grey[300]}`,
-            borderRadius: 0,
-            boxShadow: 'none',
-            m: 2
+            border: `1px solid ${COLORS.grey[200]}`,
+            borderRadius: `${SIZES.borderRadius.medium}px`,
+            boxShadow: SIZES.shadow.md,
+            m: 1
           }
         }}
         sx={{
@@ -198,25 +209,26 @@ const Dashboard = ({ searchQuery = '' }) => {
       >
         <DialogTitle sx={{ 
           color: COLORS.text.primary, 
-          fontSize: '1.25rem', 
-          fontWeight: 500,
-          borderBottom: `1px solid ${COLORS.grey[300]}`,
-          px: 3,
-          py: 2
+          fontSize: '1.1rem', 
+          fontWeight: 600,
+          borderBottom: `1px solid ${COLORS.grey[200]}`,
+          px: 2,
+          py: 1.5
         }}>
           {UI_CONSTANTS.DIALOG.CREATE_NAMESPACE.TITLE}
         </DialogTitle>
         <DialogContent sx={{ 
-          px: 3,
-          py: 3,
+          px: 2,
+          py: 2,
           '&.MuiDialogContent-root': {
-            paddingTop: 3
+            paddingTop: 2
           }
         }}>
           <TextField
+            inputRef={nameInputRef}
             autoFocus
             margin="none"
-            label="Namespace Name"
+            label="Namespace"
             placeholder={UI_CONSTANTS.DIALOG.CREATE_NAMESPACE.PLACEHOLDER}
             type="text"
             fullWidth
@@ -236,7 +248,7 @@ const Dashboard = ({ searchQuery = '' }) => {
             }}
             sx={{ 
               '& .MuiOutlinedInput-root': {
-                borderRadius: 0,
+                borderRadius: `${SIZES.borderRadius.medium}px`,
                 '& fieldset': {
                   borderColor: COLORS.grey[300],
                 },
@@ -255,15 +267,15 @@ const Dashboard = ({ searchQuery = '' }) => {
                 }
               },
               '& .MuiOutlinedInput-input': {
-                padding: '14px 12px'
+                padding: '10px 12px'
               }
             }}
           />
         </DialogContent>
         <DialogActions sx={{ 
-          px: 3, 
-          py: 2, 
-          borderTop: `1px solid ${COLORS.grey[300]}`,
+          px: 2, 
+          py: 1.5, 
+          borderTop: `1px solid ${COLORS.grey[200]}`,
           gap: 1
         }}>
           <Button 
@@ -271,9 +283,10 @@ const Dashboard = ({ searchQuery = '' }) => {
             disabled={creating}
             sx={{ 
               color: COLORS.text.secondary,
-              borderRadius: 0,
-              px: 3,
+              borderRadius: `${SIZES.borderRadius.small}px`,
+              px: 2,
               py: 1,
+              fontWeight: 500,
               '&:hover': {
                 bgcolor: COLORS.grey[100]
               },
@@ -290,17 +303,20 @@ const Dashboard = ({ searchQuery = '' }) => {
             disabled={creating || !namespaceName.trim()}
             sx={{ 
               bgcolor: COLORS.primary.main,
-              borderRadius: 0,
-              px: 3,
+              borderRadius: `${SIZES.borderRadius.small}px`,
+              px: 2,
               py: 1,
-              boxShadow: 'none',
+              fontWeight: 500,
+              boxShadow: SIZES.shadow.sm,
               '&:hover': {
                 bgcolor: COLORS.primary.dark,
-                boxShadow: 'none'
+                boxShadow: SIZES.shadow.md,
+                transform: 'translateY(-1px)',
               },
               '&:disabled': {
                 bgcolor: COLORS.grey[300],
-                color: COLORS.grey[500]
+                color: COLORS.grey[500],
+                transform: 'none',
               }
             }}
           >

@@ -1,83 +1,145 @@
 export const COLORS = {
   primary: {
-    main: '#2196F3',
-    dark: '#1976D2',
-    light: '#42A5F5',
+    main: '#6366F1',
+    dark: '#4F46E5',
+    light: '#8B5CF6',
   },
   secondary: {
-    main: '#FF5722',
-    dark: '#D84315',
-    light: '#FF7043',
+    main: '#F59E0B',
+    dark: '#D97706',
+    light: '#FCD34D',
   },
   background: {
-    default: '#f5f5f5',
-    paper: '#ffffff',
-    sidebar: '#000000',
+    default: '#FAFBFC',
+    paper: '#FFFFFF',
+    sidebar: '#1F2937',
+    elevated: '#FFFFFF',
   },
   text: {
-    primary: '#212121',
-    secondary: '#757575',
-    white: '#ffffff',
-    muted: '#B0BEC5',
+    primary: '#111827',
+    secondary: '#6B7280',
+    white: '#FFFFFF',
+    muted: '#9CA3AF',
   },
   grey: {
-    50: '#fafafa',
-    100: '#f5f5f5',
-    200: '#eeeeee',
-    300: '#e0e0e0',
-    400: '#bdbdbd',
-    500: '#9e9e9e',
-    600: '#757575',
-    700: '#616161',
-    800: '#424242',
-    900: '#212121',
+    25: '#FCFCFD',
+    50: '#F9FAFB',
+    100: '#F3F4F6',
+    200: '#E5E7EB',
+    300: '#D1D5DB',
+    400: '#9CA3AF',
+    500: '#6B7280',
+    600: '#4B5563',
+    700: '#374151',
+    800: '#1F2937',
+    900: '#111827',
+  },
+  accent: {
+    blue: '#3B82F6',
+    green: '#10B981',
+    purple: '#8B5CF6',
+    orange: '#F59E0B',
+    pink: '#EC4899',
+    teal: '#14B8A6',
   },
   warning: {
-    background: '#FFF3E0',
-    border: '#FF9800',
+    background: '#FFFBEB',
+    border: '#F59E0B',
+    text: '#92400E',
+  },
+  success: {
+    background: '#ECFDF5',
+    border: '#10B981',
+    text: '#065F46',
+  },
+  error: {
+    background: '#FEF2F2',
+    border: '#EF4444',
+    text: '#991B1B',
   },
   hover: {
-    sidebar: '#333333',
-    card: '#f5f5f5',
+    sidebar: '#374151',
+    card: '#F9FAFB',
+    button: 'rgba(99, 102, 241, 0.08)',
   },
   alerts: {
-    success: '#4caf50',
-    error: '#f44336',
-    warning: '#ff9800',
-    info: '#2196f3',
+    success: '#10B981',
+    error: '#EF4444',
+    warning: '#F59E0B',
+    info: '#3B82F6',
   }
 };
 
 export const SIZES = {
   navbar: {
-    height: 64, // Standard Material-UI AppBar height
+    height: 40,
   },
   sidebar: {
-    width: 200,
+    width: 180,
   },
   icon: {
-    small: 20,
-    medium: 24,
-    large: 28,
-    namespace: 60,
+    small: 16,
+    medium: 20,
+    large: 24,
+    namespace: 48,
   },
   spacing: {
-    xs: 1,
-    sm: 2,
-    md: 3,
-    lg: 4,
-    xl: 5,
+    xs: 4,    // 4px
+    sm: 8,    // 8px  
+    md: 16,   // 16px
+    lg: 24,   // 24px
+    xl: 32,   // 32px
+    xxl: 48,  // 48px
+  },
+  borderRadius: {
+    small: 6,
+    medium: 8,
+    large: 12,
+    xl: 16,
+  },
+  shadow: {
+    sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+    base: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+    xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
   }
 };
 
 // Common button styles
 export const BUTTON_STYLES = {
   primary: {
-    color: COLORS.primary.main,
-    '&:hover': { bgcolor: 'rgba(25, 118, 210, 0.04)' }
+    bgcolor: COLORS.primary.main,
+    color: COLORS.text.white,
+    borderRadius: `${SIZES.borderRadius.small}px`,
+    fontWeight: 500,
+    textTransform: 'none',
+    boxShadow: SIZES.shadow.sm,
+    '&:hover': { 
+      bgcolor: COLORS.primary.dark,
+      boxShadow: SIZES.shadow.md,
+    }
   },
   secondary: {
+    bgcolor: 'transparent',
     color: COLORS.text.secondary,
-    '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.04)' }
+    border: `1px solid ${COLORS.grey[300]}`,
+    borderRadius: `${SIZES.borderRadius.small}px`,
+    fontWeight: 500,
+    textTransform: 'none',
+    '&:hover': { 
+      bgcolor: COLORS.grey[50],
+      borderColor: COLORS.grey[400],
+    }
+  },
+  ghost: {
+    bgcolor: 'transparent',
+    color: COLORS.text.primary,
+    borderRadius: `${SIZES.borderRadius.small}px`,
+    fontWeight: 500,
+    textTransform: 'none',
+    '&:hover': { 
+      bgcolor: COLORS.hover.button,
+    }
   }
 };

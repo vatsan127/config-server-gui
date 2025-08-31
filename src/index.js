@@ -4,6 +4,17 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+// Global error handlers to prevent runtime error alerts
+window.addEventListener('error', (event) => {
+  console.error('Global error caught:', event.error);
+  event.preventDefault(); // Prevent default browser error dialog
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled promise rejection:', event.reason);
+  event.preventDefault(); // Prevent default browser error dialog
+});
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

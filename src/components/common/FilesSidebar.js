@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -10,32 +11,31 @@ import {
 } from '@mui/material';
 import {
   Folder as FolderIcon,
-  InsertDriveFile as FileIcon,
-  Home as HomeIcon,
-  Refresh as RefreshIcon
+  ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';
 import { COLORS, SIZES } from '../../theme/colors';
 
-const FilesSidebar = ({ 
-  currentPath = '/', 
-  onPathChange, 
-  onRefresh,
-  namespace 
-}) => {
+const FilesSidebar = ({ namespace }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
   const handleHomeClick = () => {
-    onPathChange('/');
+    navigate(`/namespace/${namespace}/files`);
   };
 
-  const handleRefreshClick = () => {
-    onRefresh();
+  const handleBackToDashboard = () => {
+    navigate('/');
   };
+
+  const isFilesActive = location.pathname.includes('/files');
+  const isFileViewActive = location.pathname.includes('/file');
 
   return (
     <Box
       sx={{
         width: SIZES.sidebar.width,
         height: '100vh',
-        bgcolor: '#000000',
+        bgcolor: COLORS.background.sidebar,
         borderRight: `1px solid ${COLORS.grey[300]}`,
         display: 'flex',
         flexDirection: 'column',
@@ -45,25 +45,16 @@ const FilesSidebar = ({
         zIndex: 1000
       }}
     >
-      <Box sx={{ p: SIZES.spacing.sm, borderBottom: `1px solid rgba(255, 255, 255, 0.2)` }}>
+      <Box sx={{ p: SIZES.spacing.xs, borderBottom: `1px solid rgba(255, 255, 255, 0.2)` }}>
         <Typography 
           variant="subtitle1" 
           sx={{ 
             color: COLORS.text.white,
             fontWeight: 600,
-            mb: 0.5
+            fontSize: '0.9rem'
           }}
         >
           {namespace}
-        </Typography>
-        <Typography 
-          variant="caption" 
-          sx={{ 
-            color: COLORS.text.muted,
-            fontSize: '0.75rem'
-          }}
-        >
-          Namespace
         </Typography>
       </Box>
 
@@ -72,17 +63,17 @@ const FilesSidebar = ({
           button
           onClick={handleHomeClick}
           sx={{
-            py: SIZES.spacing.xs,
-            px: SIZES.spacing.sm,
+            py: 1.5,
+            px: SIZES.spacing.xs,
             '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' },
-            bgcolor: 'rgba(33, 150, 243, 0.3)'
+            bgcolor: (isFilesActive || isFileViewActive) ? 'rgba(99, 102, 241, 0.2)' : 'transparent'
           }}
         >
-          <ListItemIcon sx={{ minWidth: 32 }}>
-            <HomeIcon 
+          <ListItemIcon sx={{ minWidth: 28 }}>
+            <FolderIcon 
               sx={{ 
-                color: COLORS.primary.light,
-                fontSize: '1.25rem'
+                color: (isFilesActive || isFileViewActive) ? COLORS.primary.light : COLORS.text.white,
+                fontSize: '1rem'
               }} 
             />
           </ListItemIcon>
@@ -91,40 +82,45 @@ const FilesSidebar = ({
             primaryTypographyProps={{
               sx: {
                 color: COLORS.text.white,
-                fontWeight: 600,
-                fontSize: '0.875rem'
+                fontWeight: (isFilesActive || isFileViewActive) ? 600 : 400,
+                fontSize: '0.8rem'
               }
             }}
           />
         </ListItem>
 
-        <Divider sx={{ bgcolor: 'rgba(255, 255, 255, 0.2)' }} />
+        <Divider sx={{ bgcolor: 'rgba(255, 255, 255, 0.2)', my: 1 }} />
 
         <ListItem
           button
-          onClick={handleRefreshClick}
+          onClick={handleBackToDashboard}
           sx={{
-            py: SIZES.spacing.xs,
-            px: SIZES.spacing.sm,
+            py: 1.5,
+            px: SIZES.spacing.xs,
             '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' }
           }}
         >
-          <ListItemIcon sx={{ minWidth: 32 }}>
-            <RefreshIcon sx={{ color: COLORS.text.muted, fontSize: '1.25rem' }} />
+          <ListItemIcon sx={{ minWidth: 28 }}>
+            <ArrowBackIcon 
+              sx={{ 
+                color: COLORS.text.white,
+                fontSize: '1rem',
+                opacity: 0.8
+              }} 
+            />
           </ListItemIcon>
           <ListItemText 
-            primary="Refresh"
+            primary="Dashboard"
             primaryTypographyProps={{
               sx: {
-                color: COLORS.text.muted,
-                fontSize: '0.875rem'
+                color: COLORS.text.white,
+                fontWeight: 400,
+                fontSize: '0.8rem',
+                opacity: 0.8
               }
             }}
           />
         </ListItem>
-
-        <Divider sx={{ bgcolor: 'rgba(255, 255, 255, 0.2)' }} />
-
       </List>
     </Box>
   );
