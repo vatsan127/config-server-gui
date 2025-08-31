@@ -53,3 +53,13 @@ export const debounce = (func, delay) => {
     timeoutId = setTimeout(() => func.apply(null, args), delay);
   };
 };
+
+/**
+ * Normalizes a file path to ensure it starts with '/'
+ * @param {string} path - The path to normalize
+ * @returns {string} - The normalized path
+ */
+export const normalizePath = (path) => {
+  if (!path || path === '/') return '/';
+  return path.startsWith('/') ? path : '/' + path;
+};

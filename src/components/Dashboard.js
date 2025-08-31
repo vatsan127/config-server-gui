@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Typography,
   Grid,
@@ -25,6 +26,7 @@ import NamespaceCard from './common/NamespaceCard';
 import EmptyState from './common/EmptyState';
 
 const Dashboard = ({ searchQuery = '' }) => {
+  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   
   // Custom hooks for state management
@@ -63,8 +65,7 @@ const Dashboard = ({ searchQuery = '' }) => {
 
   // Handle card clicks
   const handleCardClick = (namespace) => {
-    // Future: Navigate to namespace details
-    console.log('Clicked namespace:', namespace);
+    navigate(`/namespace/${namespace}/files`);
   };
 
   // Filter namespaces based on search query

@@ -49,8 +49,11 @@ export const COLORS = {
 };
 
 export const SIZES = {
+  navbar: {
+    height: 64, // Standard Material-UI AppBar height
+  },
   sidebar: {
-    width: 280,
+    width: 200,
   },
   icon: {
     small: 20,
@@ -64,5 +67,17 @@ export const SIZES = {
     md: 3,
     lg: 4,
     xl: 5,
+  }
+};
+
+// Common button styles
+export const BUTTON_STYLES = {
+  primary: {
+    color: COLORS.primary.main,
+    '&:hover': { bgcolor: 'rgba(25, 118, 210, 0.04)' }
+  },
+  secondary: {
+    color: COLORS.text.secondary,
+    '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.04)' }
   }
 };

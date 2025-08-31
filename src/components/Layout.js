@@ -21,7 +21,7 @@ import { UI_CONSTANTS } from '../constants';
 import ErrorBoundary from './common/ErrorBoundary';
 
 
-const Layout = ({ children, onSearchChange, searchQuery, onSearchFocus }) => {
+const Layout = ({ children, onSearchChange, searchQuery, onSearchFocus, searchPlaceholder }) => {
   const handleKeyDown = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault();
@@ -81,7 +81,7 @@ const Layout = ({ children, onSearchChange, searchQuery, onSearchFocus }) => {
             <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', mx: 4 }}>
               <TextField
                 id="global-search"
-                placeholder={UI_CONSTANTS.SEARCH.PLACEHOLDER}
+                placeholder={searchPlaceholder || UI_CONSTANTS.SEARCH.PLACEHOLDER}
                 value={searchQuery || ''}
                 onChange={(e) => onSearchChange?.(e.target.value)}
                 InputProps={{

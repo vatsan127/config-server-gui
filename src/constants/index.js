@@ -5,7 +5,11 @@ export const API_CONFIG = {
   ENDPOINTS: {
     NAMESPACES: {
       LIST: '/namespace/list',
-      CREATE: '/namespace/create'
+      CREATE: '/namespace/create',
+      FILES: '/namespace/files'
+    },
+    CONFIG: {
+      FETCH: '/config/fetch'
     }
   }
 };
@@ -17,6 +21,13 @@ export const MOCK_DATA = {
     "staging", 
     "development",
     "test"
+  ],
+  FILES: [
+    "rt/",
+    "rtsample3",
+    "sample1",
+    "sample2",
+    "sample3"
   ]
 };
 
