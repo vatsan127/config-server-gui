@@ -178,33 +178,10 @@ const FilesPage = () => {
         bgcolor: 'background.default',
         minHeight: '100vh'
       }}>
-        <Box mb={SIZES.spacing.xs}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: SIZES.spacing.xs }}>
-            <Button 
-              startIcon={<ArrowBackIcon />}
-              onClick={() => navigate('/')}
-              sx={{ 
-                color: COLORS.primary.main,
-                '&:hover': { bgcolor: 'rgba(25, 118, 210, 0.04)' }
-              }}
-            >
-              Back to Dashboard
-            </Button>
-          </Box>
-          <Box sx={{ 
-            bgcolor: COLORS.background.paper, 
-            p: SIZES.spacing.xs, 
-            borderLeft: `4px solid ${COLORS.primary.main}`,
-            borderRadius: `${SIZES.borderRadius.medium}px`,
-            boxShadow: SIZES.shadow.sm,
-          }}>
-            <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 1, color: 'text.primary' }}>
-              Files in "{namespace}"
-            </Typography>
-            <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
-              Browse and manage configuration files
-            </Typography>
-          </Box>
+        <Box mb={0.5}>
+          <Typography variant="h4" component="h1" sx={{ color: 'text.primary', fontSize: '1.75rem', fontWeight: 700 }}>
+            Explorer
+          </Typography>
         </Box>
         <FileListSkeleton count={6} />
       </Box>
@@ -214,17 +191,10 @@ const FilesPage = () => {
   if (error) {
     return (
       <Box sx={{ p: SIZES.spacing.xs }}>
-        <Box mb={SIZES.spacing.xs}>
-          <Button 
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate('/')}
-            sx={{ 
-              color: COLORS.primary.main,
-              '&:hover': { bgcolor: 'rgba(25, 118, 210, 0.04)' }
-            }}
-          >
-            Back to Dashboard
-          </Button>
+        <Box mb={0.5}>
+          <Typography variant="h4" component="h1" sx={{ color: 'text.primary', fontSize: '1.75rem', fontWeight: 700 }}>
+            Explorer
+          </Typography>
         </Box>
         <Alert severity="error">{error}</Alert>
       </Box>
@@ -240,19 +210,11 @@ const FilesPage = () => {
       bgcolor: 'background.default',
       minHeight: '100vh'
     }}>
-        <Box mb={SIZES.spacing.xs}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: SIZES.spacing.xs }}>
-            <Button 
-              startIcon={<ArrowBackIcon />}
-              onClick={() => navigate('/')}
-              sx={{ 
-                color: COLORS.primary.main,
-                '&:hover': { bgcolor: 'rgba(25, 118, 210, 0.04)' }
-              }}
-            >
-              Back to Dashboard
-            </Button>
-            
+        <Box mb={0.5}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+            <Typography variant="h4" component="h1" sx={{ color: 'text.primary', fontSize: '1.75rem', fontWeight: 700 }}>
+              Explorer
+            </Typography>
             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
               <TextField
                 inputRef={searchInputRef}
@@ -290,30 +252,16 @@ const FilesPage = () => {
           </Box>
 
           <Divider sx={{ 
-            mb: SIZES.spacing.xs, 
-            borderColor: COLORS.grey[200],
-            opacity: 0.8
+            mt: 1.5,
+            mb: 1.5,
+            borderColor: COLORS.grey[300],
+            opacity: 0.6
           }} />
 
-          <Box sx={{ 
-            bgcolor: COLORS.background.paper, 
-            p: 2, 
-            borderLeft: `3px solid ${COLORS.primary.main}`,
-            borderRadius: `${SIZES.borderRadius.small}px`,
-            boxShadow: SIZES.shadow.sm,
-            mb: 0
-          }}>
-            <Typography variant="h5" component="h1" sx={{ mb: 0.5, color: 'text.primary', fontSize: '1.2rem', fontWeight: 600 }}>
-              Files in "{namespace}"
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.8rem' }}>
-              Browse and manage configuration files
-            </Typography>
-          </Box>
         </Box>
 
         {currentPath !== '/' && (
-          <Box mb={SIZES.spacing.xs}>
+          <Box mb={1}>
             <Button
               startIcon={<ArrowBackIcon />}
               onClick={handleBackClick}
@@ -330,7 +278,7 @@ const FilesPage = () => {
 
         {searchQuery && (
           <Box sx={{ 
-            mb: SIZES.spacing.xs,
+            mb: 1,
             p: SIZES.spacing.xs,
             bgcolor: COLORS.grey[50],
             border: `1px solid ${COLORS.grey[200]}`,

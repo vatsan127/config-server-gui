@@ -3,7 +3,6 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Typography,
   Box,
-  Button,
   Alert,
   CircularProgress,
   Paper,
@@ -13,7 +12,6 @@ import {
   Tooltip
 } from '@mui/material';
 import {
-  ArrowBack as ArrowBackIcon,
   Download as DownloadIcon,
   Refresh as RefreshIcon,
   ContentCopy as ContentCopyIcon,
@@ -69,11 +67,6 @@ const FileViewPage = () => {
       fetchFileContent();
     }
   }, [namespace, normalizedPath, fileName]);
-
-  const handleBackToFiles = () => {
-    navigate(`/namespace/${namespace}/files`);
-  };
-
 
   const handleCopy = async () => {
     try {
@@ -146,15 +139,6 @@ const FileViewPage = () => {
   if (error) {
     return (
       <Box sx={{ p: SIZES.spacing.md }}>
-        <Box mb={2}>
-          <Button 
-            startIcon={<ArrowBackIcon />}
-            onClick={handleBackToFiles}
-            sx={BUTTON_STYLES.primary}
-          >
-            Back to Files
-          </Button>
-        </Box>
         <Alert severity="error">{error}</Alert>
       </Box>
     );
@@ -169,15 +153,6 @@ const FileViewPage = () => {
       bgcolor: 'background.default',
       minHeight: '100vh'
     }}>
-        <Box mb={2}>
-          <Button 
-            startIcon={<ArrowBackIcon />}
-            onClick={handleBackToFiles}
-            sx={BUTTON_STYLES.primary}
-          >
-            Back to Files
-          </Button>
-        </Box>
 
       <Paper 
         sx={{ 
