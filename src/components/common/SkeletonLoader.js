@@ -6,7 +6,7 @@ export const NamespaceCardSkeleton = () => (
   <Box sx={{ 
     p: SIZES.spacing.md,
     bgcolor: COLORS.background.paper,
-    borderRadius: `${SIZES.borderRadius.large}px`,
+    borderRadius: `${SIZES.borderRadius.medium}px`,
     border: `1px solid ${COLORS.grey[200]}`,
     height: '100%',
     display: 'flex',
@@ -48,7 +48,7 @@ export const FileListSkeleton = ({ count = 6 }) => (
   <Box sx={{ 
     bgcolor: COLORS.background.paper,
     border: `1px solid ${COLORS.grey[200]}`,
-    borderRadius: `${SIZES.borderRadius.large}px`,
+    borderRadius: `${SIZES.borderRadius.medium}px`,
     overflow: 'hidden'
   }}>
     {Array.from({ length: count }).map((_, index) => (

@@ -16,14 +16,11 @@ import {
   Logout as LogoutIcon
 } from '@mui/icons-material';
 import { theme } from '../theme/theme';
-import { COLORS, SIZES } from '../theme/colors';
+import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
 import { UI_CONSTANTS, DOM_IDS } from '../constants';
-import { useSearchShortcut } from '../hooks/useKeyboardShortcut';
 import ErrorBoundary from './common/ErrorBoundary';
 
-
-const Layout = ({ children, onSearchChange, searchQuery, onSearchFocus, searchPlaceholder }) => {
-  useSearchShortcut(onSearchFocus);
+const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder }) => {
 
   return (
     <ThemeProvider theme={theme}>
@@ -53,7 +50,7 @@ const Layout = ({ children, onSearchChange, searchQuery, onSearchFocus, searchPl
                 fontSize: '1.1rem',
                 letterSpacing: '-0.01em'
               }}>
-                Config Server
+                Configuration Dashboard
               </Typography>
             </Box>
 
@@ -80,9 +77,9 @@ const Layout = ({ children, onSearchChange, searchQuery, onSearchFocus, searchPl
                 }}
                 sx={{
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: `${SIZES.borderRadius.xl}px`,
+                    borderRadius: `${SIZES.borderRadius.medium}px`,
                     bgcolor: alpha(COLORS.background.paper, 0.9),
-                    height: 32,
+                    height: 40,
                     border: `1px solid ${alpha(COLORS.grey[300], 0.5)}`,
                     backdropFilter: 'blur(10px)',
                     transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -120,12 +117,10 @@ const Layout = ({ children, onSearchChange, searchQuery, onSearchFocus, searchPl
                   console.log('Logout clicked - functionality to be implemented');
                 }}
                 sx={{ 
+                  ...BUTTON_STYLES.secondary,
                   color: COLORS.text.white,
                   px: 2,
                   py: 1,
-                  borderRadius: `${SIZES.borderRadius.medium}px`,
-                  textTransform: 'none',
-                  fontWeight: 500,
                   fontSize: '0.8rem',
                   border: `1px solid ${alpha(COLORS.text.white, 0.2)}`,
                   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',

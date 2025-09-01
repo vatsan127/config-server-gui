@@ -5,22 +5,20 @@ import Dashboard from './components/Dashboard';
 import FilesLayout from './components/FilesLayout';
 import NotificationProvider from './components/common/NotificationProvider';
 import { useSearch } from './hooks/useSearch';
+import { useUniversalKeyboardShortcuts } from './hooks/useKeyboardShortcut';
 
 const AppContent = () => {
   const location = useLocation();
   const { searchQuery, setSearchQuery } = useSearch();
+  
+  // Set up universal keyboard shortcuts
+  useUniversalKeyboardShortcuts();
 
   // Clear search when route changes
   React.useEffect(() => {
     setSearchQuery('');
   }, [location.pathname, setSearchQuery]);
 
-  const handleSearchFocus = () => {
-    const searchInput = document.getElementById('global-search');
-    if (searchInput) {
-      searchInput.focus();
-    }
-  };
 
   const getSearchPlaceholder = () => {
     if (location.pathname.includes('/files')) {
@@ -36,7 +34,6 @@ const AppContent = () => {
       <Layout 
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        onSearchFocus={handleSearchFocus}
         searchPlaceholder={getSearchPlaceholder()}
       >
         <Routes>

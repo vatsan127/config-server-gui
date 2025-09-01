@@ -17,7 +17,7 @@ import {
 import { Add as AddIcon } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { setNotificationHandler } from '../services/api';
-import { COLORS, SIZES } from '../theme/colors';
+import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
 import { UI_CONSTANTS } from '../constants';
 import { useNamespaces } from '../hooks/useNamespaces';
 import { useDialog } from '../hooks/useDialog';
@@ -170,7 +170,7 @@ const Dashboard = ({ searchQuery = '' }) => {
           height: 56,
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           '&:hover': {
-            bgcolor: COLORS.primary.dark,
+            bgcolor: '#000000',
             boxShadow: SIZES.shadow.xl,
             transform: 'scale(1.05)',
           },
@@ -282,14 +282,9 @@ const Dashboard = ({ searchQuery = '' }) => {
             onClick={closeCreateDialog} 
             disabled={creating}
             sx={{ 
-              color: COLORS.text.secondary,
-              borderRadius: `${SIZES.borderRadius.small}px`,
+              ...BUTTON_STYLES.secondary,
               px: 2,
               py: 1,
-              fontWeight: 500,
-              '&:hover': {
-                bgcolor: COLORS.grey[100]
-              },
               '&:disabled': {
                 color: COLORS.grey[400]
               }
@@ -302,14 +297,12 @@ const Dashboard = ({ searchQuery = '' }) => {
             variant="contained"
             disabled={creating || !namespaceName.trim()}
             sx={{ 
-              bgcolor: COLORS.primary.main,
-              borderRadius: `${SIZES.borderRadius.small}px`,
+              ...BUTTON_STYLES.primary,
               px: 2,
               py: 1,
-              fontWeight: 500,
               boxShadow: SIZES.shadow.sm,
               '&:hover': {
-                bgcolor: COLORS.primary.dark,
+                ...BUTTON_STYLES.primary['&:hover'],
                 boxShadow: SIZES.shadow.md,
                 transform: 'translateY(-1px)',
               },

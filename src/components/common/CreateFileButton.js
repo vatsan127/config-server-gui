@@ -22,7 +22,7 @@ import {
   CreateNewFolder as CreateNewFolderIcon,
   InsertDriveFile as InsertDriveFileIcon
 } from '@mui/icons-material';
-import { COLORS } from '../../theme/colors';
+import { COLORS, BUTTON_STYLES } from '../../theme/colors';
 
 const CreateFileButton = ({ onCreateFile, onCreateFolder }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -80,15 +80,7 @@ const CreateFileButton = ({ onCreateFile, onCreateFolder }) => {
         variant="contained"
         startIcon={<AddIcon />}
         onClick={handleClick}
-        sx={{
-          bgcolor: COLORS.primary.main,
-          color: 'white',
-          '&:hover': {
-            bgcolor: COLORS.primary.dark
-          },
-          textTransform: 'none',
-          fontWeight: 600
-        }}
+        sx={BUTTON_STYLES.primary}
       >
         Create
       </Button>
@@ -153,12 +145,7 @@ const CreateFileButton = ({ onCreateFile, onCreateFolder }) => {
             onClick={handleCreate} 
             variant="contained"
             disabled={!name.trim()}
-            sx={{
-              bgcolor: COLORS.primary.main,
-              '&:hover': {
-                bgcolor: COLORS.primary.dark
-              }
-            }}
+            sx={BUTTON_STYLES.primary}
           >
             Create {createType === 'file' ? 'File' : 'Folder'}
           </Button>

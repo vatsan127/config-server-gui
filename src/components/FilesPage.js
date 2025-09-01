@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Typography,
   Box,
@@ -19,7 +19,6 @@ import {
 import {
   Folder as FolderIcon,
   InsertDriveFile as FileIcon,
-  ArrowBack as ArrowBackIcon,
   Search as SearchIcon,
   Code as CodeIcon,
   DataObject as JsonIcon,
@@ -28,7 +27,7 @@ import {
 } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { apiService, setNotificationHandler } from '../services/api';
-import { COLORS, SIZES } from '../theme/colors';
+import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
 import EmptyState from './common/EmptyState';
 import CreateFileButton from './common/CreateFileButton';
 import { FileListSkeleton } from './common/SkeletonLoader';
@@ -60,6 +59,7 @@ const getFileIcon = (fileName) => {
 const FilesPage = () => {
   const { namespace } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { enqueueSnackbar } = useSnackbar();
   const searchInputRef = useRef(null);
   
@@ -100,9 +100,14 @@ const FilesPage = () => {
 
   useEffect(() => {
     if (namespace) {
-      fetchFiles();
+      const pathParam = searchParams.get('path');
+      if (pathParam) {
+        fetchFiles(decodeURIComponent(pathParam));
+      } else {
+        fetchFiles();
+      }
     }
-  }, [namespace]);
+  }, [namespace, searchParams]);
 
   const handleItemClick = (item) => {
     if (item.endsWith('/')) {
@@ -116,13 +121,6 @@ const FilesPage = () => {
     }
   };
 
-  const handleBackClick = () => {
-    if (currentPath !== '/') {
-      const parentPath = currentPath.split('/').slice(0, -2).join('/') + '/';
-      const finalPath = parentPath === '/' ? '/' : parentPath;
-      fetchFiles(finalPath);
-    }
-  };
 
   const pathSegments = useMemo(() => {
     if (currentPath === '/') return [];
@@ -179,9 +177,24 @@ const FilesPage = () => {
         minHeight: '100vh'
       }}>
         <Box mb={0.5}>
-          <Typography variant="h4" component="h1" sx={{ color: 'text.primary', fontSize: '1.75rem', fontWeight: 700 }}>
-            Explorer
-          </Typography>
+          <Breadcrumbs
+            aria-label="breadcrumb"
+            separator="/"
+            sx={{
+              '& .MuiBreadcrumbs-separator': {
+                color: COLORS.text.muted,
+                mx: 0.5,
+              },
+            }}
+          >
+            <Typography variant="h5" sx={{
+              color: COLORS.text.primary,
+              fontWeight: 700,
+              fontSize: '1.5rem',
+            }}>
+              {namespace}
+            </Typography>
+          </Breadcrumbs>
         </Box>
         <FileListSkeleton count={6} />
       </Box>
@@ -192,9 +205,24 @@ const FilesPage = () => {
     return (
       <Box sx={{ p: SIZES.spacing.xs }}>
         <Box mb={0.5}>
-          <Typography variant="h4" component="h1" sx={{ color: 'text.primary', fontSize: '1.75rem', fontWeight: 700 }}>
-            Explorer
-          </Typography>
+          <Breadcrumbs
+            aria-label="breadcrumb"
+            separator="/"
+            sx={{
+              '& .MuiBreadcrumbs-separator': {
+                color: COLORS.text.muted,
+                mx: 0.5,
+              },
+            }}
+          >
+            <Typography variant="h5" sx={{
+              color: COLORS.text.primary,
+              fontWeight: 700,
+              fontSize: '1.5rem',
+            }}>
+              {namespace}
+            </Typography>
+          </Breadcrumbs>
         </Box>
         <Alert severity="error">{error}</Alert>
       </Box>
@@ -212,9 +240,71 @@ const FilesPage = () => {
     }}>
         <Box mb={0.5}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
-            <Typography variant="h4" component="h1" sx={{ color: 'text.primary', fontSize: '1.75rem', fontWeight: 700 }}>
-              Explorer
-            </Typography>
+            <Breadcrumbs
+              aria-label="breadcrumb"
+              separator="/"
+              sx={{
+                '& .MuiBreadcrumbs-separator': {
+                  color: COLORS.text.muted,
+                  mx: 0.5,
+                },
+                '& .MuiBreadcrumbs-ol': {
+                  flexWrap: 'nowrap',
+                },
+              }}
+            >
+              <Link
+                component="button"
+                variant="h5"
+                onClick={() => handleBreadcrumbClick(-1)}
+                sx={{
+                  color: currentPath === '/' ? COLORS.text.primary : COLORS.primary.main,
+                  fontWeight: currentPath === '/' ? 700 : 500,
+                  fontSize: '1.5rem',
+                  textDecoration: 'none',
+                  cursor: currentPath === '/' ? 'default' : 'pointer',
+                  '&:hover': {
+                    textDecoration: currentPath === '/' ? 'none' : 'underline',
+                    color: currentPath === '/' ? COLORS.text.primary : COLORS.primary.dark,
+                  },
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  margin: 0,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                }}
+              >
+                {namespace}
+              </Link>
+              {pathSegments.map((segment, index) => (
+                <Link
+                  key={index}
+                  component="button"
+                  variant="h5"
+                  onClick={() => handleBreadcrumbClick(index)}
+                  sx={{
+                    color: index === pathSegments.length - 1 ? COLORS.text.primary : COLORS.primary.main,
+                    fontWeight: index === pathSegments.length - 1 ? 700 : 500,
+                    fontSize: '1.5rem',
+                    textDecoration: 'none',
+                    cursor: index === pathSegments.length - 1 ? 'default' : 'pointer',
+                    '&:hover': {
+                      textDecoration: index === pathSegments.length - 1 ? 'none' : 'underline',
+                      color: index === pathSegments.length - 1 ? COLORS.text.primary : COLORS.primary.dark,
+                    },
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    margin: 0,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  {segment}
+                </Link>
+              ))}
+            </Breadcrumbs>
             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
               <TextField
                 inputRef={searchInputRef}
@@ -260,21 +350,6 @@ const FilesPage = () => {
 
         </Box>
 
-        {currentPath !== '/' && (
-          <Box mb={1}>
-            <Button
-              startIcon={<ArrowBackIcon />}
-              onClick={handleBackClick}
-              sx={{ 
-                color: COLORS.text.secondary,
-                fontSize: '0.875rem',
-                '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.04)' }
-              }}
-            >
-              Back to parent folder
-            </Button>
-          </Box>
-        )}
 
         {searchQuery && (
           <Box sx={{ 
@@ -296,7 +371,7 @@ const FilesPage = () => {
         <Box sx={{ 
           bgcolor: COLORS.background.paper,
           border: `1px solid ${COLORS.grey[200]}`,
-          borderRadius: `${SIZES.borderRadius.large}px`,
+          borderRadius: `${SIZES.borderRadius.medium}px`,
           boxShadow: SIZES.shadow.sm,
           overflow: 'hidden',
           minHeight: filteredFiles.length === 0 ? 'auto' : 'initial'

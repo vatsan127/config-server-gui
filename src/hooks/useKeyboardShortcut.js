@@ -28,8 +28,53 @@ export const useKeyboardShortcut = (key, callback, options = {}) => {
 };
 
 /**
- * Hook specifically for search functionality (Ctrl/Cmd+K)
+ * Hook for universal search functionality (Ctrl/Cmd+K)
+ * Automatically focuses the active search input on the page
  */
 export const useSearchShortcut = (callback) => {
-  return useKeyboardShortcut('k', callback, { ctrl: true });
+  const universalSearchHandler = callback || (() => {
+    // Find any search input on the page and focus it
+    const searchInputs = document.querySelectorAll('input[type="text"], input[placeholder*="search" i], input[id*="search" i], input[class*="search" i]');
+    if (searchInputs.length > 0) {
+      // Focus the first visible search input
+      for (const input of searchInputs) {
+        if (input.offsetParent !== null) { // Check if element is visible
+          input.focus();
+          break;
+        }
+      }
+    }
+  });
+  
+  return useKeyboardShortcut('k', universalSearchHandler, { ctrl: true });
+};
+
+/**
+ * Hook for universal escape key functionality
+ * Automatically blurs any focused search input
+ */
+export const useEscapeKey = (callback) => {
+  const universalEscapeHandler = callback || (() => {
+    const activeElement = document.activeElement;
+    if (activeElement && (
+      activeElement.type === 'text' || 
+      activeElement.type === 'search' ||
+      activeElement.placeholder?.toLowerCase().includes('search') ||
+      activeElement.id?.toLowerCase().includes('search') ||
+      activeElement.className?.toLowerCase().includes('search')
+    )) {
+      activeElement.blur();
+    }
+  });
+  
+  return useKeyboardShortcut('Escape', universalEscapeHandler);
+};
+
+/**
+ * Universal keyboard shortcuts hook
+ * Sets up Ctrl+K and Escape shortcuts globally
+ */
+export const useUniversalKeyboardShortcuts = () => {
+  useSearchShortcut();
+  useEscapeKey();
 };

@@ -1,8 +1,8 @@
 export const COLORS = {
   primary: {
-    main: '#6366F1',
+    main: '#007BFF',
     dark: '#4F46E5',
-    light: '#8B5CF6',
+    light: '#007BFF',
   },
   secondary: {
     main: '#F59E0B',
@@ -12,7 +12,7 @@ export const COLORS = {
   background: {
     default: '#FAFBFC',
     paper: '#FFFFFF',
-    sidebar: '#1F2937',
+    sidebar: '#000000',
     elevated: '#FFFFFF',
   },
   text: {
@@ -37,7 +37,7 @@ export const COLORS = {
   accent: {
     blue: '#3B82F6',
     green: '#10B981',
-    purple: '#8B5CF6',
+    purple: '#007BFF',
     orange: '#F59E0B',
     pink: '#EC4899',
     teal: '#14B8A6',
@@ -58,7 +58,7 @@ export const COLORS = {
     text: '#991B1B',
   },
   hover: {
-    sidebar: '#374151',
+    sidebar: '#1a1a1a',
     card: '#F9FAFB',
     button: 'rgba(99, 102, 241, 0.08)',
   },
@@ -111,21 +111,19 @@ export const BUTTON_STYLES = {
   primary: {
     bgcolor: COLORS.primary.main,
     color: COLORS.text.white,
-    borderRadius: `${SIZES.borderRadius.small}px`,
-    fontWeight: 500,
+    borderRadius: `${SIZES.borderRadius.medium}px`,
+    fontWeight: 600,
     textTransform: 'none',
-    boxShadow: SIZES.shadow.sm,
     '&:hover': { 
       bgcolor: COLORS.primary.dark,
-      boxShadow: SIZES.shadow.md,
     }
   },
   secondary: {
     bgcolor: 'transparent',
     color: COLORS.text.secondary,
     border: `1px solid ${COLORS.grey[300]}`,
-    borderRadius: `${SIZES.borderRadius.small}px`,
-    fontWeight: 500,
+    borderRadius: `${SIZES.borderRadius.medium}px`,
+    fontWeight: 600,
     textTransform: 'none',
     '&:hover': { 
       bgcolor: COLORS.grey[50],
@@ -135,8 +133,8 @@ export const BUTTON_STYLES = {
   ghost: {
     bgcolor: 'transparent',
     color: COLORS.text.primary,
-    borderRadius: `${SIZES.borderRadius.small}px`,
-    fontWeight: 500,
+    borderRadius: `${SIZES.borderRadius.medium}px`,
+    fontWeight: 600,
     textTransform: 'none',
     '&:hover': { 
       bgcolor: COLORS.hover.button,

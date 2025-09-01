@@ -173,9 +173,82 @@ const FileViewPage = () => {
             minHeight: '36px'
           }}
         >
-          <Typography variant="body1" sx={{ color: COLORS.text.primary, fontWeight: 600, fontSize: '0.9rem' }}>
-            {fileName}
-          </Typography>
+          <Breadcrumbs
+            aria-label="breadcrumb"
+            separator="/"
+            sx={{
+              '& .MuiBreadcrumbs-separator': {
+                color: COLORS.text.muted,
+                mx: 0.5,
+                fontSize: '1.1rem',
+              },
+              '& .MuiBreadcrumbs-ol': {
+                flexWrap: 'nowrap',
+              },
+            }}
+          >
+            <Link
+              component="button"
+              variant="body1"
+              onClick={() => navigate(`/namespace/${namespace}/files`)}
+              sx={{
+                color: COLORS.primary.main,
+                fontWeight: 500,
+                fontSize: '1.1rem',
+                textDecoration: 'none',
+                cursor: 'pointer',
+                '&:hover': {
+                  textDecoration: 'underline',
+                  color: COLORS.primary.dark,
+                },
+                background: 'none',
+                border: 'none',
+                padding: 0,
+                margin: 0,
+                display: 'inline-flex',
+                alignItems: 'center',
+              }}
+            >
+              {namespace}
+            </Link>
+            {pathSegments.map((segment, index) => (
+              <Link
+                key={index}
+                component="button"
+                variant="body1"
+                onClick={() => {
+                  const folderPath = '/' + pathSegments.slice(0, index + 1).join('/') + '/';
+                  navigate(`/namespace/${namespace}/files?path=${encodeURIComponent(folderPath)}`);
+                }}
+                sx={{
+                  color: COLORS.primary.main,
+                  fontWeight: 500,
+                  fontSize: '1.1rem',
+                  textDecoration: 'none',
+                  cursor: 'pointer',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                    color: COLORS.primary.dark,
+                  },
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  margin: 0,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                }}
+              >
+                {segment}
+              </Link>
+            ))}
+            <Typography variant="body1" sx={{ 
+              color: COLORS.text.primary, 
+              fontWeight: 600, 
+              fontSize: '1.1rem' 
+            }}>
+              {fileName}
+            </Typography>
+          </Breadcrumbs>
           <Box sx={{ display: 'flex', gap: 0.5 }}>
             {!isEditing ? (
               <>

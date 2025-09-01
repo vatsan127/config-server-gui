@@ -132,7 +132,7 @@ export const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: SIZES.borderRadius.small,
+          borderRadius: SIZES.borderRadius.medium,
           fontWeight: 500,
           textTransform: 'none',
           padding: '8px 16px',
@@ -150,7 +150,7 @@ export const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          borderRadius: SIZES.borderRadius.large,
+          borderRadius: SIZES.borderRadius.medium,
           boxShadow: SIZES.shadow.base,
           border: `1px solid ${COLORS.grey[200]}`,
         },
