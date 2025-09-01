@@ -9,19 +9,37 @@ export const useNamespaces = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchNamespaces = useCallback(async () => {
+  const fetchNamespaces = useCallback(async (signal) => {
+    console.log('🔄 fetchNamespaces called', { 
+      timestamp: new Date().toISOString(), 
+      aborted: signal?.aborted,
+      stack: new Error().stack.split('\n').slice(0, 5).join('\n')
+    });
+    
     try {
       setLoading(true);
       setError(null);
       
+      console.log('📡 Making API call to getNamespaces');
       const data = await apiService.getNamespaces();
-      setNamespaces(data);
+      
+      // Only update state if request wasn't aborted
+      if (!signal?.aborted) {
+        console.log('✅ Setting namespaces data', data);
+        setNamespaces(data);
+      } else {
+        console.log('❌ Request was aborted, not setting data');
+      }
       
     } catch (err) {
-      setError('Failed to load namespaces. Please ensure the config server is running.');
-      setNamespaces([]);
+      if (!signal?.aborted) {
+        setError('Failed to load namespaces. Please ensure the config server is running.');
+        setNamespaces([]);
+      }
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) {
+        setLoading(false);
+      }
     }
   }, []);
 
@@ -42,7 +60,18 @@ export const useNamespaces = () => {
   }, [fetchNamespaces]);
 
   useEffect(() => {
-    fetchNamespaces();
+    console.log('🎯 useNamespaces useEffect triggered', {
+      timestamp: new Date().toISOString(),
+      fetchNamespaces: !!fetchNamespaces
+    });
+    
+    const abortController = new AbortController();
+    fetchNamespaces(abortController.signal);
+    
+    return () => {
+      console.log('🧹 useNamespaces cleanup called');
+      abortController.abort();
+    };
   }, [fetchNamespaces]);
 
   return {

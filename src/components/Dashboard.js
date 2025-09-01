@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Typography,
@@ -31,6 +31,11 @@ const Dashboard = ({ searchQuery = '' }) => {
   const { enqueueSnackbar } = useSnackbar();
   const nameInputRef = useRef(null);
   
+  console.log('🏠 Dashboard component rendered', {
+    timestamp: new Date().toISOString(),
+    searchQuery
+  });
+
   // Custom hooks for state management
   const { 
     namespaces, 
@@ -49,10 +54,15 @@ const Dashboard = ({ searchQuery = '' }) => {
     handleSubmit: handleDialogSubmit
   } = useDialog({ namespaceName: '' });
 
-  // Set up notification handler
+  // Set up notification handler with ref to avoid dependency issues
+  const notificationRef = useRef();
+  notificationRef.current = enqueueSnackbar;
+  
   useEffect(() => {
-    setNotificationHandler(enqueueSnackbar);
-  }, [enqueueSnackbar]);
+    setNotificationHandler((message, options) => {
+      notificationRef.current(message, options);
+    });
+  }, []); // Empty dependency array - runs only once
 
   // Handle auto-focus when dialog opens
   const handleDialogEntered = () => {

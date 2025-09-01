@@ -16,6 +16,10 @@ const AppContent = () => {
 
   // Clear search when route changes
   React.useEffect(() => {
+    console.log('🔄 Route changed - clearing search', {
+      pathname: location.pathname,
+      timestamp: new Date().toISOString()
+    });
     setSearchQuery('');
   }, [location.pathname, setSearchQuery]);
 
@@ -27,7 +31,7 @@ const AppContent = () => {
     return 'Search namespaces... (Ctrl+K)';
   };
 
-  const isDashboard = location.pathname === '/' || location.pathname === '/dashboard';
+  const isDashboard = location.pathname === '/';
 
   if (isDashboard) {
     return (
@@ -38,7 +42,6 @@ const AppContent = () => {
       >
         <Routes>
           <Route path="/" element={<Dashboard searchQuery={searchQuery} />} />
-          <Route path="/dashboard" element={<Dashboard searchQuery={searchQuery} />} />
         </Routes>
       </Layout>
     );

@@ -58,9 +58,15 @@ const FileViewPage = () => {
     console.log('CommitId state changed to:', commitId);
   }, [commitId]);
 
+  // Set up notification handler with ref to avoid dependency issues
+  const notificationRef = useRef();
+  notificationRef.current = enqueueSnackbar;
+  
   useEffect(() => {
-    setNotificationHandler(enqueueSnackbar);
-  }, [enqueueSnackbar]);
+    setNotificationHandler((message, options) => {
+      notificationRef.current(message, options);
+    });
+  }, []); // Empty dependency array - runs only once
 
   const fetchFileContent = async () => {
     setLoading(true);

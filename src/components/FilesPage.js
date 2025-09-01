@@ -70,9 +70,15 @@ const FilesPage = () => {
   const [currentPath, setCurrentPath] = useState('/');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Set up notification handler with ref to avoid dependency issues
+  const notificationRef = useRef();
+  notificationRef.current = enqueueSnackbar;
+  
   useEffect(() => {
-    setNotificationHandler(enqueueSnackbar);
-  }, [enqueueSnackbar]);
+    setNotificationHandler((message, options) => {
+      notificationRef.current(message, options);
+    });
+  }, []); // Empty dependency array - runs only once
 
   // Handle Ctrl+K to focus search
   const handleSearchFocus = () => {
