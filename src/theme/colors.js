@@ -75,7 +75,7 @@ export const SIZES = {
     height: 40,
   },
   sidebar: {
-    width: 180,
+    width: 220,
   },
   icon: {
     small: 16,
@@ -115,7 +115,7 @@ export const BUTTON_STYLES = {
     fontWeight: 600,
     textTransform: 'none',
     '&:hover': { 
-      bgcolor: COLORS.primary.dark,
+      bgcolor: '#000000',
     }
   },
   secondary: {

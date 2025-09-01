@@ -45,16 +45,25 @@ const FilesSidebar = ({ namespace }) => {
         zIndex: 1000
       }}
     >
-      <Box sx={{ p: SIZES.spacing.xs, borderBottom: `1px solid rgba(255, 255, 255, 0.2)` }}>
+      <Box sx={{ 
+        px: SIZES.spacing.sm, 
+        py: SIZES.spacing.xs, 
+        borderBottom: `1px solid rgba(255, 255, 255, 0.2)`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-start'
+      }}>
         <Typography 
-          variant="subtitle1" 
+          variant="h5" 
           sx={{ 
             color: COLORS.text.white,
-            fontWeight: 600,
-            fontSize: '0.9rem'
+            fontWeight: 700,
+            fontSize: '1.2rem',
+            letterSpacing: '0.5px',
+            margin: 0
           }}
         >
-          {namespace}
+          Explorer
         </Typography>
       </Box>
 
