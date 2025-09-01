@@ -29,16 +29,6 @@ export const validateNamespace = (name) => {
   return { isValid: true, error: null };
 };
 
-/**
- * Checks if two arrays are equal (used for mock data detection)
- * @param {Array} arr1 
- * @param {Array} arr2 
- * @returns {boolean}
- */
-export const arraysEqual = (arr1, arr2) => {
-  if (arr1.length !== arr2.length) return false;
-  return JSON.stringify(arr1.sort()) === JSON.stringify(arr2.sort());
-};
 
 /**
  * Debounce function for search input
@@ -55,11 +45,20 @@ export const debounce = (func, delay) => {
 };
 
 /**
- * Normalizes a file path to ensure it starts with '/'
+ * Normalizes a file path to ensure it starts and ends with '/'
  * @param {string} path - The path to normalize
- * @returns {string} - The normalized path
+ * @returns {string} - The normalized path (always starts and ends with '/')
  */
 export const normalizePath = (path) => {
   if (!path || path === '/') return '/';
-  return path.startsWith('/') ? path : '/' + path;
+  
+  // Ensure path starts with '/'
+  let normalized = path.startsWith('/') ? path : '/' + path;
+  
+  // Ensure path ends with '/' (unless it's just '/')
+  if (normalized !== '/' && !normalized.endsWith('/')) {
+    normalized = normalized + '/';
+  }
+  
+  return normalized;
 };

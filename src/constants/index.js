@@ -9,27 +9,12 @@ export const API_CONFIG = {
       FILES: '/namespace/files'
     },
     CONFIG: {
-      FETCH: '/config/fetch'
+      FETCH: '/config/fetch',
+      UPDATE: '/config/update'
     }
   }
 };
 
-// Mock data
-export const MOCK_DATA = {
-  NAMESPACES: [
-    "production",
-    "staging", 
-    "development",
-    "test"
-  ],
-  FILES: [
-    "rt/",
-    "rtsample3",
-    "sample1",
-    "sample2",
-    "sample3"
-  ]
-};
 
 // UI Constants
 export const UI_CONSTANTS = {
@@ -47,7 +32,6 @@ export const UI_CONSTANTS = {
     EMPTY_NAMESPACES: 'No namespaces found',
     EMPTY_NAMESPACES_DESC: 'Get started by creating your first namespace',
     NO_SEARCH_RESULTS: 'No matching namespaces',
-    MOCK_DATA_WARNING: 'Using mock data - config server at localhost:8080 is not accessible',
     NAMESPACE_CREATED: (name) => `Namespace "${name}" created successfully`
   }
 };

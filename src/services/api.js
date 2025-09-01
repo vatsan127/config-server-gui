@@ -1,5 +1,5 @@
-import { API_CONFIG, MOCK_DATA, UI_CONSTANTS, PERFORMANCE_CONFIG } from '../constants';
-import { makeApiRequest, extractResponseMessage } from '../utils/apiUtils';
+import { API_CONFIG, UI_CONSTANTS, PERFORMANCE_CONFIG } from '../constants';
+import { makeApiRequest, extractResponseMessage, createConnectionErrorMessage } from '../utils/apiUtils';
 
 // Global notification function (will be set by components)
 let showNotification = null;
@@ -70,10 +70,19 @@ export const apiService = {
       
     } catch (error) {
       console.error('Error fetching namespaces:', error);
+      const friendlyMessage = createConnectionErrorMessage(error, 'fetch namespaces');
       
-      // Return mock data as fallback when network fails  
-      console.log('Using mock namespaces:', MOCK_DATA.NAMESPACES);
-      return MOCK_DATA.NAMESPACES;
+      // Show connection error notification
+      if (showNotification) {
+        showNotification(friendlyMessage, { 
+          variant: 'error',
+          preventDuplicate: true,
+          autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+          key: `connection-error-${Date.now()}`
+        });
+      }
+      
+      throw new Error(friendlyMessage);
     }
   },
 
@@ -120,7 +129,19 @@ export const apiService = {
       
     } catch (error) {
       console.error('Error creating namespace:', error);
-      throw error;
+      const friendlyMessage = createConnectionErrorMessage(error, 'create namespace');
+      
+      // Show connection error notification
+      if (showNotification) {
+        showNotification(friendlyMessage, { 
+          variant: 'error',
+          preventDuplicate: true,
+          autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+          key: `connection-error-${Date.now()}`
+        });
+      }
+      
+      throw new Error(friendlyMessage);
     }
   },
 
@@ -152,9 +173,19 @@ export const apiService = {
       
     } catch (error) {
       console.error('Error fetching namespace files:', error);
+      const friendlyMessage = createConnectionErrorMessage(error, 'fetch files');
       
-      console.log('Using mock files:', MOCK_DATA.FILES);
-      return MOCK_DATA.FILES;
+      // Show connection error notification
+      if (showNotification) {
+        showNotification(friendlyMessage, { 
+          variant: 'error',
+          preventDuplicate: true,
+          autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+          key: `connection-error-${Date.now()}`
+        });
+      }
+      
+      throw new Error(friendlyMessage);
     }
   },
 
@@ -188,30 +219,28 @@ export const apiService = {
       const data = await response.json();
       console.log('Successfully fetched file content:', data);
       
-      // Return the content string or a mock content for now
-      return data.content || data || `# ${fileName}
+      // Return both content and commitId for update operations
+      return {
+        content: data.content || data || `# ${fileName}`,
+        commitId: data.commitId
+      };
 
-This is the content of ${fileName} from namespace "${namespace}".
-Path: ${path}
-
-Sample configuration data would appear here.
-`;
       
     } catch (error) {
       console.error('Error getting file content:', error);
+      const friendlyMessage = createConnectionErrorMessage(error, 'fetch file content');
       
-      // Return mock content as fallback
-      return `# ${fileName}
-
-This is mock content for ${fileName} from namespace "${namespace}".
-Path: ${path}
-
-Sample configuration data:
-key1=value1
-key2=value2
-database.host=localhost
-database.port=5432
-`;
+      // Show connection error notification
+      if (showNotification) {
+        showNotification(friendlyMessage, { 
+          variant: 'error',
+          preventDuplicate: true,
+          autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+          key: `connection-error-${Date.now()}`
+        });
+      }
+      
+      throw new Error(friendlyMessage);
     }
   },
 
@@ -244,9 +273,8 @@ database.port=5432
       
     } catch (error) {
       console.error('Error creating file:', error);
-      // For now, simulate success since we don't have the actual endpoint
-      console.log('Simulating file creation success for:', fileName);
-      return true;
+      const friendlyMessage = createConnectionErrorMessage(error, 'create file');
+      throw new Error(friendlyMessage);
     }
   },
 
@@ -278,44 +306,73 @@ database.port=5432
       
     } catch (error) {
       console.error('Error creating folder:', error);
-      // For now, simulate success since we don't have the actual endpoint
-      console.log('Simulating folder creation success for:', folderName);
-      return true;
+      const friendlyMessage = createConnectionErrorMessage(error, 'create folder');
+      throw new Error(friendlyMessage);
     }
   },
 
-  async updateFileContent(namespace, path, fileName, content) {
+  async updateFileContent(namespace, path, fileName, content, commitId, message) {
     try {
-      const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CONFIG.UPDATE || '/config/update'}`;
+      const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CONFIG.UPDATE}`;
       console.log('Attempting to update file:', fileName, 'in namespace:', namespace, 'path:', path);
+      
+      const requestBody = {
+        action: 'update',
+        appName: fileName,
+        namespace: namespace,
+        path: path,
+        content: content,
+        commitId: commitId,
+        message: message,
+        email: 'user@example.com'
+      };
+      
+      console.log('Update request body:', JSON.stringify(requestBody, null, 2));
       
       const response = await makeApiRequest(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          action: 'update',
-          appName: fileName,
-          namespace: namespace,
-          path: path,
-          content: content,
-          email: 'user@example.com'
-        })
+        body: JSON.stringify(requestBody)
       });
       
+      // Handle response for both success and error cases
       await handleApiResponse(response, `File "${fileName}" updated successfully`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      console.log('Successfully updated file:', fileName);
-      return true;
+      const responseData = await response.json();
+      console.log('Full update response:', responseData);
+      console.log('Successfully updated file:', fileName, 'New commitId:', responseData.commitId);
+      
+      // Return the new commitId from the update response
+      // Check different possible field names for commitId
+      const newCommitId = responseData.commitId || responseData.commit_id || responseData.id;
+      console.log('Extracted commitId:', newCommitId);
+      
+      return {
+        success: true,
+        commitId: newCommitId
+      };
       
     } catch (error) {
       console.error('Error updating file:', error);
-      throw error;
+      const friendlyMessage = createConnectionErrorMessage(error, 'update file');
+      
+      // Show connection error notification
+      if (showNotification) {
+        showNotification(friendlyMessage, { 
+          variant: 'error',
+          preventDuplicate: true,
+          autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+          key: `connection-error-${Date.now()}`
+        });
+      }
+      
+      throw new Error(friendlyMessage);
     }
   }
 };

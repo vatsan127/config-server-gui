@@ -36,7 +36,6 @@ const Dashboard = ({ searchQuery = '' }) => {
     namespaces, 
     loading, 
     error, 
-    usingMockData, 
     createNamespace 
   } = useNamespaces();
   
@@ -114,21 +113,6 @@ const Dashboard = ({ searchQuery = '' }) => {
 
   return (
     <Box sx={{ p: SIZES.spacing.xs, bgcolor: 'background.default', minHeight: '100vh' }}>
-      {usingMockData && (
-        <Alert 
-          severity="warning" 
-          sx={{ 
-            mb: SIZES.spacing.xs,
-            bgcolor: COLORS.warning.background,
-            border: `1px solid ${COLORS.warning.border}`,
-            borderRadius: `${SIZES.borderRadius.medium}px`,
-            color: COLORS.warning.text,
-            '& .MuiAlert-icon': { color: COLORS.warning.border }
-          }}
-        >
-          {UI_CONSTANTS.MESSAGES.MOCK_DATA_WARNING}
-        </Alert>
-      )}
 
       <Box 
         sx={{ 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Typography,
@@ -9,7 +9,13 @@ import {
   Breadcrumbs,
   Link,
   IconButton,
-  Tooltip
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Button
 } from '@mui/material';
 import {
   Download as DownloadIcon,
@@ -41,6 +47,16 @@ const FileViewPage = () => {
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [commitId, setCommitId] = useState(null);
+  const [showCommitDialog, setShowCommitDialog] = useState(false);
+  const [commitMessage, setCommitMessage] = useState('');
+  const commitIdRef = useRef(null);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    commitIdRef.current = commitId;
+    console.log('CommitId state changed to:', commitId);
+  }, [commitId]);
 
   useEffect(() => {
     setNotificationHandler(enqueueSnackbar);
@@ -51,9 +67,14 @@ const FileViewPage = () => {
     setError(null);
     
     try {
-      const fileContent = await apiService.getFileContent(namespace, normalizedPath, fileName);
-      setContent(fileContent);
-      setOriginalContent(fileContent);
+      const fileData = await apiService.getFileContent(namespace, normalizedPath, fileName);
+      const content = typeof fileData === 'string' ? fileData : fileData.content;
+      const commitIdFromResponse = typeof fileData === 'object' ? fileData.commitId : null;
+      
+      setContent(content);
+      setOriginalContent(content);
+      setCommitId(commitIdFromResponse);
+      commitIdRef.current = commitIdFromResponse;
     } catch (err) {
       setError('Failed to load file content');
       console.error('Error fetching file content:', err);
@@ -71,9 +92,8 @@ const FileViewPage = () => {
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(content);
-      enqueueSnackbar('File content copied to clipboard', { variant: 'success' });
     } catch (error) {
-      enqueueSnackbar('Failed to copy file content', { variant: 'error' });
+      console.error('Failed to copy file content:', error);
     }
   };
 
@@ -81,19 +101,53 @@ const FileViewPage = () => {
     setIsEditing(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
+    setShowCommitDialog(true);
+  };
+
+  const handleCommitSave = async () => {
+    if (!commitMessage.trim()) {
+      enqueueSnackbar('Commit message is required', { variant: 'error' });
+      return;
+    }
+
+    const currentCommitId = commitIdRef.current;
+    console.log('Saving with commitId (from ref):', currentCommitId);
+    console.log('Saving with commitId (from state):', commitId);
     setSaving(true);
     try {
-      await apiService.updateFileContent(namespace, normalizedPath, fileName, content);
+      const result = await apiService.updateFileContent(
+        namespace, 
+        normalizedPath, 
+        fileName, 
+        content, 
+        currentCommitId, 
+        commitMessage
+      );
+      
+      // Update commitId with the new one from the server response
+      if (result && result.commitId) {
+        console.log('Updating commitId from', currentCommitId, 'to', result.commitId);
+        setCommitId(result.commitId);
+        commitIdRef.current = result.commitId;
+      }
+      
       setOriginalContent(content);
       setIsEditing(false);
-      enqueueSnackbar('File saved successfully', { variant: 'success' });
+      setShowCommitDialog(false);
+      setCommitMessage('');
+      // Don't show success notification here since it's handled in the API service
     } catch (error) {
       enqueueSnackbar('Failed to save file', { variant: 'error' });
       console.error('Error saving file:', error);
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleCommitCancel = () => {
+    setShowCommitDialog(false);
+    setCommitMessage('');
   };
 
   const handleCancel = () => {
@@ -118,9 +172,8 @@ const FileViewPage = () => {
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
-      enqueueSnackbar('File downloaded successfully', { variant: 'success' });
     } catch (error) {
-      enqueueSnackbar('Failed to download file', { variant: 'error' });
+      console.error('Failed to download file:', error);
     }
   };
 
@@ -331,6 +384,140 @@ const FileViewPage = () => {
           />
         </Box>
       </Paper>
+
+      {/* Commit Message Dialog */}
+      <Dialog 
+        open={showCommitDialog} 
+        onClose={handleCommitCancel} 
+        maxWidth="sm" 
+        fullWidth
+        PaperProps={{
+          sx: {
+            bgcolor: COLORS.background.paper,
+            border: `1px solid ${COLORS.grey[200]}`,
+            borderRadius: `${SIZES.borderRadius.medium}px`,
+            boxShadow: SIZES.shadow.md,
+            m: 1
+          }
+        }}
+        sx={{
+          '& .MuiBackdrop-root': {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          color: COLORS.text.primary, 
+          fontSize: '1.1rem', 
+          fontWeight: 600,
+          borderBottom: `1px solid ${COLORS.grey[200]}`,
+          px: 2,
+          py: 1.5
+        }}>
+          Save Changes
+        </DialogTitle>
+        <DialogContent sx={{ 
+          px: 2,
+          py: 2,
+          '&.MuiDialogContent-root': {
+            paddingTop: 2
+          }
+        }}>
+          <Typography variant="body2" sx={{ mb: 2, color: COLORS.text.secondary }}>
+            Please provide a descriptive message for your changes:
+          </Typography>
+          <TextField
+            autoFocus
+            margin="none"
+            label="Commit Message"
+            placeholder="e.g., Updated configuration settings for production environment"
+            type="text"
+            fullWidth
+            multiline
+            rows={3}
+            variant="outlined"
+            value={commitMessage}
+            onChange={(e) => setCommitMessage(e.target.value)}
+            disabled={saving}
+            inputProps={{
+              maxLength: 200
+            }}
+            sx={{ 
+              '& .MuiOutlinedInput-root': {
+                borderRadius: `${SIZES.borderRadius.medium}px`,
+                '& fieldset': {
+                  borderColor: COLORS.grey[300],
+                },
+                '&:hover fieldset': {
+                  borderColor: COLORS.grey[400],
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: COLORS.primary.main,
+                  borderWidth: 2
+                }
+              },
+              '& .MuiInputLabel-root': {
+                color: COLORS.text.secondary,
+                '&.Mui-focused': {
+                  color: COLORS.primary.main
+                }
+              }
+            }}
+          />
+          <Typography variant="caption" sx={{ 
+            display: 'block', 
+            mt: 1, 
+            textAlign: 'right',
+            color: COLORS.text.secondary 
+          }}>
+            {commitMessage.length}/200 characters
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ 
+          px: 2, 
+          py: 1.5, 
+          borderTop: `1px solid ${COLORS.grey[200]}`,
+          gap: 1
+        }}>
+          <Button 
+            onClick={handleCommitCancel} 
+            disabled={saving}
+            sx={{ 
+              ...BUTTON_STYLES.secondary,
+              px: 2,
+              py: 1,
+              '&:disabled': {
+                color: COLORS.grey[400]
+              }
+            }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleCommitSave} 
+            variant="contained"
+            disabled={saving || !commitMessage.trim()}
+            sx={{ 
+              ...BUTTON_STYLES.primary,
+              px: 2,
+              py: 1,
+              boxShadow: SIZES.shadow.sm,
+              '&:hover': {
+                ...BUTTON_STYLES.primary['&:hover'],
+                boxShadow: SIZES.shadow.md,
+                transform: 'translateY(-1px)',
+              },
+              '&:disabled': {
+                bgcolor: COLORS.grey[300],
+                color: COLORS.grey[500],
+                transform: 'none',
+              }
+            }}
+          >
+            {saving ? 'Saving...' : 'Save Changes'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

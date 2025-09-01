@@ -28,6 +28,7 @@ import {
 import { useSnackbar } from 'notistack';
 import { apiService, setNotificationHandler } from '../services/api';
 import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
+import { normalizePath } from '../utils';
 import EmptyState from './common/EmptyState';
 import CreateFileButton from './common/CreateFileButton';
 import { FileListSkeleton } from './common/SkeletonLoader';
@@ -87,9 +88,10 @@ const FilesPage = () => {
     setError(null);
     
     try {
-      const data = await apiService.getNamespaceFiles(namespace, path);
+      const normalizedPath = normalizePath(path);
+      const data = await apiService.getNamespaceFiles(namespace, normalizedPath);
       setFiles(data);
-      setCurrentPath(path);
+      setCurrentPath(normalizedPath);
     } catch (err) {
       setError('Failed to load files');
       console.error('Error fetching files:', err);
@@ -102,7 +104,8 @@ const FilesPage = () => {
     if (namespace) {
       const pathParam = searchParams.get('path');
       if (pathParam) {
-        fetchFiles(decodeURIComponent(pathParam));
+        const decodedPath = decodeURIComponent(pathParam);
+        fetchFiles(decodedPath);
       } else {
         fetchFiles();
       }
@@ -111,8 +114,10 @@ const FilesPage = () => {
 
   const handleItemClick = (item) => {
     if (item.endsWith('/')) {
+      // For folders, construct the new path and navigate to update URL
       const newPath = currentPath === '/' ? item : currentPath + item;
-      fetchFiles(newPath);
+      const normalizedPath = normalizePath(newPath);
+      navigate(`/namespace/${namespace}/files?path=${encodeURIComponent(normalizedPath)}`);
     } else {
       // Navigate to file view page
       const encodedPath = encodeURIComponent(currentPath);
@@ -139,7 +144,8 @@ const FilesPage = () => {
     if (index === -1) {
       fetchFiles('/');
     } else {
-      const newPath = '/' + pathSegments.slice(0, index + 1).join('/') + '/';
+      const pathParts = pathSegments.slice(0, index + 1);
+      const newPath = '/' + pathParts.join('/') + '/';
       fetchFiles(newPath);
     }
   };
