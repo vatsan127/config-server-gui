@@ -410,7 +410,6 @@ const FilesPage = () => {
             </List>
           )}
         </Box>
-      </Box>
     </Box>
   );
 };

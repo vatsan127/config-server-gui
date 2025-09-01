@@ -283,7 +283,6 @@ const FileViewPage = () => {
           />
         </Box>
       </Paper>
-      </Box>
     </Box>
   );
 };
