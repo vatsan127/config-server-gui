@@ -662,11 +662,13 @@ const FilesPage = () => {
                           color: COLORS.text.secondary,
                           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                           '&:hover': {
-                            color: COLORS.success.main,
-                            bgcolor: COLORS.grey[100],
+                            color: '#10b981',
+                            bgcolor: 'rgba(16, 185, 129, 0.1)',
                             transform: 'scale(1.1)',
+                            boxShadow: '0 2px 8px rgba(16, 185, 129, 0.2)',
                           },
-                          p: 0.5
+                          p: 0.5,
+                          borderRadius: '6px'
                         }}
                       >
                         <DownloadIcon fontSize="small" />
@@ -678,11 +680,13 @@ const FilesPage = () => {
                           color: COLORS.text.secondary,
                           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                           '&:hover': {
-                            color: COLORS.primary.main,
-                            bgcolor: COLORS.grey[100],
+                            color: '#3b82f6',
+                            bgcolor: 'rgba(59, 130, 246, 0.1)',
                             transform: 'scale(1.1)',
+                            boxShadow: '0 2px 8px rgba(59, 130, 246, 0.2)',
                           },
-                          p: 0.5
+                          p: 0.5,
+                          borderRadius: '6px'
                         }}
                       >
                         <HistoryIcon fontSize="small" />
@@ -694,11 +698,13 @@ const FilesPage = () => {
                           color: COLORS.text.secondary,
                           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                           '&:hover': {
-                            color: COLORS.error.main,
-                            bgcolor: COLORS.grey[100],
+                            color: '#ef4444',
+                            bgcolor: 'rgba(239, 68, 68, 0.1)',
                             transform: 'scale(1.1)',
+                            boxShadow: '0 2px 8px rgba(239, 68, 68, 0.2)',
                           },
-                          p: 0.5
+                          p: 0.5,
+                          borderRadius: '6px'
                         }}
                       >
                         <DeleteIcon fontSize="small" />
