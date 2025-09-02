@@ -185,10 +185,11 @@ const FilesPage = () => {
       await apiService.createConfigFile(namespace, path, fileName);
       // Refresh the current directory to show updated file list
       fetchFiles(currentPath);
-      enqueueSnackbar(`Config file "${fileName}" created successfully`, { variant: 'success' });
+      // Success notification is already handled by the API service
     } catch (error) {
       console.error('Error creating config file:', error);
-      enqueueSnackbar(`Failed to create config file "${fileName}"`, { variant: 'error' });
+      // Error notification is already handled by the API service
+      // Don't show duplicate error messages
     }
   };
 

@@ -300,6 +300,7 @@ export const apiService = {
       await handleApiResponse(response, `Config file "${fileName}" created successfully`);
       
       if (!response.ok) {
+        // Don't show additional error - handleApiResponse already handled it
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
@@ -308,19 +309,31 @@ export const apiService = {
       
     } catch (error) {
       console.error('Error creating config file:', error);
-      const friendlyMessage = createConnectionErrorMessage(error, 'create config file');
       
-      // Show connection error notification
-      if (showNotification) {
-        showNotification(friendlyMessage, { 
-          variant: 'error',
-          preventDuplicate: true,
-          autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
-          key: `connection-error-${Date.now()}`
-        });
+      // Only show connection errors, not HTTP errors (which are already handled by handleApiResponse)
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'create config file');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+            key: `connection-error-${Date.now()}`
+          });
+        }
+        
+        throw new Error(friendlyMessage);
       }
       
-      throw new Error(friendlyMessage);
+      // For HTTP errors, just re-throw without additional notifications
+      // The error message from handleApiResponse is already shown
+      throw error;
     }
   },
 
