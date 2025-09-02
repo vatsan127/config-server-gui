@@ -254,38 +254,6 @@ const FileViewPage = () => {
         >
           {/* Left Section - Breadcrumbs and Status */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1, minWidth: 0 }}>
-            {/* File Icon and Type */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Box
-                sx={{
-                  width: 24, // Smaller icon
-                  height: 24,
-                  borderRadius: `${SIZES.borderRadius.medium}px`,
-                  bgcolor: alpha(COLORS.primary.main, 0.1),
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  border: `1px solid ${alpha(COLORS.primary.main, 0.2)}`
-                }}
-              >
-                <CodeIcon sx={{ fontSize: 12, color: COLORS.primary.main }} />
-              </Box>
-              <Chip
-                label="YAML"
-                size="small"
-                sx={{
-                  bgcolor: alpha(COLORS.accent.blue, 0.1),
-                  color: COLORS.accent.blue,
-                  border: `1px solid ${alpha(COLORS.accent.blue, 0.2)}`,
-                  fontWeight: 600,
-                  fontSize: '0.7rem',
-                  height: 16 // Smaller chip
-                }}
-              />
-            </Box>
-
-            <Divider orientation="vertical" flexItem sx={{ height: 20, bgcolor: alpha(COLORS.grey[400], 0.3) }} />
-            
             <Breadcrumbs
               aria-label="breadcrumb"
               separator="/"
@@ -626,7 +594,7 @@ const FileViewPage = () => {
                 lineHeight: 1.5,
                 letterSpacing: 0.3,
                 lineNumbers: 'on',
-                lineNumbersMinChars: 3,
+                lineNumbersMinChars: 3, // Minimal space for line numbers themselves
                 folding: true,
                 foldingStrategy: 'indentation',
                 wordWrap: 'on',
@@ -660,9 +628,9 @@ const FileViewPage = () => {
                 padding: { top: 12, bottom: 24 },
                 // Prevent horizontal expansion
                 stopRenderingLineAfter: 200, // Shorter lines
-                glyphMargin: false,
-                lineDecorationsWidth: 0,
-                lineNumbersMinChars: 2, // Smaller line numbers
+                glyphMargin: false, // Disable glyph margin to reduce left space
+                lineDecorationsWidth: 15, // Increase space after line numbers
+                lineNumbersMinChars: 3, // Minimal space for line numbers themselves
                 folding: false, // Disable folding to save space
                 wordWrapColumn: 80 // Shorter wrap column
               }}
