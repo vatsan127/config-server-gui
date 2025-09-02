@@ -595,6 +595,10 @@ const FilesPage = () => {
                     '&:hover': {
                       bgcolor: COLORS.hover.card,
                       transform: 'translateX(4px)',
+                      '& .action-buttons': {
+                        opacity: 1,
+                        visibility: 'visible'
+                      }
                     },
                     py: 1.5,
                     px: 2,
@@ -622,7 +626,18 @@ const FilesPage = () => {
                     }}
                   />
                   {!item.endsWith('/') && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', ml: 1, gap: 0.5 }}>
+                    <Box 
+                      className="action-buttons"
+                      sx={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        ml: 1, 
+                        gap: 0.5,
+                        opacity: 0,
+                        visibility: 'hidden',
+                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+                      }}
+                    >
                       <IconButton
                         size="small"
                         onClick={(e) => handleDownloadFile(item, e)}
