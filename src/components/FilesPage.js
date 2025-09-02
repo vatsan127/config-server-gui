@@ -33,7 +33,8 @@ import {
   History as HistoryIcon,
   Close as CloseIcon,
   ArrowBack as ArrowBackIcon,
-  Download as DownloadIcon
+  Download as DownloadIcon,
+  Delete as DeleteIcon
 } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { apiService, setNotificationHandler } from '../services/api';
@@ -89,6 +90,10 @@ const FilesPage = () => {
   const [changesData, setChangesData] = useState(null);
   const [changesLoading, setChangesLoading] = useState(false);
   const [showChanges, setShowChanges] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState(null);
+  const [deleteMessage, setDeleteMessage] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
   // Set up notification handler with ref to avoid dependency issues
   const notificationRef = useRef();
@@ -210,6 +215,45 @@ const FilesPage = () => {
       // Error notification is already handled by the API service
       // Don't show duplicate error messages
     }
+  };
+
+  const handleDeleteClick = (fileName, event) => {
+    event.stopPropagation(); // Prevent file click when delete button is clicked
+    setFileToDelete(fileName);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deleteMessage.trim()) {
+      enqueueSnackbar('Delete message is required', { variant: 'error' });
+      return;
+    }
+
+    setDeleting(true);
+    try {
+      await apiService.deleteFile(namespace, currentPath, fileToDelete, deleteMessage);
+      
+      // Refresh the file list after deletion
+      fetchFiles(currentPath);
+      
+      // Close the dialog and reset state
+      setDeleteDialogOpen(false);
+      setFileToDelete(null);
+      setDeleteMessage('');
+      
+      // Success notification is already handled by the API service
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      // Error notification is already handled by the API service
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setFileToDelete(null);
+    setDeleteMessage('');
   };
 
   const handleHistoryClick = async (fileName, event) => {
@@ -607,6 +651,20 @@ const FilesPage = () => {
                       >
                         <HistoryIcon fontSize="small" />
                       </IconButton>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => handleDeleteClick(item, e)}
+                        sx={{
+                          color: COLORS.text.secondary,
+                          '&:hover': {
+                            color: COLORS.error.main,
+                            bgcolor: COLORS.grey[100]
+                          },
+                          p: 0.5
+                        }}
+                      >
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
                     </Box>
                   )}
                 </ListItem>
@@ -769,6 +827,144 @@ const FilesPage = () => {
             )}
           </DialogContent>
           
+        </Dialog>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog 
+          open={deleteDialogOpen} 
+          onClose={handleDeleteCancel} 
+          maxWidth="sm" 
+          fullWidth
+          PaperProps={{
+            sx: {
+              bgcolor: COLORS.background.paper,
+              border: `1px solid ${COLORS.grey[200]}`,
+              borderRadius: `${SIZES.borderRadius.medium}px`,
+              boxShadow: SIZES.shadow.md,
+              m: 1
+            }
+          }}
+          sx={{
+            '& .MuiBackdrop-root': {
+              backgroundColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }}
+        >
+          <DialogTitle sx={{ 
+            color: COLORS.text.primary, 
+            fontSize: '1.1rem', 
+            fontWeight: 600,
+            borderBottom: `1px solid ${COLORS.grey[200]}`,
+            px: 2,
+            py: 1.5
+          }}>
+            Delete File
+          </DialogTitle>
+          <DialogContent sx={{ 
+            px: 2,
+            py: 2,
+            '&.MuiDialogContent-root': {
+              paddingTop: 2
+            }
+          }}>
+            <Typography variant="body2" sx={{ mb: 2, color: COLORS.text.secondary }}>
+              Are you sure you want to delete <strong>{fileToDelete}</strong>? This action cannot be undone.
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 2, color: COLORS.text.secondary }}>
+              Please provide a reason for deleting this file:
+            </Typography>
+            <TextField
+              autoFocus
+              margin="none"
+              label="Delete Message"
+              placeholder="e.g., Removing obsolete configuration file"
+              type="text"
+              fullWidth
+              multiline
+              rows={3}
+              variant="outlined"
+              value={deleteMessage}
+              onChange={(e) => setDeleteMessage(e.target.value)}
+              disabled={deleting}
+              inputProps={{
+                maxLength: 200
+              }}
+              sx={{ 
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: `${SIZES.borderRadius.medium}px`,
+                  '& fieldset': {
+                    borderColor: COLORS.grey[300],
+                  },
+                  '&:hover fieldset': {
+                    borderColor: COLORS.grey[400],
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: COLORS.primary.main,
+                    borderWidth: 2
+                  }
+                },
+                '& .MuiInputLabel-root': {
+                  color: COLORS.text.secondary,
+                  '&.Mui-focused': {
+                    color: COLORS.primary.main
+                  }
+                }
+              }}
+            />
+            <Typography variant="caption" sx={{ 
+              display: 'block', 
+              mt: 1, 
+              textAlign: 'right',
+              color: COLORS.text.secondary 
+            }}>
+              {deleteMessage.length}/200 characters
+            </Typography>
+          </DialogContent>
+          <DialogActions sx={{ 
+            px: 2, 
+            py: 1.5, 
+            borderTop: `1px solid ${COLORS.grey[200]}`,
+            gap: 1
+          }}>
+            <Button 
+              onClick={handleDeleteCancel} 
+              disabled={deleting}
+              sx={{ 
+                ...BUTTON_STYLES.secondary,
+                px: 2,
+                py: 1,
+                '&:disabled': {
+                  color: COLORS.grey[400]
+                }
+              }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleDeleteConfirm} 
+              variant="contained"
+              disabled={deleting || !deleteMessage.trim()}
+              sx={{ 
+                bgcolor: COLORS.error.main,
+                color: COLORS.text.white,
+                px: 2,
+                py: 1,
+                boxShadow: SIZES.shadow.sm,
+                '&:hover': {
+                  bgcolor: COLORS.error.dark,
+                  boxShadow: SIZES.shadow.md,
+                  transform: 'translateY(-1px)',
+                },
+                '&:disabled': {
+                  bgcolor: COLORS.grey[300],
+                  color: COLORS.grey[500],
+                  transform: 'none',
+                }
+              }}
+            >
+              {deleting ? 'Deleting...' : 'Delete File'}
+            </Button>
+          </DialogActions>
         </Dialog>
     </Box>
   );

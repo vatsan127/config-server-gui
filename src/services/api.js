@@ -601,5 +601,65 @@ export const apiService = {
       // For HTTP errors, just re-throw without additional notifications
       throw error;
     }
+  },
+
+  async deleteFile(namespace, path, fileName, message, email = 'user@example.com') {
+    try {
+      const url = `${API_CONFIG.BASE_URL}/config/delete`;
+      console.log('Attempting to delete file:', fileName, 'in namespace:', namespace, 'path:', path);
+      
+      const response = await makeApiRequest(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          action: 'delete',
+          appName: fileName,
+          namespace: namespace,
+          path: path,
+          email: email,
+          message: message
+        })
+      });
+      
+      await handleApiResponse(response, `File "${fileName}" deleted successfully`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Successfully deleted file:', fileName);
+      
+      return data;
+      
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      
+      // Only show connection errors, not HTTP errors (which are already handled by handleApiResponse)
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'delete file');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+            key: `connection-error-${Date.now()}`
+          });
+        }
+        
+        throw new Error(friendlyMessage);
+      }
+      
+      // For HTTP errors, just re-throw without additional notifications
+      throw error;
+    }
   }
 };
