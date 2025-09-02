@@ -10,17 +10,18 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
+  Card,
+  CardContent,
+  CardActionArea,
+  Grid,
   IconButton,
-  Divider
+  Menu,
+  MenuItem
 } from '@mui/material';
 import { 
   Folder as FolderIcon,
-  Delete as DeleteIcon
+  Delete as DeleteIcon,
+  MoreVert as MoreVertIcon
 } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { setNotificationHandler } from '../services/api';
@@ -36,6 +37,8 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const nameInputRef = useRef(null);
+  const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
+  const [selectedNamespace, setSelectedNamespace] = React.useState(null);
   
   console.log('🏠 Dashboard component rendered', {
     timestamp: new Date().toISOString(),
@@ -100,10 +103,23 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
     navigate(`/namespace/${namespace}/files`);
   };
 
+  // Handle options menu
+  const handleOptionsClick = (event, namespace) => {
+    event.stopPropagation();
+    setMenuAnchorEl(event.currentTarget);
+    setSelectedNamespace(namespace);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+    setSelectedNamespace(null);
+  };
+
   // Handle namespace delete
-  const handleDeleteNamespace = async (namespace) => {
-    if (window.confirm(`Are you sure you want to delete the namespace "${namespace}"?`)) {
-      await deleteNamespace(namespace);
+  const handleDeleteNamespace = async () => {
+    if (selectedNamespace && window.confirm(`Are you sure you want to delete the namespace "${selectedNamespace}"?`)) {
+      await deleteNamespace(selectedNamespace);
+      handleMenuClose();
     }
   };
 
@@ -144,70 +160,133 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
         </Typography>
       </Box>
 
-      {/* Namespace List */}
+      {/* Namespace Cards Grid */}
       {filteredNamespaces.length > 0 && (
-        <Box sx={{
-          bgcolor: COLORS.background.paper,
-          borderRadius: `${SIZES.borderRadius.large}px`,
-          border: `1px solid ${COLORS.grey[200]}`,
-          boxShadow: SIZES.shadow.card,
-          overflow: 'hidden'
-        }}>
-          <List sx={{ py: 0 }}>
-            {filteredNamespaces.map((namespace, index) => (
-              <React.Fragment key={namespace}>
-                <ListItem disablePadding>
-                  <ListItemButton
-                    onClick={() => handleNamespaceClick(namespace)}
+        <Grid container spacing={3}>
+          {filteredNamespaces.map((namespace) => (
+            <Grid item xs={6} sm={4} md={3} lg={2} key={namespace}>
+              <Card
+                sx={{
+                  height: '100%',
+                  bgcolor: COLORS.background.paper,
+                  border: `1px solid ${COLORS.grey[200]}`,
+                  borderRadius: `${SIZES.borderRadius.large}px`,
+                  boxShadow: SIZES.shadow.card,
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: SIZES.shadow.elevated,
+                    borderColor: COLORS.primary.light,
+                  }
+                }}
+              >
+                <CardActionArea
+                  onClick={() => handleNamespaceClick(namespace)}
+                  sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    p: 0
+                  }}
+                >
+                  <CardContent
                     sx={{
-                      py: 2,
-                      px: 3,
-                      '&:hover': {
-                        bgcolor: COLORS.hover.card,
-                      }
+                      width: '100%',
+                      p: 3,
+                      pb: '16px !important',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      textAlign: 'center',
+                      position: 'relative'
                     }}
                   >
-                    <ListItemIcon sx={{ minWidth: 40 }}>
-                      <FolderIcon sx={{ 
-                        color: COLORS.primary.main,
-                        fontSize: 24
-                      }} />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary={namespace}
-                      primaryTypographyProps={{
-                        sx: {
-                          color: COLORS.text.primary,
-                          fontWeight: 500,
-                          fontSize: '1rem'
-                        }
-                      }}
-                    />
+                    {/* Options Menu Button */}
                     <IconButton
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteNamespace(namespace);
-                      }}
+                      onClick={(e) => handleOptionsClick(e, namespace)}
                       sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 8,
                         color: COLORS.text.secondary,
+                        bgcolor: 'transparent',
+                        width: 32,
+                        height: 32,
+                        transition: 'all 0.2s ease',
                         '&:hover': {
-                          color: COLORS.error.border,
-                          bgcolor: COLORS.hover.error
+                          color: COLORS.text.primary,
+                          bgcolor: COLORS.grey[100],
+                          transform: 'scale(1.1)',
                         }
                       }}
                     >
-                      <DeleteIcon />
+                      <MoreVertIcon fontSize="small" />
                     </IconButton>
-                  </ListItemButton>
-                </ListItem>
-                {index < filteredNamespaces.length - 1 && (
-                  <Divider variant="inset" component="li" sx={{ ml: 7 }} />
-                )}
-              </React.Fragment>
-            ))}
-          </List>
-        </Box>
+
+                    {/* Folder Icon */}
+                    <FolderIcon
+                      sx={{
+                        color: COLORS.primary.main,
+                        fontSize: 48,
+                        mb: 2,
+                        transition: 'color 0.2s ease'
+                      }}
+                    />
+
+                    {/* Namespace Name */}
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        color: COLORS.text.primary,
+                        fontWeight: 600,
+                        fontSize: '1.1rem',
+                        lineHeight: 1.2,
+                        wordBreak: 'break-word',
+                        textAlign: 'center'
+                      }}
+                    >
+                      {namespace}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
       )}
+
+      {/* Options Menu */}
+      <Menu
+        anchorEl={menuAnchorEl}
+        open={Boolean(menuAnchorEl)}
+        onClose={handleMenuClose}
+        PaperProps={{
+          sx: {
+            bgcolor: COLORS.background.paper,
+            border: `1px solid ${COLORS.grey[200]}`,
+            borderRadius: `${SIZES.borderRadius.medium}px`,
+            boxShadow: SIZES.shadow.md,
+            minWidth: 150
+          }
+        }}
+      >
+        <MenuItem
+          onClick={handleDeleteNamespace}
+          sx={{
+            color: COLORS.error.main,
+            py: 1.5,
+            px: 2,
+            fontSize: '0.9rem',
+            '&:hover': {
+              bgcolor: COLORS.hover.error,
+            }
+          }}
+        >
+          <DeleteIcon sx={{ mr: 1.5, fontSize: 18 }} />
+          Delete
+        </MenuItem>
+      </Menu>
 
       {/* Empty States */}
       {namespaces.length === 0 && (
