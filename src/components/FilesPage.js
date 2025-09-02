@@ -15,7 +15,11 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-  Divider
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
 import {
   Folder as FolderIcon,
@@ -25,7 +29,8 @@ import {
   Code as CodeIcon,
   DataObject as JsonIcon,
   Description as TextIcon,
-  Image as ImageIcon
+  Image as ImageIcon,
+  History as HistoryIcon
 } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { apiService, setNotificationHandler } from '../services/api';
@@ -72,6 +77,11 @@ const FilesPage = () => {
   const [error, setError] = useState(null);
   const [currentPath, setCurrentPath] = useState('/');
   const [searchQuery, setSearchQuery] = useState('');
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyData, setHistoryData] = useState(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedCommitId, setSelectedCommitId] = useState(null);
 
   // Set up notification handler with ref to avoid dependency issues
   const notificationRef = useRef();
@@ -193,6 +203,38 @@ const FilesPage = () => {
       // Error notification is already handled by the API service
       // Don't show duplicate error messages
     }
+  };
+
+  const handleHistoryClick = async (fileName, event) => {
+    event.stopPropagation(); // Prevent file click when history button is clicked
+    
+    setSelectedFile(fileName);
+    setHistoryOpen(true);
+    setHistoryLoading(true);
+    
+    try {
+      const historyData = await apiService.getFileHistory(namespace, currentPath, fileName);
+      setHistoryData(historyData);
+    } catch (error) {
+      console.error('Error fetching file history:', error);
+      setHistoryData({ commits: [] });
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  const handleHistoryClose = () => {
+    setHistoryOpen(false);
+    setHistoryData(null);
+    setSelectedFile(null);
+    setSelectedCommitId(null);
+  };
+
+  const handleCommitSelect = (commitId) => {
+    setSelectedCommitId(commitId);
+    console.log('Selected commit ID:', commitId, 'for file:', selectedFile);
+    // Store commit ID for future API usage
+    // This can be used by other components or API calls that need the specific commit
   };
 
   if (loading) {
@@ -477,12 +519,150 @@ const FilesPage = () => {
                       }
                     }}
                   />
+                  {!item.endsWith('/') && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => handleHistoryClick(item, e)}
+                        sx={{
+                          color: COLORS.text.secondary,
+                          '&:hover': {
+                            color: COLORS.primary.main,
+                            bgcolor: COLORS.grey[100]
+                          },
+                          p: 0.5
+                        }}
+                      >
+                        <HistoryIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  )}
                 </ListItem>
                 );
               })}
             </List>
           )}
         </Box>
+
+        {/* History Dialog */}
+        <Dialog
+          open={historyOpen}
+          onClose={handleHistoryClose}
+          maxWidth="md"
+          fullWidth
+          PaperProps={{
+            sx: {
+              borderRadius: `${SIZES.borderRadius.medium}px`,
+            }
+          }}
+        >
+          <DialogTitle sx={{ 
+            borderBottom: `1px solid ${COLORS.grey[200]}`,
+            pb: 2
+          }}>
+            <Typography variant="h6" sx={{ color: COLORS.text.primary, fontWeight: 600 }}>
+              History: {selectedFile}
+            </Typography>
+          </DialogTitle>
+          
+          <DialogContent sx={{ p: 0 }}>
+            {historyLoading ? (
+              <Box sx={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                py: 4 
+              }}>
+                <CircularProgress size={40} />
+              </Box>
+            ) : historyData && historyData.commits && historyData.commits.length > 0 ? (
+              <List sx={{ py: 0 }}>
+                {historyData.commits.map((commit, index) => (
+                  <ListItem
+                    key={commit.commitId || index}
+                    onClick={() => handleCommitSelect(commit.commitId)}
+                    sx={{
+                      borderBottom: index < historyData.commits.length - 1 ? `1px solid ${COLORS.grey[100]}` : 'none',
+                      py: 2,
+                      px: 3,
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      cursor: 'pointer',
+                      bgcolor: selectedCommitId === commit.commitId ? COLORS.primary.light : 'transparent',
+                      '&:hover': {
+                        bgcolor: selectedCommitId === commit.commitId ? COLORS.primary.light : COLORS.grey[50]
+                      },
+                      transition: 'background-color 0.2s ease'
+                    }}
+                  >
+                    <Typography 
+                      variant="body1" 
+                      sx={{ 
+                        color: COLORS.text.primary, 
+                        fontWeight: 500,
+                        mb: 0.5,
+                        lineHeight: 1.4
+                      }}
+                    >
+                      {commit.message || 'No commit message'}
+                    </Typography>
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        color: COLORS.text.secondary,
+                        fontSize: '0.8rem'
+                      }}
+                    >
+                      {commit.author && commit.email ? `${commit.author} (${commit.email})` : commit.author || commit.email || 'Unknown author'}
+                      {commit.date && ` • ${new Date(commit.date).toLocaleDateString()} ${new Date(commit.date).toLocaleTimeString()}`}
+                    </Typography>
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <Box sx={{ 
+                py: 4, 
+                px: 3,
+                textAlign: 'center',
+                color: COLORS.text.secondary
+              }}>
+                <Typography variant="body1" sx={{ mb: 1, fontWeight: 500 }}>
+                  No commit history found
+                </Typography>
+                <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
+                  This file may be new or history is not available
+                </Typography>
+              </Box>
+            )}
+          </DialogContent>
+          
+          <DialogActions sx={{ 
+            borderTop: `1px solid ${COLORS.grey[200]}`,
+            pt: 2,
+            px: 3,
+            pb: 2,
+            justifyContent: 'space-between'
+          }}>
+            {selectedCommitId && (
+              <Typography variant="body2" sx={{ color: COLORS.text.secondary }}>
+                Selected: {selectedCommitId.substring(0, 8)}...
+              </Typography>
+            )}
+            <Box sx={{ marginLeft: 'auto' }}>
+              <Button 
+                onClick={handleHistoryClose}
+                sx={{ 
+                  color: COLORS.text.secondary,
+                  '&:hover': {
+                    bgcolor: COLORS.grey[100]
+                  }
+                }}
+              >
+                Close
+              </Button>
+            </Box>
+          </DialogActions>
+        </Dialog>
     </Box>
   );
 };
