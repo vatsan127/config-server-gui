@@ -92,10 +92,10 @@ export const SIZES = {
     xxl: 48,  // 48px
   },
   borderRadius: {
-    small: 0,
-    medium: 0,
-    large: 0,
-    xl: 0,
+    small: 4,
+    medium: 8,
+    large: 12,
+    xl: 16,
   },
   shadow: {
     sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
@@ -103,10 +103,14 @@ export const SIZES = {
     md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
     lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
     xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+    card: '0 2px 8px rgba(0, 0, 0, 0.08)',
+    elevated: '0 4px 16px rgba(0, 0, 0, 0.12)',
+    floating: '0 8px 32px rgba(0, 0, 0, 0.16)',
+    hover: '0 6px 20px rgba(0, 0, 0, 0.15)',
   }
 };
 
-// Common button styles with Bootstrap-like hover effects
+// Enhanced button styles with modern hover effects
 export const BUTTON_STYLES = {
   primary: {
     bgcolor: COLORS.primary.main,
@@ -114,37 +118,79 @@ export const BUTTON_STYLES = {
     borderRadius: `${SIZES.borderRadius.medium}px`,
     fontWeight: 600,
     textTransform: 'none',
-    transition: 'all 0.15s ease-in-out',
+    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+    boxShadow: SIZES.shadow.sm,
+    border: 'none',
+    position: 'relative',
+    overflow: 'hidden',
+    '&:before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'linear-gradient(135deg, rgba(255,255,255,0.2), transparent)',
+      opacity: 0,
+      transition: 'opacity 0.2s ease',
+    },
     '&:hover': { 
       bgcolor: '#0056b3',
-      boxShadow: '0 4px 8px rgba(0, 123, 255, 0.25)',
-      transform: 'translateY(-1px)',
+      boxShadow: SIZES.shadow.elevated,
+      transform: 'translateY(-2px) scale(1.02)',
+      '&:before': {
+        opacity: 1,
+      }
     },
     '&:active': {
       bgcolor: '#004085',
-      transform: 'translateY(0px)',
-      boxShadow: '0 2px 4px rgba(0, 123, 255, 0.25)',
+      transform: 'translateY(-1px) scale(1.01)',
+      boxShadow: SIZES.shadow.md,
+    },
+    '&:focus': {
+      outline: `3px solid ${COLORS.primary.main}40`,
+      outlineOffset: '2px',
     }
   },
   secondary: {
-    bgcolor: 'transparent',
+    bgcolor: COLORS.background.paper,
     color: COLORS.text.secondary,
     border: `1px solid ${COLORS.grey[300]}`,
     borderRadius: `${SIZES.borderRadius.medium}px`,
     fontWeight: 600,
     textTransform: 'none',
-    transition: 'all 0.15s ease-in-out',
+    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+    position: 'relative',
+    overflow: 'hidden',
+    '&:before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: `linear-gradient(135deg, ${COLORS.grey[100]}, ${COLORS.grey[50]})`,
+      opacity: 0,
+      transition: 'opacity 0.2s ease',
+    },
     '&:hover': { 
-      bgcolor: COLORS.grey[50],
+      bgcolor: COLORS.grey[25],
       borderColor: COLORS.grey[400],
       color: COLORS.text.primary,
-      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-      transform: 'translateY(-1px)',
+      boxShadow: SIZES.shadow.md,
+      transform: 'translateY(-1px) scale(1.01)',
+      '&:before': {
+        opacity: 1,
+      }
     },
     '&:active': {
       bgcolor: COLORS.grey[100],
-      transform: 'translateY(0px)',
-      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
+      transform: 'translateY(0px) scale(1.00)',
+      boxShadow: SIZES.shadow.sm,
+    },
+    '&:focus': {
+      outline: `3px solid ${COLORS.grey[400]}40`,
+      outlineOffset: '2px',
     }
   },
   ghost: {
@@ -164,22 +210,80 @@ export const BUTTON_STYLES = {
       transform: 'translateY(0px)',
     }
   },
+  gradient: {
+    background: `linear-gradient(135deg, ${COLORS.primary.main}, ${COLORS.primary.dark})`,
+    color: COLORS.text.white,
+    borderRadius: `${SIZES.borderRadius.medium}px`,
+    fontWeight: 600,
+    textTransform: 'none',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    boxShadow: SIZES.shadow.md,
+    border: 'none',
+    position: 'relative',
+    overflow: 'hidden',
+    '&:before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: `linear-gradient(135deg, ${COLORS.primary.dark}, #2563eb)`,
+      opacity: 0,
+      transition: 'opacity 0.3s ease',
+    },
+    '&:hover': {
+      transform: 'translateY(-3px) scale(1.02)',
+      boxShadow: SIZES.shadow.floating,
+      '&:before': {
+        opacity: 1,
+      }
+    },
+    '&:active': {
+      transform: 'translateY(-1px) scale(1.01)',
+      boxShadow: SIZES.shadow.elevated,
+    }
+  },
+  floating: {
+    bgcolor: COLORS.background.paper,
+    color: COLORS.text.primary,
+    borderRadius: `${SIZES.borderRadius.xl}px`,
+    fontWeight: 600,
+    textTransform: 'none',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    boxShadow: SIZES.shadow.floating,
+    border: `1px solid ${COLORS.grey[200]}`,
+    backdropFilter: 'blur(10px)',
+    position: 'relative',
+    overflow: 'hidden',
+    '&:hover': {
+      bgcolor: COLORS.grey[25],
+      borderColor: COLORS.primary.main,
+      color: COLORS.primary.main,
+      transform: 'translateY(-4px) scale(1.05)',
+      boxShadow: '0 12px 40px rgba(0, 0, 0, 0.15)',
+    },
+    '&:active': {
+      transform: 'translateY(-2px) scale(1.02)',
+    }
+  },
   success: {
     bgcolor: COLORS.success.border,
     color: COLORS.text.white,
     borderRadius: `${SIZES.borderRadius.medium}px`,
     fontWeight: 600,
     textTransform: 'none',
-    transition: 'all 0.15s ease-in-out',
+    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+    boxShadow: SIZES.shadow.sm,
     '&:hover': { 
       bgcolor: '#059669',
-      boxShadow: '0 4px 8px rgba(16, 185, 129, 0.25)',
-      transform: 'translateY(-1px)',
+      boxShadow: SIZES.shadow.elevated,
+      transform: 'translateY(-2px) scale(1.02)',
     },
     '&:active': {
       bgcolor: '#047857',
-      transform: 'translateY(0px)',
-      boxShadow: '0 2px 4px rgba(16, 185, 129, 0.25)',
+      transform: 'translateY(-1px) scale(1.01)',
+      boxShadow: SIZES.shadow.md,
     }
   },
   warning: {

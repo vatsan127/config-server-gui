@@ -25,6 +25,7 @@ import { validateNamespace } from '../utils/validation';
 import NamespaceCard from './common/NamespaceCard';
 import EmptyState from './common/EmptyState';
 import { DashboardSkeletonLoader } from './common/SkeletonLoader';
+import { StatusIndicator, InlineSpinner } from './common/ProgressIndicator';
 
 const Dashboard = ({ searchQuery = '' }) => {
   const navigate = useNavigate();
@@ -94,15 +95,30 @@ const Dashboard = ({ searchQuery = '' }) => {
     );
   }, [namespaces, searchQuery]);
 
-  // Memoized components
+  // Generate mock metadata for namespaces (in real app, this would come from API)
+  const getNamespaceMetadata = useCallback((namespace) => {
+    // Mock data - in real implementation, this would be fetched from API
+    const mockData = {
+      fileCount: Math.floor(Math.random() * 50) + 5,
+      lastModified: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+    };
+    return mockData;
+  }, []);
+
+  // Memoized components with enhanced metadata
   const namespaceCards = useMemo(() => 
-    filteredNamespaces.map((namespace) => (
-      <NamespaceCard 
-        key={namespace}
-        namespace={namespace}
-        onClick={() => handleCardClick(namespace)}
-      />
-    )), [filteredNamespaces, handleCardClick]
+    filteredNamespaces.map((namespace) => {
+      const metadata = getNamespaceMetadata(namespace);
+      return (
+        <NamespaceCard 
+          key={namespace}
+          namespace={namespace}
+          fileCount={metadata.fileCount}
+          lastModified={metadata.lastModified}
+          onClick={() => handleCardClick(namespace)}
+        />
+      );
+    }), [filteredNamespaces, handleCardClick, getNamespaceMetadata]
   );
 
   if (loading) {
@@ -123,12 +139,101 @@ const Dashboard = ({ searchQuery = '' }) => {
 
   return (
     <Box sx={{ p: SIZES.spacing.xs, bgcolor: 'background.default', minHeight: '100vh' }}>
+      {/* Status Indicator */}
+      <Box sx={{ mb: 3, maxWidth: 400 }}>
+        <StatusIndicator 
+          status="connected" 
+          message="Connected to config-server"
+          compact={true}
+        />
+      </Box>
+
+      {/* Dashboard Stats */}
+      {namespaces.length > 0 && (
+        <Box sx={{ 
+          mb: 4,
+          display: 'flex',
+          gap: 3,
+          flexWrap: 'wrap'
+        }}>
+          <Box sx={{
+            bgcolor: COLORS.background.paper,
+            border: `1px solid ${COLORS.grey[200]}`,
+            borderRadius: `${SIZES.borderRadius.large}px`,
+            p: 2,
+            boxShadow: SIZES.shadow.card,
+            minWidth: 140,
+          }}>
+            <Typography variant="h4" sx={{ 
+              color: COLORS.primary.main,
+              fontWeight: 700,
+              mb: 0.5
+            }}>
+              {namespaces.length}
+            </Typography>
+            <Typography variant="body2" sx={{ 
+              color: COLORS.text.secondary,
+              fontSize: '0.8rem'
+            }}>
+              Total Namespaces
+            </Typography>
+          </Box>
+          
+          <Box sx={{
+            bgcolor: COLORS.background.paper,
+            border: `1px solid ${COLORS.grey[200]}`,
+            borderRadius: `${SIZES.borderRadius.large}px`,
+            p: 2,
+            boxShadow: SIZES.shadow.card,
+            minWidth: 140,
+          }}>
+            <Typography variant="h4" sx={{ 
+              color: COLORS.accent.green,
+              fontWeight: 700,
+              mb: 0.5
+            }}>
+              {filteredNamespaces.reduce((acc, ns) => acc + getNamespaceMetadata(ns).fileCount, 0)}
+            </Typography>
+            <Typography variant="body2" sx={{ 
+              color: COLORS.text.secondary,
+              fontSize: '0.8rem'
+            }}>
+              Config Files
+            </Typography>
+          </Box>
+
+          {searchQuery && (
+            <Box sx={{
+              bgcolor: COLORS.primary.main + '10',
+              border: `1px solid ${COLORS.primary.main}30`,
+              borderRadius: `${SIZES.borderRadius.large}px`,
+              p: 2,
+              boxShadow: SIZES.shadow.card,
+              minWidth: 140,
+            }}>
+              <Typography variant="h4" sx={{ 
+                color: COLORS.primary.main,
+                fontWeight: 700,
+                mb: 0.5
+              }}>
+                {filteredNamespaces.length}
+              </Typography>
+              <Typography variant="body2" sx={{ 
+                color: COLORS.primary.main,
+                fontSize: '0.8rem'
+              }}>
+                Search Results
+              </Typography>
+            </Box>
+          )}
+        </Box>
+      )}
 
       <Box 
         sx={{ 
           display: 'flex',
           flexWrap: 'wrap',
-          gap: 1,
+          gap: 2,
         }}
       >
         {namespaceCards}
@@ -150,7 +255,7 @@ const Dashboard = ({ searchQuery = '' }) => {
         />
       )}
 
-      {/* Floating Action Button for Create */}
+      {/* Enhanced Floating Action Button for Create */}
       <Fab
         color="primary"
         aria-label="add"
@@ -158,25 +263,40 @@ const Dashboard = ({ searchQuery = '' }) => {
           position: 'fixed', 
           bottom: SIZES.spacing.lg, 
           right: SIZES.spacing.lg,
-          bgcolor: COLORS.primary.main,
-          boxShadow: '0 6px 16px rgba(0, 123, 255, 0.3)',
-          width: 56,
-          height: 56,
-          transition: 'all 0.15s ease-in-out',
+          background: `linear-gradient(135deg, ${COLORS.primary.main}, ${COLORS.primary.dark})`,
+          boxShadow: SIZES.shadow.floating,
+          width: 64,
+          height: 64,
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          border: `2px solid ${COLORS.background.paper}`,
           '&:hover': {
-            bgcolor: '#0056b3',
-            boxShadow: '0 8px 25px rgba(0, 123, 255, 0.4)',
-            transform: 'translateY(-2px) scale(1.05)',
+            background: `linear-gradient(135deg, ${COLORS.primary.dark}, #2563eb)`,
+            boxShadow: '0 12px 40px rgba(0, 123, 255, 0.4)',
+            transform: 'translateY(-4px) scale(1.1)',
           },
           '&:active': {
-            bgcolor: '#004085',
-            transform: 'translateY(-1px) scale(1.02)',
-            boxShadow: '0 4px 12px rgba(0, 123, 255, 0.35)',
+            transform: 'translateY(-2px) scale(1.05)',
+            boxShadow: SIZES.shadow.elevated,
+          },
+          '&:before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.2), transparent)',
+            opacity: 0,
+            transition: 'opacity 0.3s ease',
+          },
+          '&:hover:before': {
+            opacity: 1,
           }
         }}
         onClick={openCreateDialog}
       >
-        <AddIcon sx={{ fontSize: 24 }} />
+        <AddIcon sx={{ fontSize: 28 }} />
       </Fab>
 
       {/* Create Namespace Dialog */}
@@ -297,29 +417,26 @@ const Dashboard = ({ searchQuery = '' }) => {
             variant="contained"
             disabled={creating || !namespaceName.trim()}
             sx={{ 
-              ...BUTTON_STYLES.primary,
+              ...BUTTON_STYLES.gradient,
               px: 2,
               py: 1,
-              minWidth: '100px',
-              boxShadow: '0 2px 8px rgba(0, 123, 255, 0.25)',
-              '&:hover': {
-                ...BUTTON_STYLES.primary['&:hover'],
-                boxShadow: '0 4px 12px rgba(0, 123, 255, 0.35)',
-                transform: 'translateY(-2px)',
-              },
-              '&:active': {
-                ...BUTTON_STYLES.primary['&:active'],
-                transform: 'translateY(0px)',
-              },
+              minWidth: '120px',
               '&:disabled': {
-                bgcolor: COLORS.grey[300],
+                background: COLORS.grey[300],
                 color: COLORS.grey[500],
                 transform: 'none',
                 boxShadow: 'none',
               }
             }}
           >
-            {creating ? 'Creating...' : 'Create'}
+            {creating ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <InlineSpinner size={16} color={COLORS.text.white} />
+                Creating...
+              </Box>
+            ) : (
+              'Create Namespace'
+            )}
           </Button>
         </DialogActions>
       </Dialog>

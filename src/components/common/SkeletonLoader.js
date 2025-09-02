@@ -4,44 +4,126 @@ import { COLORS, SIZES } from '../../theme/colors';
 
 export const NamespaceCardSkeleton = () => (
   <Box sx={{ 
-    p: SIZES.spacing.md,
+    width: 280,
+    height: 160,
+    p: 2,
     bgcolor: COLORS.background.paper,
-    borderRadius: `${SIZES.borderRadius.medium}px`,
+    borderRadius: `${SIZES.borderRadius.large}px`,
     border: `1px solid ${COLORS.grey[200]}`,
-    height: '100%',
+    boxShadow: SIZES.shadow.card,
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-    textAlign: 'center'
+    position: 'relative',
+    overflow: 'hidden',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)',
+      transform: 'translateX(-100%)',
+      animation: 'shimmer 1.5s infinite',
+    },
+    '@keyframes shimmer': {
+      '100%': {
+        transform: 'translateX(100%)',
+      },
+    },
   }}>
+    {/* Environment Badge Skeleton */}
     <Skeleton 
-      variant="circular" 
-      width={SIZES.icon.namespace} 
-      height={SIZES.icon.namespace}
-      sx={{ mb: SIZES.spacing.md }}
-    />
-    <Skeleton 
-      variant="text" 
-      width="80%" 
-      height={28}
-      sx={{ mb: SIZES.spacing.xs }}
-    />
-    <Skeleton 
-      variant="text" 
-      width="60%" 
+      variant="rectangular" 
+      width={50} 
       height={20}
+      sx={{ 
+        position: 'absolute',
+        top: 12,
+        right: 12,
+        borderRadius: `${SIZES.borderRadius.small}px`
+      }}
     />
+    
+    {/* Header with Icon and Title */}
+    <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1.5 }}>
+      <Skeleton 
+        variant="rounded" 
+        width={48} 
+        height={48}
+        sx={{ 
+          mr: 2,
+          borderRadius: `${SIZES.borderRadius.large}px`
+        }}
+      />
+      <Box sx={{ flex: 1 }}>
+        <Skeleton 
+          variant="text" 
+          width="80%" 
+          height={24}
+          sx={{ mb: 0.5 }}
+        />
+      </Box>
+    </Box>
+
+    {/* Metadata Skeletons */}
+    <Box sx={{ mb: 2, flex: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+        <Skeleton 
+          variant="circular" 
+          width={16} 
+          height={16}
+          sx={{ mr: 1 }}
+        />
+        <Skeleton 
+          variant="text" 
+          width="60%" 
+          height={16}
+        />
+      </Box>
+      
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Skeleton 
+          variant="circular" 
+          width={16} 
+          height={16}
+          sx={{ mr: 1 }}
+        />
+        <Skeleton 
+          variant="text" 
+          width="70%" 
+          height={16}
+        />
+      </Box>
+    </Box>
+
+    {/* Quick Actions Skeleton */}
+    <Box sx={{ display: 'flex', gap: 1 }}>
+      <Skeleton 
+        variant="circular" 
+        width={32} 
+        height={32}
+      />
+      <Skeleton 
+        variant="circular" 
+        width={32} 
+        height={32}
+      />
+    </Box>
   </Box>
 );
 
 export const DashboardSkeletonLoader = ({ count = 8 }) => (
-  <Grid container spacing={SIZES.spacing.md}>
+  <Box sx={{ 
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: 2,
+    p: SIZES.spacing.xs
+  }}>
     {Array.from({ length: count }).map((_, index) => (
-      <Grid item xs={12} sm={6} md={4} key={index}>
-        <NamespaceCardSkeleton />
-      </Grid>
+      <NamespaceCardSkeleton key={index} />
     ))}
-  </Grid>
+  </Box>
 );
 
 export const FileListSkeleton = ({ count = 6 }) => (
