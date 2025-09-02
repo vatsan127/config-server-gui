@@ -1,69 +1,60 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Button,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   TextField,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Box
+  Stack
 } from '@mui/material';
 import {
-  Add as AddIcon,
-  CreateNewFolder as CreateNewFolderIcon,
-  InsertDriveFile as InsertDriveFileIcon
+  Add as AddIcon
 } from '@mui/icons-material';
-import { COLORS, BUTTON_STYLES } from '../../theme/colors';
+import { BUTTON_STYLES } from '../../theme/colors';
 
-const CreateFileButton = ({ onCreateFile, onCreateFolder }) => {
-  const [anchorEl, setAnchorEl] = useState(null);
+const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [createType, setCreateType] = useState('file');
-  const [name, setName] = useState('');
+  const [fileName, setFileName] = useState('');
+  const [path, setPath] = useState('');
   const nameInputRef = useRef(null);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  useEffect(() => {
+    // Set default path when dialog opens
+    if (dialogOpen) {
+      setPath(currentPath);
+    }
+  }, [dialogOpen, currentPath]);
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleMenuItemClick = (type) => {
-    setCreateType(type);
+  const handleClick = () => {
     setDialogOpen(true);
-    handleClose();
   };
 
   const handleDialogClose = () => {
     setDialogOpen(false);
-    setName('');
+    setFileName('');
+    setPath('');
   };
 
   const handleCreate = () => {
-    if (name.trim()) {
-      if (createType === 'file') {
-        onCreateFile(name.trim());
-      } else {
-        onCreateFolder(name.trim());
-      }
+    if (fileName.trim() && path.trim()) {
+      onCreateConfigFile(fileName.trim(), path.trim());
       handleDialogClose();
     }
   };
 
   const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
-      handleCreate();
+    if (event.key === 'Enter' && event.target.name === 'path') {
+      // Move focus to create button or submit if both fields are filled
+      if (fileName.trim() && path.trim()) {
+        handleCreate();
+      }
+    } else if (event.key === 'Enter' && event.target.name === 'fileName') {
+      // Move to path field if filename is entered
+      const pathInput = document.querySelector('input[name="path"]');
+      if (pathInput) {
+        pathInput.focus();
+      }
     }
   };
 
@@ -82,35 +73,8 @@ const CreateFileButton = ({ onCreateFile, onCreateFolder }) => {
         onClick={handleClick}
         sx={BUTTON_STYLES.primary}
       >
-        Create
+        Create Config
       </Button>
-
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-      >
-        <MenuItem onClick={() => handleMenuItemClick('file')}>
-          <ListItemIcon>
-            <InsertDriveFileIcon />
-          </ListItemIcon>
-          <ListItemText>New File</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={() => handleMenuItemClick('folder')}>
-          <ListItemIcon>
-            <CreateNewFolderIcon />
-          </ListItemIcon>
-          <ListItemText>New Folder</ListItemText>
-        </MenuItem>
-      </Menu>
 
       <Dialog 
         open={dialogOpen} 
@@ -122,21 +86,37 @@ const CreateFileButton = ({ onCreateFile, onCreateFolder }) => {
         }}
       >
         <DialogTitle>
-          Create New {createType === 'file' ? 'File' : 'Folder'}
+          Create New Config File
         </DialogTitle>
+
         <DialogContent sx={{ pt: 3 }}>
-          <TextField
+          <Stack spacing={2}>
+            <TextField
               inputRef={nameInputRef}
+              name="fileName"
               autoFocus
               fullWidth
-              label={`${createType === 'file' ? 'File' : 'Folder'} Name`}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              label="File Name"
+              value={fileName}
+              onChange={(e) => setFileName(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder={createType === 'file' ? 'config.properties' : 'new-folder'}
+              placeholder="application.properties"
               variant="outlined"
             />
+
+            <TextField
+              name="path"
+              fullWidth
+              label="Path"
+              value={path}
+              onChange={(e) => setPath(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="/configs/app/"
+              variant="outlined"
+            />
+          </Stack>
         </DialogContent>
+
         <DialogActions>
           <Button onClick={handleDialogClose} color="inherit">
             Cancel
@@ -144,10 +124,10 @@ const CreateFileButton = ({ onCreateFile, onCreateFolder }) => {
           <Button 
             onClick={handleCreate} 
             variant="contained"
-            disabled={!name.trim()}
+            disabled={!fileName.trim() || !path.trim()}
             sx={BUTTON_STYLES.primary}
           >
-            Create {createType === 'file' ? 'File' : 'Folder'}
+            Create Config File
           </Button>
         </DialogActions>
       </Dialog>

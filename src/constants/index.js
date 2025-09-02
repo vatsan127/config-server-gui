@@ -10,7 +10,8 @@ export const API_CONFIG = {
     },
     CONFIG: {
       FETCH: '/config/fetch',
-      UPDATE: '/config/update'
+      UPDATE: '/config/update',
+      CREATE: '/config/create'
     }
   }
 };

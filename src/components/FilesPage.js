@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import {
   Typography,
   Box,
@@ -61,6 +61,7 @@ const FilesPage = () => {
   const { namespace } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const location = useLocation();
   const { enqueueSnackbar } = useSnackbar();
   const searchInputRef = useRef(null);
   
@@ -90,14 +91,18 @@ const FilesPage = () => {
   useSearchShortcut(handleSearchFocus);
 
   const fetchFiles = async (path = '/') => {
+    console.log('fetchFiles called with path:', path);
     setLoading(true);
     setError(null);
     
     try {
       const normalizedPath = normalizePath(path);
+      console.log('fetchFiles normalizedPath:', normalizedPath);
       const data = await apiService.getNamespaceFiles(namespace, normalizedPath);
+      console.log('fetchFiles received data:', data);
       setFiles(data);
       setCurrentPath(normalizedPath);
+      console.log('fetchFiles completed successfully');
     } catch (err) {
       setError('Failed to load files');
       console.error('Error fetching files:', err);
@@ -107,28 +112,47 @@ const FilesPage = () => {
   };
 
   useEffect(() => {
+    console.log('useEffect triggered - namespace:', namespace, 'searchParams:', searchParams.toString());
     if (namespace) {
       const pathParam = searchParams.get('path');
+      console.log('pathParam from URL:', pathParam);
       if (pathParam) {
         const decodedPath = decodeURIComponent(pathParam);
+        console.log('decodedPath:', decodedPath);
         fetchFiles(decodedPath);
       } else {
+        console.log('No path param, fetching root');
         fetchFiles();
       }
     }
-  }, [namespace, searchParams]);
+  }, [namespace, location.search]);
 
   const handleItemClick = (item) => {
+    console.log('handleItemClick called with item:', item);
+    console.log('currentPath:', currentPath);
+    console.log('namespace:', namespace);
     if (item.endsWith('/')) {
-      // For folders, construct the new path and navigate to update URL
+      // For folders, construct the new path and directly fetch files
       const newPath = currentPath === '/' ? item : currentPath + item;
       const normalizedPath = normalizePath(newPath);
-      navigate(`/namespace/${namespace}/files?path=${encodeURIComponent(normalizedPath)}`);
+      console.log('Direct folder navigation to:', normalizedPath);
+      
+      // Try direct fetchFiles call instead of navigation
+      fetchFiles(normalizedPath);
+      
+      // Also update URL manually
+      const fullUrl = `/namespace/${namespace}/files?path=${encodeURIComponent(normalizedPath)}`;
+      window.history.pushState({}, '', fullUrl);
+      console.log('Updated URL to:', fullUrl);
+      
     } else {
       // Navigate to file view page
       const encodedPath = encodeURIComponent(currentPath);
       const encodedFileName = encodeURIComponent(item);
-      navigate(`/namespace/${namespace}/file?path=${encodedPath}&file=${encodedFileName}`);
+      const fullUrl = `/namespace/${namespace}/file?path=${encodedPath}&file=${encodedFileName}`;
+      console.log('Navigating to file:', encodedFileName, 'in path:', encodedPath);
+      console.log('Full navigation URL:', fullUrl);
+      navigate(fullUrl);
     }
   };
 
@@ -156,25 +180,15 @@ const FilesPage = () => {
     }
   };
 
-  const handleCreateFile = async (fileName) => {
+  const handleCreateConfigFile = async (fileName, path) => {
     try {
-      await apiService.createFile(namespace, currentPath, fileName);
-      enqueueSnackbar(`File "${fileName}" created successfully`, { variant: 'success' });
+      await apiService.createConfigFile(namespace, path, fileName);
+      // Refresh the current directory to show updated file list
       fetchFiles(currentPath);
+      enqueueSnackbar(`Config file "${fileName}" created successfully`, { variant: 'success' });
     } catch (error) {
-      enqueueSnackbar(`Failed to create file "${fileName}"`, { variant: 'error' });
-      console.error('Error creating file:', error);
-    }
-  };
-
-  const handleCreateFolder = async (folderName) => {
-    try {
-      await apiService.createFolder(namespace, currentPath, folderName);
-      enqueueSnackbar(`Folder "${folderName}" created successfully`, { variant: 'success' });
-      fetchFiles(currentPath);
-    } catch (error) {
-      enqueueSnackbar(`Failed to create folder "${folderName}"`, { variant: 'error' });
-      console.error('Error creating folder:', error);
+      console.error('Error creating config file:', error);
+      enqueueSnackbar(`Failed to create config file "${fileName}"`, { variant: 'error' });
     }
   };
 
@@ -347,8 +361,8 @@ const FilesPage = () => {
                 }}
               />
               <CreateFileButton
-                onCreateFile={handleCreateFile}
-                onCreateFolder={handleCreateFolder}
+                onCreateConfigFile={handleCreateConfigFile}
+                currentPath={currentPath}
               />
             </Box>
           </Box>
@@ -404,10 +418,11 @@ const FilesPage = () => {
             </Box>
           ) : (
             <List sx={{ py: 0 }}>
-              {filteredFiles.map((item, index) => (
+              {filteredFiles.map((item, index) => {
+                console.log('Rendering item:', item, 'is folder:', item.endsWith('/'));
+                return (
                 <ListItem
                   key={item}
-                  button
                   onClick={() => handleItemClick(item)}
                   sx={{
                     borderBottom: index < filteredFiles.length - 1 ? `1px solid ${COLORS.grey[100]}` : 'none',
@@ -417,7 +432,8 @@ const FilesPage = () => {
                       transform: 'translateX(4px)',
                     },
                     py: 1.5,
-                    px: 2
+                    px: 2,
+                    cursor: 'pointer'
                   }}
                 >
                   <ListItemIcon sx={{ minWidth: 36 }}>
@@ -441,7 +457,8 @@ const FilesPage = () => {
                     }}
                   />
                 </ListItem>
-              ))}
+                );
+              })}
             </List>
           )}
         </Box>

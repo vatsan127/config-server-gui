@@ -278,6 +278,52 @@ export const apiService = {
     }
   },
 
+  async createConfigFile(namespace, path, fileName, email = 'user@example.com') {
+    try {
+      const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CONFIG.CREATE}`;
+      console.log('Attempting to create config file:', fileName, 'in namespace:', namespace, 'path:', path);
+      
+      const response = await makeApiRequest(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          action: 'create',
+          appName: fileName,
+          namespace: namespace,
+          path: path,
+          email: email
+        })
+      });
+      
+      await handleApiResponse(response, `Config file "${fileName}" created successfully`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      console.log('Successfully created config file:', fileName);
+      return true;
+      
+    } catch (error) {
+      console.error('Error creating config file:', error);
+      const friendlyMessage = createConnectionErrorMessage(error, 'create config file');
+      
+      // Show connection error notification
+      if (showNotification) {
+        showNotification(friendlyMessage, { 
+          variant: 'error',
+          preventDuplicate: true,
+          autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+          key: `connection-error-${Date.now()}`
+        });
+      }
+      
+      throw new Error(friendlyMessage);
+    }
+  },
+
   async createFolder(namespace, path, folderName) {
     try {
       const url = `${API_CONFIG.BASE_URL}/folder/create`;
