@@ -159,17 +159,19 @@ const Dashboard = ({ searchQuery = '' }) => {
           bottom: SIZES.spacing.lg, 
           right: SIZES.spacing.lg,
           bgcolor: COLORS.primary.main,
-          boxShadow: SIZES.shadow.lg,
+          boxShadow: '0 6px 16px rgba(0, 123, 255, 0.3)',
           width: 56,
           height: 56,
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'all 0.15s ease-in-out',
           '&:hover': {
-            bgcolor: '#000000',
-            boxShadow: SIZES.shadow.xl,
-            transform: 'scale(1.05)',
+            bgcolor: '#0056b3',
+            boxShadow: '0 8px 25px rgba(0, 123, 255, 0.4)',
+            transform: 'translateY(-2px) scale(1.05)',
           },
           '&:active': {
-            transform: 'scale(0.98)',
+            bgcolor: '#004085',
+            transform: 'translateY(-1px) scale(1.02)',
+            boxShadow: '0 4px 12px rgba(0, 123, 255, 0.35)',
           }
         }}
         onClick={openCreateDialog}
@@ -298,16 +300,22 @@ const Dashboard = ({ searchQuery = '' }) => {
               ...BUTTON_STYLES.primary,
               px: 2,
               py: 1,
-              boxShadow: SIZES.shadow.sm,
+              minWidth: '100px',
+              boxShadow: '0 2px 8px rgba(0, 123, 255, 0.25)',
               '&:hover': {
                 ...BUTTON_STYLES.primary['&:hover'],
-                boxShadow: SIZES.shadow.md,
-                transform: 'translateY(-1px)',
+                boxShadow: '0 4px 12px rgba(0, 123, 255, 0.35)',
+                transform: 'translateY(-2px)',
+              },
+              '&:active': {
+                ...BUTTON_STYLES.primary['&:active'],
+                transform: 'translateY(0px)',
               },
               '&:disabled': {
                 bgcolor: COLORS.grey[300],
                 color: COLORS.grey[500],
                 transform: 'none',
+                boxShadow: 'none',
               }
             }}
           >

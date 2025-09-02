@@ -46,39 +46,30 @@ const FilesSidebar = ({ namespace }) => {
       }}
     >
 
-      <List sx={{ py: 0, flex: 1, mt: 2 }}>
-        <ListItem
-          button
-          onClick={handleHomeClick}
-          sx={{
-            py: 1.5,
-            px: SIZES.spacing.xs,
-            '&:hover': { bgcolor: COLORS.hover.sidebar },
-            bgcolor: (isFilesActive || isFileViewActive) ? 'rgba(255, 255, 255, 0.2)' : 'transparent'
+      <Box sx={{ 
+        px: SIZES.spacing.xs, 
+        py: 2, 
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'flex-start'
+      }}>
+        <Typography 
+          variant="h5" 
+          sx={{ 
+            color: COLORS.text.white,
+            fontWeight: 700,
+            fontSize: '1.2rem',
+            letterSpacing: '0.5px',
+            margin: 0
           }}
         >
-          <ListItemIcon sx={{ minWidth: 28 }}>
-            <HomeIcon 
-              sx={{ 
-                color: (isFilesActive || isFileViewActive) ? COLORS.primary.light : COLORS.text.white,
-                fontSize: '1rem'
-              }} 
-            />
-          </ListItemIcon>
-          <ListItemText 
-            primary="Home"
-            primaryTypographyProps={{
-              sx: {
-                color: COLORS.text.white,
-                fontWeight: (isFilesActive || isFileViewActive) ? 600 : 400,
-                fontSize: '0.8rem'
-              }
-            }}
-          />
-        </ListItem>
+          Config-server
+        </Typography>
+      </Box>
 
+      <List sx={{ py: 0, flex: 1 }}>
         <Divider sx={{ bgcolor: 'rgba(255, 255, 255, 0.4)', my: 0 }} />
-
+        
         <ListItem
           button
           onClick={handleBackToDashboard}
@@ -92,8 +83,7 @@ const FilesSidebar = ({ namespace }) => {
             <DashboardIcon 
               sx={{ 
                 color: COLORS.text.white,
-                fontSize: '1rem',
-                opacity: 0.8
+                fontSize: '1rem'
               }} 
             />
           </ListItemIcon>
@@ -103,8 +93,39 @@ const FilesSidebar = ({ namespace }) => {
               sx: {
                 color: COLORS.text.white,
                 fontWeight: 400,
-                fontSize: '0.8rem',
-                opacity: 0.8
+                fontSize: '0.8rem'
+              }
+            }}
+          />
+        </ListItem>
+
+        <Divider sx={{ bgcolor: 'rgba(255, 255, 255, 0.4)', my: 0 }} />
+
+        <ListItem
+          button
+          onClick={handleHomeClick}
+          sx={{
+            py: 1.5,
+            px: SIZES.spacing.xs,
+            '&:hover': { bgcolor: COLORS.hover.sidebar },
+            bgcolor: (isFilesActive || isFileViewActive) ? 'rgba(255, 255, 255, 0.2)' : 'transparent'
+          }}
+        >
+          <ListItemIcon sx={{ minWidth: 28 }}>
+            <HomeIcon 
+              sx={{ 
+                color: COLORS.text.white,
+                fontSize: '1rem'
+              }} 
+            />
+          </ListItemIcon>
+          <ListItemText 
+            primary="Home"
+            primaryTypographyProps={{
+              sx: {
+                color: COLORS.text.white,
+                fontWeight: (isFilesActive || isFileViewActive) ? 600 : 400,
+                fontSize: '0.8rem'
               }
             }}
           />

@@ -106,7 +106,7 @@ export const SIZES = {
   }
 };
 
-// Common button styles
+// Common button styles with Bootstrap-like hover effects
 export const BUTTON_STYLES = {
   primary: {
     bgcolor: COLORS.primary.main,
@@ -114,8 +114,16 @@ export const BUTTON_STYLES = {
     borderRadius: `${SIZES.borderRadius.medium}px`,
     fontWeight: 600,
     textTransform: 'none',
+    transition: 'all 0.15s ease-in-out',
     '&:hover': { 
-      bgcolor: '#000000',
+      bgcolor: '#0056b3',
+      boxShadow: '0 4px 8px rgba(0, 123, 255, 0.25)',
+      transform: 'translateY(-1px)',
+    },
+    '&:active': {
+      bgcolor: '#004085',
+      transform: 'translateY(0px)',
+      boxShadow: '0 2px 4px rgba(0, 123, 255, 0.25)',
     }
   },
   secondary: {
@@ -125,9 +133,18 @@ export const BUTTON_STYLES = {
     borderRadius: `${SIZES.borderRadius.medium}px`,
     fontWeight: 600,
     textTransform: 'none',
+    transition: 'all 0.15s ease-in-out',
     '&:hover': { 
       bgcolor: COLORS.grey[50],
       borderColor: COLORS.grey[400],
+      color: COLORS.text.primary,
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+      transform: 'translateY(-1px)',
+    },
+    '&:active': {
+      bgcolor: COLORS.grey[100],
+      transform: 'translateY(0px)',
+      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
     }
   },
   ghost: {
@@ -136,8 +153,69 @@ export const BUTTON_STYLES = {
     borderRadius: `${SIZES.borderRadius.medium}px`,
     fontWeight: 600,
     textTransform: 'none',
+    transition: 'all 0.15s ease-in-out',
     '&:hover': { 
       bgcolor: COLORS.hover.button,
+      color: COLORS.primary.main,
+      transform: 'translateY(-1px)',
+    },
+    '&:active': {
+      bgcolor: 'rgba(99, 102, 241, 0.12)',
+      transform: 'translateY(0px)',
+    }
+  },
+  success: {
+    bgcolor: COLORS.success.border,
+    color: COLORS.text.white,
+    borderRadius: `${SIZES.borderRadius.medium}px`,
+    fontWeight: 600,
+    textTransform: 'none',
+    transition: 'all 0.15s ease-in-out',
+    '&:hover': { 
+      bgcolor: '#059669',
+      boxShadow: '0 4px 8px rgba(16, 185, 129, 0.25)',
+      transform: 'translateY(-1px)',
+    },
+    '&:active': {
+      bgcolor: '#047857',
+      transform: 'translateY(0px)',
+      boxShadow: '0 2px 4px rgba(16, 185, 129, 0.25)',
+    }
+  },
+  warning: {
+    bgcolor: COLORS.warning.border,
+    color: COLORS.text.white,
+    borderRadius: `${SIZES.borderRadius.medium}px`,
+    fontWeight: 600,
+    textTransform: 'none',
+    transition: 'all 0.15s ease-in-out',
+    '&:hover': { 
+      bgcolor: '#d97706',
+      boxShadow: '0 4px 8px rgba(245, 158, 11, 0.25)',
+      transform: 'translateY(-1px)',
+    },
+    '&:active': {
+      bgcolor: '#b45309',
+      transform: 'translateY(0px)',
+      boxShadow: '0 2px 4px rgba(245, 158, 11, 0.25)',
+    }
+  },
+  danger: {
+    bgcolor: COLORS.error.border,
+    color: COLORS.text.white,
+    borderRadius: `${SIZES.borderRadius.medium}px`,
+    fontWeight: 600,
+    textTransform: 'none',
+    transition: 'all 0.15s ease-in-out',
+    '&:hover': { 
+      bgcolor: '#dc2626',
+      boxShadow: '0 4px 8px rgba(239, 68, 68, 0.25)',
+      transform: 'translateY(-1px)',
+    },
+    '&:active': {
+      bgcolor: '#b91c1c',
+      transform: 'translateY(0px)',
+      boxShadow: '0 2px 4px rgba(239, 68, 68, 0.25)',
     }
   }
 };
