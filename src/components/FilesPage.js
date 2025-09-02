@@ -31,8 +31,6 @@ import {
   Description as TextIcon,
   Image as ImageIcon,
   History as HistoryIcon,
-  Close as CloseIcon,
-  ArrowBack as ArrowBackIcon,
   Download as DownloadIcon,
   Delete as DeleteIcon
 } from '@mui/icons-material';
@@ -44,7 +42,7 @@ import EmptyState from './common/EmptyState';
 import CreateFileButton from './common/CreateFileButton';
 import { FileListSkeleton } from './common/SkeletonLoader';
 import { useSearchShortcut } from '../hooks/useKeyboardShortcut';
-import DiffViewer from './common/DiffViewer';
+import HistoryPanel from './common/HistoryPanel';
 
 const getFileIcon = (fileName) => {
   const extension = fileName.split('.').pop().toLowerCase();
@@ -82,7 +80,7 @@ const FilesPage = () => {
   const [error, setError] = useState(null);
   const [currentPath, setCurrentPath] = useState('/');
   const [searchQuery, setSearchQuery] = useState('');
-  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyPanelOpen, setHistoryPanelOpen] = useState(false);
   const [historyData, setHistoryData] = useState(null);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -260,8 +258,11 @@ const FilesPage = () => {
     event.stopPropagation(); // Prevent file click when history button is clicked
     
     setSelectedFile(fileName);
-    setHistoryOpen(true);
+    setHistoryPanelOpen(true);
     setHistoryLoading(true);
+    setShowChanges(false); // Reset to history view
+    setSelectedCommitId(null);
+    setChangesData(null);
     
     try {
       const historyData = await apiService.getFileHistory(namespace, currentPath, fileName);
@@ -275,12 +276,18 @@ const FilesPage = () => {
   };
 
   const handleHistoryClose = () => {
-    setHistoryOpen(false);
+    setHistoryPanelOpen(false);
     setHistoryData(null);
     setSelectedFile(null);
     setSelectedCommitId(null);
     setChangesData(null);
     setShowChanges(false);
+  };
+
+  const handleBackToHistory = () => {
+    setShowChanges(false);
+    setSelectedCommitId(null);
+    setChangesData(null);
   };
 
   const handleCommitSelect = async (commitId) => {
@@ -718,160 +725,6 @@ const FilesPage = () => {
           )}
         </Box>
 
-        {/* History Dialog */}
-        <Dialog
-          open={historyOpen}
-          onClose={handleHistoryClose}
-          maxWidth="md"
-          fullWidth
-          PaperProps={{
-            sx: {
-              borderRadius: `${SIZES.borderRadius.medium}px`,
-              mt: -8  // Move dialog up
-            }
-          }}
-        >
-          <DialogTitle sx={{ 
-            borderBottom: `1px solid ${COLORS.grey[200]}`,
-            pb: 2,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
-            <Typography variant="h6" sx={{ color: COLORS.text.primary, fontWeight: 600 }}>
-              {showChanges && changesData ? 
-                changesData.message || 'No commit message' : 
-                `History: ${selectedFile || ''}`
-              }
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              {showChanges && (
-                <IconButton
-                  onClick={() => setShowChanges(false)}
-                  size="small"
-                  sx={{
-                    color: COLORS.text.secondary,
-                    '&:hover': {
-                      color: COLORS.text.primary,
-                      bgcolor: COLORS.grey[100]
-                    },
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 0.5
-                  }}
-                >
-                  <ArrowBackIcon fontSize="small" />
-                  <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
-                    Back
-                  </Typography>
-                </IconButton>
-              )}
-              <IconButton
-                onClick={handleHistoryClose}
-                size="small"
-                sx={{
-                  color: COLORS.text.secondary,
-                  '&:hover': {
-                    color: COLORS.text.primary,
-                    bgcolor: COLORS.grey[100]
-                  }
-                }}
-              >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          </DialogTitle>
-          
-          <DialogContent sx={{ p: 0 }}>
-            {historyLoading ? (
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
-                py: 4 
-              }}>
-                <CircularProgress size={40} />
-              </Box>
-            ) : showChanges ? (
-              <Box sx={{ p: 3 }}>
-                {changesData && (
-                  <Box sx={{ mb: 2, p: 2, bgcolor: COLORS.grey[50], borderRadius: 0 }}>
-                    <Typography variant="caption" sx={{ color: COLORS.text.secondary }}>
-                      {changesData.author} • {changesData.commitTime ? new Date(changesData.commitTime).toLocaleString() : 'Unknown time'}
-                    </Typography>
-                  </Box>
-                )}
-                
-                {changesLoading ? (
-                  <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-                    <CircularProgress size={30} />
-                  </Box>
-                ) : (
-                  <DiffViewer diffText={changesData?.changes} />
-                )}
-              </Box>
-            ) : historyData && historyData.commits && historyData.commits.length > 0 ? (
-              <List sx={{ py: 0 }}>
-                {historyData.commits.map((commit, index) => (
-                  <ListItem
-                    key={commit.commitId || index}
-                    onClick={() => handleCommitSelect(commit.commitId)}
-                    sx={{
-                      borderBottom: index < historyData.commits.length - 1 ? `1px solid ${COLORS.grey[100]}` : 'none',
-                      py: 2,
-                      px: 3,
-                      flexDirection: 'column',
-                      alignItems: 'flex-start',
-                      cursor: 'pointer',
-                      bgcolor: selectedCommitId === commit.commitId ? COLORS.primary.light : 'transparent',
-                      '&:hover': {
-                        bgcolor: selectedCommitId === commit.commitId ? COLORS.primary.light : COLORS.grey[50]
-                      },
-                      transition: 'background-color 0.2s ease'
-                    }}
-                  >
-                    <Typography 
-                      variant="body1" 
-                      sx={{ 
-                        color: COLORS.text.primary, 
-                        fontWeight: 500,
-                        mb: 0.5,
-                        lineHeight: 1.4
-                      }}
-                    >
-                      {commit.commitMessage || commit.message || 'No commit message'}
-                    </Typography>
-                    <Typography 
-                      variant="body2" 
-                      sx={{ 
-                        color: COLORS.text.secondary,
-                        fontSize: '0.8rem'
-                      }}
-                    >
-                      {commit.author && commit.email ? `${commit.author} (${commit.email})` : commit.author || commit.email || 'Unknown author'}
-                      {commit.date && ` • ${new Date(commit.date).toLocaleDateString()} ${new Date(commit.date).toLocaleTimeString()}`}
-                    </Typography>
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <Box sx={{ 
-                py: 4, 
-                px: 3,
-                textAlign: 'center',
-                color: COLORS.text.secondary
-              }}>
-                <Typography variant="body1" sx={{ mb: 1, fontWeight: 500 }}>
-                  No commit history found
-                </Typography>
-                <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
-                  This file may be new or history is not available
-                </Typography>
-              </Box>
-            )}
-          </DialogContent>
-          
-        </Dialog>
 
         {/* Delete Confirmation Dialog */}
         <Dialog 
@@ -1010,6 +863,21 @@ const FilesPage = () => {
             </Button>
           </DialogActions>
         </Dialog>
+
+        {/* History Side Panel */}
+        <HistoryPanel
+          isOpen={historyPanelOpen}
+          onClose={handleHistoryClose}
+          fileName={selectedFile}
+          historyData={historyData}
+          historyLoading={historyLoading}
+          changesData={changesData}
+          changesLoading={changesLoading}
+          showChanges={showChanges}
+          onBackToHistory={handleBackToHistory}
+          onCommitSelect={handleCommitSelect}
+          selectedCommitId={selectedCommitId}
+        />
     </Box>
   );
 };
