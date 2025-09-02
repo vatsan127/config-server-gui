@@ -15,14 +15,15 @@ import {
 import { 
   Search as SearchIcon,
   Clear as ClearIcon,
-  Logout as LogoutIcon
+  Logout as LogoutIcon,
+  Add as AddIcon
 } from '@mui/icons-material';
 import { theme } from '../theme/theme';
 import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
 import { UI_CONSTANTS, DOM_IDS } from '../constants';
 import ErrorBoundary from './common/ErrorBoundary';
 
-const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder }) => {
+const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCreateNamespace, showCreateButton = false }) => {
 
   return (
     <ThemeProvider theme={theme}>
@@ -128,8 +129,34 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder }) =>
               />
             </Box>
 
-            {/* Right side - Logout Button */}
-            <Box>
+            {/* Right side - Actions */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {/* Create Namespace Button */}
+              {showCreateButton && (
+                <Button 
+                  startIcon={<AddIcon sx={{ fontSize: 18 }} />}
+                  onClick={onCreateNamespace}
+                  sx={{ 
+                    color: COLORS.text.white,
+                    bgcolor: alpha(COLORS.text.white, 0.1),
+                    px: 2,
+                    py: 1,
+                    fontSize: '0.8rem',
+                    border: `1px solid ${alpha(COLORS.text.white, 0.3)}`,
+                    borderRadius: `${SIZES.borderRadius.medium}px`,
+                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    '&:hover': {
+                      bgcolor: alpha(COLORS.text.white, 0.2),
+                      borderColor: alpha(COLORS.text.white, 0.5),
+                      transform: 'translateY(-1px)',
+                    }
+                  }}
+                >
+                  Create
+                </Button>
+              )}
+              
+              {/* Logout Button */}
               <Button 
                 startIcon={<LogoutIcon sx={{ fontSize: 18 }} />}
                 onClick={() => {
@@ -137,16 +164,17 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder }) =>
                   console.log('Logout clicked - functionality to be implemented');
                 }}
                 sx={{ 
-                  ...BUTTON_STYLES.secondary,
                   color: COLORS.text.white,
+                  bgcolor: alpha(COLORS.text.white, 0.1),
                   px: 2,
                   py: 1,
                   fontSize: '0.8rem',
-                  border: `1px solid ${alpha(COLORS.text.white, 0.2)}`,
+                  border: `1px solid ${alpha(COLORS.text.white, 0.3)}`,
+                  borderRadius: `${SIZES.borderRadius.medium}px`,
                   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                   '&:hover': {
-                    bgcolor: alpha(COLORS.text.white, 0.1),
-                    borderColor: alpha(COLORS.text.white, 0.3),
+                    bgcolor: alpha(COLORS.text.white, 0.2),
+                    borderColor: alpha(COLORS.text.white, 0.5),
                     transform: 'translateY(-1px)',
                   }
                 }}

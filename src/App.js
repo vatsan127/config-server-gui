@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
@@ -33,15 +33,32 @@ const AppContent = () => {
 
   const isDashboard = location.pathname === '/';
 
+  // Reference to store the Dashboard's openCreateDialog function
+  const createDialogRef = useRef(null);
+
+  // Handle create namespace for navbar
+  const handleCreateNamespace = () => {
+    if (createDialogRef.current) {
+      createDialogRef.current();
+    }
+  };
+
+  // Callback to receive Dashboard's openCreateDialog function
+  const setCreateDialogFunction = (openDialogFn) => {
+    createDialogRef.current = openDialogFn;
+  };
+
   if (isDashboard) {
     return (
       <Layout 
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         searchPlaceholder={getSearchPlaceholder()}
+        showCreateButton={true}
+        onCreateNamespace={handleCreateNamespace}
       >
         <Routes>
-          <Route path="/" element={<Dashboard searchQuery={searchQuery} />} />
+          <Route path="/" element={<Dashboard searchQuery={searchQuery} onCreateNamespace={setCreateDialogFunction} />} />
         </Routes>
       </Layout>
     );
