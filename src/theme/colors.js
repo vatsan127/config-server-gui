@@ -12,7 +12,7 @@ export const COLORS = {
   background: {
     default: '#FAFBFC',
     paper: '#FFFFFF',
-    sidebar: '#000000',
+    sidebar: '#063970',
     elevated: '#FFFFFF',
   },
   text: {
@@ -58,7 +58,7 @@ export const COLORS = {
     text: '#991B1B',
   },
   hover: {
-    sidebar: '#1a1a1a',
+    sidebar: '#0a4d8a',
     card: '#F9FAFB',
     button: 'rgba(99, 102, 241, 0.08)',
   },
@@ -92,10 +92,10 @@ export const SIZES = {
     xxl: 48,  // 48px
   },
   borderRadius: {
-    small: 6,
-    medium: 8,
-    large: 12,
-    xl: 16,
+    small: 0,
+    medium: 0,
+    large: 0,
+    xl: 0,
   },
   shadow: {
     sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',

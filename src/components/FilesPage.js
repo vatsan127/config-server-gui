@@ -766,7 +766,7 @@ const FilesPage = () => {
             ) : showChanges ? (
               <Box sx={{ p: 3 }}>
                 {changesData && (
-                  <Box sx={{ mb: 2, p: 2, bgcolor: COLORS.grey[50], borderRadius: 1 }}>
+                  <Box sx={{ mb: 2, p: 2, bgcolor: COLORS.grey[50], borderRadius: 0 }}>
                     <Typography variant="caption" sx={{ color: COLORS.text.secondary }}>
                       {changesData.author} • {changesData.commitTime ? new Date(changesData.commitTime).toLocaleString() : 'Unknown time'}
                     </Typography>

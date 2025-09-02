@@ -90,7 +90,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
           sx: {
             bgcolor: 'background.paper',
             border: '1px solid #e0e0e0',
-            borderRadius: '8px',
+            borderRadius: '0px',
             boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
             m: 1
           }
@@ -141,7 +141,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
               }}
               sx={{ 
                 '& .MuiOutlinedInput-root': {
-                  borderRadius: '8px',
+                  borderRadius: '0px',
                   '& fieldset': {
                     borderColor: '#d0d0d0',
                   },
@@ -186,7 +186,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
                 }}
                 sx={{ 
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: '8px',
+                    borderRadius: '0px',
                     '& fieldset': {
                       borderColor: '#d0d0d0',
                     },

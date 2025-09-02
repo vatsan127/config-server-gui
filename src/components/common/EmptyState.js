@@ -41,7 +41,7 @@ const EmptyState = ({
           width: 48,
           height: 48,
           bgcolor: COLORS.grey[50],
-          borderRadius: '50%',
+          borderRadius: '0px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

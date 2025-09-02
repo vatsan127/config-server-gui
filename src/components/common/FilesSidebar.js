@@ -10,8 +10,8 @@ import {
   Divider
 } from '@mui/material';
 import {
-  Folder as FolderIcon,
-  ArrowBack as ArrowBackIcon
+  Home as HomeIcon,
+  Dashboard as DashboardIcon
 } from '@mui/icons-material';
 import { COLORS, SIZES } from '../../theme/colors';
 
@@ -45,41 +45,20 @@ const FilesSidebar = ({ namespace }) => {
         zIndex: 1000
       }}
     >
-      <Box sx={{ 
-        px: SIZES.spacing.sm, 
-        py: SIZES.spacing.xs, 
-        borderBottom: `1px solid rgba(255, 255, 255, 0.2)`,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'flex-start'
-      }}>
-        <Typography 
-          variant="h5" 
-          sx={{ 
-            color: COLORS.text.white,
-            fontWeight: 700,
-            fontSize: '1.2rem',
-            letterSpacing: '0.5px',
-            margin: 0
-          }}
-        >
-          Explorer
-        </Typography>
-      </Box>
 
-      <List sx={{ py: 0, flex: 1 }}>
+      <List sx={{ py: 0, flex: 1, mt: 2 }}>
         <ListItem
           button
           onClick={handleHomeClick}
           sx={{
             py: 1.5,
             px: SIZES.spacing.xs,
-            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' },
-            bgcolor: (isFilesActive || isFileViewActive) ? 'rgba(99, 102, 241, 0.2)' : 'transparent'
+            '&:hover': { bgcolor: COLORS.hover.sidebar },
+            bgcolor: (isFilesActive || isFileViewActive) ? 'rgba(255, 255, 255, 0.2)' : 'transparent'
           }}
         >
           <ListItemIcon sx={{ minWidth: 28 }}>
-            <FolderIcon 
+            <HomeIcon 
               sx={{ 
                 color: (isFilesActive || isFileViewActive) ? COLORS.primary.light : COLORS.text.white,
                 fontSize: '1rem'
@@ -87,7 +66,7 @@ const FilesSidebar = ({ namespace }) => {
             />
           </ListItemIcon>
           <ListItemText 
-            primary="Files"
+            primary="Home"
             primaryTypographyProps={{
               sx: {
                 color: COLORS.text.white,
@@ -98,7 +77,7 @@ const FilesSidebar = ({ namespace }) => {
           />
         </ListItem>
 
-        <Divider sx={{ bgcolor: 'rgba(255, 255, 255, 0.2)', my: 1 }} />
+        <Divider sx={{ bgcolor: 'rgba(255, 255, 255, 0.4)', my: 0 }} />
 
         <ListItem
           button
@@ -106,11 +85,11 @@ const FilesSidebar = ({ namespace }) => {
           sx={{
             py: 1.5,
             px: SIZES.spacing.xs,
-            '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.1)' }
+            '&:hover': { bgcolor: COLORS.hover.sidebar }
           }}
         >
           <ListItemIcon sx={{ minWidth: 28 }}>
-            <ArrowBackIcon 
+            <DashboardIcon 
               sx={{ 
                 color: COLORS.text.white,
                 fontSize: '1rem',
@@ -130,6 +109,8 @@ const FilesSidebar = ({ namespace }) => {
             }}
           />
         </ListItem>
+
+        <Divider sx={{ bgcolor: 'rgba(255, 255, 255, 0.4)', my: 0 }} />
       </List>
     </Box>
   );
