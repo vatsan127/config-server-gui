@@ -9,10 +9,12 @@ import {
   Button,
   TextField,
   InputAdornment,
+  IconButton,
   alpha,
 } from '@mui/material';
 import { 
   Search as SearchIcon,
+  Clear as ClearIcon,
   Logout as LogoutIcon
 } from '@mui/icons-material';
 import { theme } from '../theme/theme';
@@ -72,6 +74,24 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder }) =>
                   startAdornment: (
                     <InputAdornment position="start">
                       <SearchIcon sx={{ color: COLORS.text.muted, fontSize: 20 }} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: searchQuery && (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => onSearchChange?.('')}
+                        size="small"
+                        sx={{ 
+                          color: COLORS.text.muted,
+                          p: 0.5,
+                          '&:hover': {
+                            color: COLORS.text.primary,
+                            bgcolor: alpha(COLORS.background.paper, 0.8)
+                          }
+                        }}
+                      >
+                        <ClearIcon fontSize="small" />
+                      </IconButton>
                     </InputAdornment>
                   ),
                 }}

@@ -30,8 +30,9 @@ export const useDialog = (initialFormData = {}) => {
       await submitFn(formData);
       closeDialog();
     } catch (error) {
-      // Let the caller handle the error
-      throw error;
+      console.error('Dialog submit error:', error);
+      // Don't re-throw the error since API service already handles error display
+      // The dialog will remain open for user to try again or close manually
     } finally {
       setIsSubmitting(false);
     }

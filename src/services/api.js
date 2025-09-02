@@ -70,19 +70,30 @@ export const apiService = {
       
     } catch (error) {
       console.error('Error fetching namespaces:', error);
-      const friendlyMessage = createConnectionErrorMessage(error, 'fetch namespaces');
       
-      // Show connection error notification
-      if (showNotification) {
-        showNotification(friendlyMessage, { 
-          variant: 'error',
-          preventDuplicate: true,
-          autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
-          key: `connection-error-${Date.now()}`
-        });
+      // Only show connection errors, not HTTP errors (which are already handled by handleApiResponse)
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'fetch namespaces');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+            key: `connection-error-${Date.now()}`
+          });
+        }
+        
+        throw new Error(friendlyMessage);
       }
       
-      throw new Error(friendlyMessage);
+      // For HTTP errors, just re-throw without additional notifications
+      throw error;
     }
   },
 
@@ -103,25 +114,8 @@ export const apiService = {
       await handleApiResponse(response, UI_CONSTANTS.MESSAGES.NAMESPACE_CREATED(namespace));
       
       if (!response.ok) {
-        // Provide specific error messages for common HTTP status codes
-        let errorMessage;
-        switch (response.status) {
-          case 409:
-            errorMessage = `Namespace "${namespace}" already exists. Please choose a different name.`;
-            break;
-          case 400:
-            errorMessage = `Invalid namespace name "${namespace}". Please check the naming requirements.`;
-            break;
-          case 403:
-            errorMessage = `Access denied. You don't have permission to create namespace "${namespace}".`;
-            break;
-          case 500:
-            errorMessage = `Server error occurred while creating namespace "${namespace}". Please try again later.`;
-            break;
-          default:
-            errorMessage = `Failed to create namespace "${namespace}". Server returned ${response.status}.`;
-        }
-        throw new Error(errorMessage);
+        // Don't show additional error - handleApiResponse already handled it
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       console.log('Successfully created namespace:', namespace);
@@ -129,19 +123,31 @@ export const apiService = {
       
     } catch (error) {
       console.error('Error creating namespace:', error);
-      const friendlyMessage = createConnectionErrorMessage(error, 'create namespace');
       
-      // Show connection error notification
-      if (showNotification) {
-        showNotification(friendlyMessage, { 
-          variant: 'error',
-          preventDuplicate: true,
-          autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
-          key: `connection-error-${Date.now()}`
-        });
+      // Only show connection errors, not HTTP errors (which are already handled by handleApiResponse)
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'create namespace');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+            key: `connection-error-${Date.now()}`
+          });
+        }
+        
+        throw new Error(friendlyMessage);
       }
       
-      throw new Error(friendlyMessage);
+      // For HTTP errors, just re-throw without additional notifications
+      // The error message from handleApiResponse is already shown
+      throw error;
     }
   },
 
@@ -173,19 +179,30 @@ export const apiService = {
       
     } catch (error) {
       console.error('Error fetching namespace files:', error);
-      const friendlyMessage = createConnectionErrorMessage(error, 'fetch files');
       
-      // Show connection error notification
-      if (showNotification) {
-        showNotification(friendlyMessage, { 
-          variant: 'error',
-          preventDuplicate: true,
-          autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
-          key: `connection-error-${Date.now()}`
-        });
+      // Only show connection errors, not HTTP errors (which are already handled by handleApiResponse)
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'fetch files');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+            key: `connection-error-${Date.now()}`
+          });
+        }
+        
+        throw new Error(friendlyMessage);
       }
       
-      throw new Error(friendlyMessage);
+      // For HTTP errors, just re-throw without additional notifications
+      throw error;
     }
   },
 
@@ -228,19 +245,30 @@ export const apiService = {
       
     } catch (error) {
       console.error('Error getting file content:', error);
-      const friendlyMessage = createConnectionErrorMessage(error, 'fetch file content');
       
-      // Show connection error notification
-      if (showNotification) {
-        showNotification(friendlyMessage, { 
-          variant: 'error',
-          preventDuplicate: true,
-          autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
-          key: `connection-error-${Date.now()}`
-        });
+      // Only show connection errors, not HTTP errors (which are already handled by handleApiResponse)
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'fetch file content');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+            key: `connection-error-${Date.now()}`
+          });
+        }
+        
+        throw new Error(friendlyMessage);
       }
       
-      throw new Error(friendlyMessage);
+      // For HTTP errors, just re-throw without additional notifications
+      throw error;
     }
   },
 
@@ -419,19 +447,31 @@ export const apiService = {
       
     } catch (error) {
       console.error('Error updating file:', error);
-      const friendlyMessage = createConnectionErrorMessage(error, 'update file');
       
-      // Show connection error notification
-      if (showNotification) {
-        showNotification(friendlyMessage, { 
-          variant: 'error',
-          preventDuplicate: true,
-          autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
-          key: `connection-error-${Date.now()}`
-        });
+      // Only show connection errors, not HTTP errors (which are already handled by handleApiResponse)
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'update file');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+            key: `connection-error-${Date.now()}`
+          });
+        }
+        
+        throw new Error(friendlyMessage);
       }
       
-      throw new Error(friendlyMessage);
+      // For HTTP errors, just re-throw without additional notifications
+      // The error message from handleApiResponse is already shown
+      throw error;
     }
   }
 };

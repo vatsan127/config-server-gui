@@ -14,12 +14,14 @@ import {
   Link,
   TextField,
   InputAdornment,
+  IconButton,
   Divider
 } from '@mui/material';
 import {
   Folder as FolderIcon,
   InsertDriveFile as FileIcon,
   Search as SearchIcon,
+  Clear as ClearIcon,
   Code as CodeIcon,
   DataObject as JsonIcon,
   Description as TextIcon,
@@ -357,6 +359,24 @@ const FilesPage = () => {
                   startAdornment: (
                     <InputAdornment position="start">
                       <SearchIcon sx={{ color: COLORS.text.muted, fontSize: 18 }} />
+                    </InputAdornment>
+                  ),
+                  endAdornment: searchQuery && (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setSearchQuery('')}
+                        size="small"
+                        sx={{ 
+                          color: COLORS.text.muted,
+                          p: 0.5,
+                          '&:hover': {
+                            color: COLORS.text.primary,
+                            bgcolor: COLORS.grey[100]
+                          }
+                        }}
+                      >
+                        <ClearIcon fontSize="small" />
+                      </IconButton>
                     </InputAdornment>
                   ),
                 }}

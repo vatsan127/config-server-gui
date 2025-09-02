@@ -256,6 +256,10 @@ const Dashboard = ({ searchQuery = '' }) => {
               },
               '& .MuiInputLabel-root': {
                 color: COLORS.text.secondary,
+                transform: 'translate(14px, 12px) scale(1)',
+                '&.MuiInputLabel-shrink': {
+                  transform: 'translate(14px, -9px) scale(0.75)',
+                },
                 '&.Mui-focused': {
                   color: COLORS.primary.main
                 }

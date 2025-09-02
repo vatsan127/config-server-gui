@@ -144,8 +144,9 @@ const FileViewPage = () => {
       setCommitMessage('');
       // Don't show success notification here since it's handled in the API service
     } catch (error) {
-      enqueueSnackbar('Failed to save file', { variant: 'error' });
       console.error('Error saving file:', error);
+      // Error notification is already handled by the API service
+      // Don't show duplicate error messages
     } finally {
       setSaving(false);
     }
