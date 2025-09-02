@@ -13,12 +13,14 @@ import {
 import {
   Add as AddIcon
 } from '@mui/icons-material';
-import { BUTTON_STYLES } from '../../theme/colors';
+import { COLORS, SIZES, BUTTON_STYLES } from '../../theme/colors';
+import { InlineSpinner } from './ProgressIndicator';
 
 const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [fileName, setFileName] = useState('');
   const [path, setPath] = useState('');
+  const [creating, setCreating] = useState(false);
   const nameInputRef = useRef(null);
 
   useEffect(() => {
@@ -33,15 +35,24 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
   };
 
   const handleDialogClose = () => {
-    setDialogOpen(false);
-    setFileName('');
-    setPath('');
+    if (!creating) {
+      setDialogOpen(false);
+      setFileName('');
+      setPath('');
+    }
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (fileName.trim() && path.trim()) {
-      onCreateConfigFile(fileName.trim(), path.trim());
-      handleDialogClose();
+      setCreating(true);
+      try {
+        await onCreateConfigFile(fileName.trim(), path.trim());
+        handleDialogClose();
+      } catch (error) {
+        // Error handling is done in parent component
+      } finally {
+        setCreating(false);
+      }
     }
   };
 
@@ -88,10 +99,10 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
         }}
         PaperProps={{
           sx: {
-            bgcolor: 'background.paper',
-            border: '1px solid #e0e0e0',
-            borderRadius: '0px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+            bgcolor: COLORS.background.paper,
+            border: `1px solid ${COLORS.grey[200]}`,
+            borderRadius: `${SIZES.borderRadius.medium}px`,
+            boxShadow: SIZES.shadow.md,
             m: 1
           }
         }}
@@ -102,10 +113,10 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
         }}
       >
         <DialogTitle sx={{ 
-          color: 'text.primary', 
+          color: COLORS.text.primary, 
           fontSize: '1.1rem', 
           fontWeight: 600,
-          borderBottom: '1px solid #e0e0e0',
+          borderBottom: `1px solid ${COLORS.grey[200]}`,
           px: 2,
           py: 1.5
         }}>
@@ -132,6 +143,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
               onKeyPress={handleKeyPress}
               placeholder="application name"
               variant="outlined"
+              disabled={creating}
               InputProps={{
                 placeholder: "application name"
               }}
@@ -141,26 +153,26 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
               }}
               sx={{ 
                 '& .MuiOutlinedInput-root': {
-                  borderRadius: '0px',
+                  borderRadius: `${SIZES.borderRadius.medium}px`,
                   '& fieldset': {
-                    borderColor: '#d0d0d0',
+                    borderColor: COLORS.grey[300],
                   },
                   '&:hover fieldset': {
-                    borderColor: '#b0b0b0',
+                    borderColor: COLORS.grey[400],
                   },
                   '&.Mui-focused fieldset': {
-                    borderColor: '#1976d2',
+                    borderColor: COLORS.primary.main,
                     borderWidth: 2
                   }
                 },
                 '& .MuiInputLabel-root': {
-                  color: 'text.secondary',
+                  color: COLORS.text.secondary,
                   transform: 'translate(14px, 12px) scale(1)',
                   '&.MuiInputLabel-shrink': {
                     transform: 'translate(14px, -9px) scale(0.75)',
                   },
                   '&.Mui-focused': {
-                    color: '#1976d2'
+                    color: COLORS.primary.main
                   }
                 },
                 '& .MuiOutlinedInput-input': {
@@ -180,32 +192,33 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
                 onKeyPress={handleKeyPress}
                 placeholder="/configs/app/"
                 variant="outlined"
+                disabled={creating}
                 inputProps={{
                   autoComplete: 'off',
                   tabIndex: 0,
                 }}
                 sx={{ 
                   '& .MuiOutlinedInput-root': {
-                    borderRadius: '0px',
+                    borderRadius: `${SIZES.borderRadius.medium}px`,
                     '& fieldset': {
-                      borderColor: '#d0d0d0',
+                      borderColor: COLORS.grey[300],
                     },
                     '&:hover fieldset': {
-                      borderColor: '#b0b0b0',
+                      borderColor: COLORS.grey[400],
                     },
                     '&.Mui-focused fieldset': {
-                      borderColor: '#1976d2',
+                      borderColor: COLORS.primary.main,
                       borderWidth: 2
                     }
                   },
                   '& .MuiInputLabel-root': {
-                    color: 'text.secondary',
+                    color: COLORS.text.secondary,
                     transform: 'translate(14px, 12px) scale(1)',
                     '&.MuiInputLabel-shrink': {
                       transform: 'translate(14px, -9px) scale(0.75)',
                     },
                     '&.Mui-focused': {
-                      color: '#1976d2'
+                      color: COLORS.primary.main
                     }
                   },
                   '& .MuiOutlinedInput-input': {
@@ -213,7 +226,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
                   }
                 }}
               />
-              <Typography variant="body2" sx={{ mt: 0.5, ml: '14px', color: 'text.secondary', fontSize: '0.75rem' }}>
+              <Typography variant="body2" sx={{ mt: 0.5, ml: '14px', color: COLORS.text.secondary, fontSize: '0.75rem' }}>
                 Note: Path should always start and end with '/'
               </Typography>
             </Box>
@@ -223,17 +236,31 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
         <DialogActions sx={{ 
           px: 2, 
           py: 1.5, 
-          borderTop: '1px solid #e0e0e0',
+          borderTop: `1px solid ${COLORS.grey[200]}`,
           gap: 1
         }}>
           <Button 
             onClick={handleDialogClose}
+            disabled={creating}
             sx={{ 
               px: 2,
               py: 1,
-              color: 'text.secondary',
+              color: COLORS.text.secondary,
+              bgcolor: 'transparent',
+              border: `1px solid ${COLORS.grey[300]}`,
+              borderRadius: `${SIZES.borderRadius.medium}px`,
+              fontSize: '0.9rem',
+              fontWeight: 500,
+              transition: 'all 0.2s ease',
               '&:hover': {
-                backgroundColor: '#f5f5f5'
+                bgcolor: COLORS.grey[50],
+                borderColor: COLORS.grey[400],
+                color: COLORS.text.primary,
+              },
+              '&:disabled': {
+                color: COLORS.grey[400],
+                borderColor: COLORS.grey[200],
+                bgcolor: 'transparent',
               }
             }}
           >
@@ -242,25 +269,43 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
           <Button 
             onClick={handleCreate} 
             variant="contained"
-            disabled={!fileName.trim() || !path.trim()}
+            disabled={creating || !fileName.trim() || !path.trim()}
             sx={{ 
-              ...BUTTON_STYLES.primary,
               px: 2,
               py: 1,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              minWidth: '120px',
+              bgcolor: COLORS.primary.main,
+              color: COLORS.text.white,
+              borderRadius: `${SIZES.borderRadius.medium}px`,
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              boxShadow: SIZES.shadow.card,
+              transition: 'all 0.2s ease',
               '&:hover': {
-                ...BUTTON_STYLES.primary['&:hover'],
-                boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                bgcolor: COLORS.primary.dark,
+                boxShadow: SIZES.shadow.elevated,
                 transform: 'translateY(-1px)',
               },
+              '&:active': {
+                transform: 'translateY(0)',
+                boxShadow: SIZES.shadow.card,
+              },
               '&:disabled': {
-                bgcolor: '#d0d0d0',
-                color: '#a0a0a0',
+                bgcolor: COLORS.grey[300],
+                color: COLORS.grey[500],
                 transform: 'none',
+                boxShadow: 'none',
               }
             }}
           >
-            Create
+            {creating ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <InlineSpinner size={16} color={COLORS.text.white} />
+                Creating...
+              </Box>
+            ) : (
+              'Create'
+            )}
           </Button>
         </DialogActions>
       </Dialog>

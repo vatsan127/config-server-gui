@@ -562,10 +562,14 @@ const FilesPage = () => {
         <Box sx={{ 
           bgcolor: COLORS.background.paper,
           border: `1px solid ${COLORS.grey[200]}`,
-          borderRadius: `${SIZES.borderRadius.medium}px`,
-          boxShadow: SIZES.shadow.sm,
+          borderRadius: `${SIZES.borderRadius.large}px`,
+          boxShadow: SIZES.shadow.card,
           overflow: 'hidden',
-          minHeight: filteredFiles.length === 0 ? 'auto' : 'initial'
+          minHeight: filteredFiles.length === 0 ? 'auto' : 'initial',
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          '&:hover': {
+            boxShadow: SIZES.shadow.elevated,
+          }
         }}>
           {filteredFiles.length === 0 ? (
             <Box sx={{ 
@@ -595,21 +599,32 @@ const FilesPage = () => {
                     '&:hover': {
                       bgcolor: COLORS.hover.card,
                       transform: 'translateX(4px)',
+                      borderColor: COLORS.primary.light,
                       '& .action-buttons': {
                         opacity: 1,
                         visibility: 'visible'
+                      },
+                      '& .MuiListItemIcon-root': {
+                        transform: 'scale(1.1)',
+                      },
+                      '& .MuiListItemText-primary': {
+                        color: COLORS.text.primary,
+                        fontWeight: 500,
                       }
                     },
-                    py: 1.5,
-                    px: 2,
+                    py: 2,
+                    px: 3,
                     cursor: 'pointer'
                   }}
                 >
-                  <ListItemIcon sx={{ minWidth: 36 }}>
+                  <ListItemIcon sx={{ 
+                    minWidth: 40,
+                    transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+                  }}>
                     {item.endsWith('/') ? (
                       <FolderIcon sx={{ 
                         color: COLORS.primary.main,
-                        fontSize: 20
+                        fontSize: 22
                       }} />
                     ) : (
                       getFileIcon(item)
@@ -620,8 +635,10 @@ const FilesPage = () => {
                     primaryTypographyProps={{
                       sx: {
                         color: item.endsWith('/') ? COLORS.primary.main : COLORS.text.primary,
-                        fontWeight: item.endsWith('/') ? 500 : 400,
-                        fontSize: '0.85rem',
+                        fontWeight: item.endsWith('/') ? 600 : 400,
+                        fontSize: '0.9rem',
+                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                        lineHeight: 1.4
                       }
                     }}
                   />
@@ -643,9 +660,11 @@ const FilesPage = () => {
                         onClick={(e) => handleDownloadFile(item, e)}
                         sx={{
                           color: COLORS.text.secondary,
+                          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                           '&:hover': {
                             color: COLORS.success.main,
-                            bgcolor: COLORS.grey[100]
+                            bgcolor: COLORS.grey[100],
+                            transform: 'scale(1.1)',
                           },
                           p: 0.5
                         }}
@@ -657,9 +676,11 @@ const FilesPage = () => {
                         onClick={(e) => handleHistoryClick(item, e)}
                         sx={{
                           color: COLORS.text.secondary,
+                          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                           '&:hover': {
                             color: COLORS.primary.main,
-                            bgcolor: COLORS.grey[100]
+                            bgcolor: COLORS.grey[100],
+                            transform: 'scale(1.1)',
                           },
                           p: 0.5
                         }}
@@ -671,9 +692,11 @@ const FilesPage = () => {
                         onClick={(e) => handleDeleteClick(item, e)}
                         sx={{
                           color: COLORS.text.secondary,
+                          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                           '&:hover': {
                             color: COLORS.error.main,
-                            bgcolor: COLORS.grey[100]
+                            bgcolor: COLORS.grey[100],
+                            transform: 'scale(1.1)',
                           },
                           p: 0.5
                         }}
