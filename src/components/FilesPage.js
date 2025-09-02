@@ -30,7 +30,9 @@ import {
   DataObject as JsonIcon,
   Description as TextIcon,
   Image as ImageIcon,
-  History as HistoryIcon
+  History as HistoryIcon,
+  Close as CloseIcon,
+  ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { apiService, setNotificationHandler } from '../services/api';
@@ -40,6 +42,7 @@ import EmptyState from './common/EmptyState';
 import CreateFileButton from './common/CreateFileButton';
 import { FileListSkeleton } from './common/SkeletonLoader';
 import { useSearchShortcut } from '../hooks/useKeyboardShortcut';
+import DiffViewer from './common/DiffViewer';
 
 const getFileIcon = (fileName) => {
   const extension = fileName.split('.').pop().toLowerCase();
@@ -82,6 +85,9 @@ const FilesPage = () => {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedCommitId, setSelectedCommitId] = useState(null);
+  const [changesData, setChangesData] = useState(null);
+  const [changesLoading, setChangesLoading] = useState(false);
+  const [showChanges, setShowChanges] = useState(false);
 
   // Set up notification handler with ref to avoid dependency issues
   const notificationRef = useRef();
@@ -228,14 +234,28 @@ const FilesPage = () => {
     setHistoryData(null);
     setSelectedFile(null);
     setSelectedCommitId(null);
+    setChangesData(null);
+    setShowChanges(false);
   };
 
-  const handleCommitSelect = (commitId) => {
+  const handleCommitSelect = async (commitId) => {
     setSelectedCommitId(commitId);
+    setShowChanges(true);
+    setChangesLoading(true);
+    setChangesData(null);
     console.log('Selected commit ID:', commitId, 'for file:', selectedFile);
-    // Store commit ID for future API usage
-    // This can be used by other components or API calls that need the specific commit
+    
+    try {
+      const changes = await apiService.getCommitChanges(namespace, currentPath, selectedFile, commitId);
+      setChangesData(changes);
+    } catch (error) {
+      console.error('Error fetching commit changes:', error);
+      setChangesData(null);
+    } finally {
+      setChangesLoading(false);
+    }
   };
+
 
   if (loading) {
     return (
@@ -558,11 +578,53 @@ const FilesPage = () => {
         >
           <DialogTitle sx={{ 
             borderBottom: `1px solid ${COLORS.grey[200]}`,
-            pb: 2
+            pb: 2,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
           }}>
             <Typography variant="h6" sx={{ color: COLORS.text.primary, fontWeight: 600 }}>
-              History: {selectedFile}
+              {showChanges && changesData ? 
+                changesData.message || 'No commit message' : 
+                `History: ${selectedFile}`
+              }
             </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {showChanges && (
+                <IconButton
+                  onClick={() => setShowChanges(false)}
+                  size="small"
+                  sx={{
+                    color: COLORS.text.secondary,
+                    '&:hover': {
+                      color: COLORS.text.primary,
+                      bgcolor: COLORS.grey[100]
+                    },
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5
+                  }}
+                >
+                  <ArrowBackIcon fontSize="small" />
+                  <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
+                    Back
+                  </Typography>
+                </IconButton>
+              )}
+              <IconButton
+                onClick={handleHistoryClose}
+                size="small"
+                sx={{
+                  color: COLORS.text.secondary,
+                  '&:hover': {
+                    color: COLORS.text.primary,
+                    bgcolor: COLORS.grey[100]
+                  }
+                }}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </Box>
           </DialogTitle>
           
           <DialogContent sx={{ p: 0 }}>
@@ -574,6 +636,24 @@ const FilesPage = () => {
                 py: 4 
               }}>
                 <CircularProgress size={40} />
+              </Box>
+            ) : showChanges ? (
+              <Box sx={{ p: 3 }}>
+                {changesData && (
+                  <Box sx={{ mb: 2, p: 2, bgcolor: COLORS.grey[50], borderRadius: 1 }}>
+                    <Typography variant="caption" sx={{ color: COLORS.text.secondary }}>
+                      {changesData.author} • {changesData.commitTime ? new Date(changesData.commitTime).toLocaleString() : 'Unknown time'}
+                    </Typography>
+                  </Box>
+                )}
+                
+                {changesLoading ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+                    <CircularProgress size={30} />
+                  </Box>
+                ) : (
+                  <DiffViewer diffText={changesData?.changes} />
+                )}
               </Box>
             ) : historyData && historyData.commits && historyData.commits.length > 0 ? (
               <List sx={{ py: 0 }}>
@@ -604,7 +684,7 @@ const FilesPage = () => {
                         lineHeight: 1.4
                       }}
                     >
-                      {commit.message || 'No commit message'}
+                      {commit.commitMessage || commit.message || 'No commit message'}
                     </Typography>
                     <Typography 
                       variant="body2" 
@@ -636,32 +716,6 @@ const FilesPage = () => {
             )}
           </DialogContent>
           
-          <DialogActions sx={{ 
-            borderTop: `1px solid ${COLORS.grey[200]}`,
-            pt: 2,
-            px: 3,
-            pb: 2,
-            justifyContent: 'space-between'
-          }}>
-            {selectedCommitId && (
-              <Typography variant="body2" sx={{ color: COLORS.text.secondary }}>
-                Selected: {selectedCommitId.substring(0, 8)}...
-              </Typography>
-            )}
-            <Box sx={{ marginLeft: 'auto' }}>
-              <Button 
-                onClick={handleHistoryClose}
-                sx={{ 
-                  color: COLORS.text.secondary,
-                  '&:hover': {
-                    bgcolor: COLORS.grey[100]
-                  }
-                }}
-              >
-                Close
-              </Button>
-            </Box>
-          </DialogActions>
         </Dialog>
     </Box>
   );

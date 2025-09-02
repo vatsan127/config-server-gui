@@ -535,5 +535,71 @@ export const apiService = {
       // For HTTP errors, just re-throw without additional notifications
       throw error;
     }
+  },
+
+  async getCommitChanges(namespace, path, fileName, commitId, email = 'user@example.com') {
+    try {
+      const url = `${API_CONFIG.BASE_URL}/config/changes`;
+      console.log('Attempting to fetch commit changes for:', fileName, 'commitId:', commitId);
+      
+      const response = await makeApiRequest(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          action: 'changes',
+          appName: fileName,
+          namespace: namespace,
+          path: path,
+          email: email,
+          commitId: commitId
+        })
+      });
+      
+      await handleApiResponse(response);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Successfully fetched commit changes:', data);
+      
+      return {
+        commitId: data.commitId,
+        message: data.commitMessage,
+        author: data.author,
+        commitTime: data.commitTime,
+        changes: data.changes || ''
+      };
+      
+    } catch (error) {
+      console.error('Error fetching commit changes:', error);
+      
+      // Only show connection errors, not HTTP errors (which are already handled by handleApiResponse)
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'fetch commit changes');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+            key: `connection-error-${Date.now()}`
+          });
+        }
+        
+        throw new Error(friendlyMessage);
+      }
+      
+      // For HTTP errors, just re-throw without additional notifications
+      throw error;
+    }
   }
 };
