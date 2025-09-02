@@ -18,7 +18,6 @@ import {
   Button
 } from '@mui/material';
 import {
-  Download as DownloadIcon,
   Refresh as RefreshIcon,
   ContentCopy as ContentCopyIcon,
   Edit as EditIcon,
@@ -168,21 +167,6 @@ const FileViewPage = () => {
 
   const hasChanges = content !== originalContent;
 
-  const handleDownload = () => {
-    try {
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Failed to download file:', error);
-    }
-  };
 
   const pathSegments = normalizedPath === '/' ? [] : normalizedPath.split('/').filter(segment => segment.length > 0);
 
@@ -269,7 +253,7 @@ const FileViewPage = () => {
                 alignItems: 'center',
               }}
             >
-              {namespace}
+              {namespace || ''}
             </Link>
             {pathSegments.map((segment, index) => (
               <Link
@@ -325,11 +309,6 @@ const FileViewPage = () => {
                 <Tooltip title="Copy">
                   <IconButton onClick={handleCopy} size="small" sx={{ color: COLORS.text.secondary, p: 0.5 }}>
                     <ContentCopyIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Download">
-                  <IconButton onClick={handleDownload} size="small" sx={{ color: COLORS.text.secondary, p: 0.5 }}>
-                    <DownloadIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
               </>

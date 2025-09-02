@@ -32,7 +32,8 @@ import {
   Image as ImageIcon,
   History as HistoryIcon,
   Close as CloseIcon,
-  ArrowBack as ArrowBackIcon
+  ArrowBack as ArrowBackIcon,
+  Download as DownloadIcon
 } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { apiService, setNotificationHandler } from '../services/api';
@@ -256,6 +257,43 @@ const FilesPage = () => {
     }
   };
 
+  const handleDownloadFile = async (fileName, event) => {
+    event.stopPropagation(); // Prevent file click when download button is clicked
+    
+    try {
+      console.log('Downloading file:', fileName, 'from path:', currentPath);
+      const fileData = await apiService.getFileContent(namespace, currentPath, fileName);
+      
+      // Create blob with YAML content
+      const blob = new Blob([fileData.content], { type: 'application/x-yaml' });
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Set filename with .yml extension if not already present
+      const downloadFileName = fileName.endsWith('.yml') || fileName.endsWith('.yaml') 
+        ? fileName 
+        : `${fileName}.yml`;
+      link.download = downloadFileName;
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      console.log('File downloaded successfully:', downloadFileName);
+      
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      // Error notification is already handled by the API service
+    }
+  };
+
 
   if (loading) {
     return (
@@ -283,7 +321,7 @@ const FilesPage = () => {
               fontWeight: 700,
               fontSize: '1.5rem',
             }}>
-              {namespace}
+              {namespace || ''}
             </Typography>
           </Breadcrumbs>
         </Box>
@@ -311,7 +349,7 @@ const FilesPage = () => {
               fontWeight: 700,
               fontSize: '1.5rem',
             }}>
-              {namespace}
+              {namespace || ''}
             </Typography>
           </Breadcrumbs>
         </Box>
@@ -366,7 +404,7 @@ const FilesPage = () => {
                   alignItems: 'center',
                 }}
               >
-                {namespace}
+                {namespace || ''}
               </Link>
               {pathSegments.map((segment, index) => (
                 <Link
@@ -540,7 +578,21 @@ const FilesPage = () => {
                     }}
                   />
                   {!item.endsWith('/') && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', ml: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', ml: 1, gap: 0.5 }}>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => handleDownloadFile(item, e)}
+                        sx={{
+                          color: COLORS.text.secondary,
+                          '&:hover': {
+                            color: COLORS.success.main,
+                            bgcolor: COLORS.grey[100]
+                          },
+                          p: 0.5
+                        }}
+                      >
+                        <DownloadIcon fontSize="small" />
+                      </IconButton>
                       <IconButton
                         size="small"
                         onClick={(e) => handleHistoryClick(item, e)}
@@ -573,6 +625,7 @@ const FilesPage = () => {
           PaperProps={{
             sx: {
               borderRadius: `${SIZES.borderRadius.medium}px`,
+              mt: -8  // Move dialog up
             }
           }}
         >
@@ -586,7 +639,7 @@ const FilesPage = () => {
             <Typography variant="h6" sx={{ color: COLORS.text.primary, fontWeight: 600 }}>
               {showChanges && changesData ? 
                 changesData.message || 'No commit message' : 
-                `History: ${selectedFile}`
+                `History: ${selectedFile || ''}`
               }
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
