@@ -8,7 +8,6 @@ import {
   ListItemIcon,
   ListItemText,
   Alert,
-  CircularProgress,
   Button,
   Breadcrumbs,
   Link,
@@ -416,9 +415,35 @@ const FilesPage = () => {
       flexDirection: 'column',
       p: SIZES.spacing.xs,
       bgcolor: 'background.default',
-      minHeight: '100vh'
+      minHeight: '100vh',
+      animation: 'fadeInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both',
+      '@keyframes fadeInUp': {
+        '0%': {
+          opacity: 0,
+          transform: 'translateY(20px)'
+        },
+        '100%': {
+          opacity: 1,
+          transform: 'translateY(0)'
+        }
+      }
     }}>
-        <Box mb={0.5}>
+        <Box 
+          mb={0.5}
+          sx={{
+            animation: 'slideInFromTop 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+            '@keyframes slideInFromTop': {
+              '0%': {
+                opacity: 0,
+                transform: 'translateY(-15px)'
+              },
+              '100%': {
+                opacity: 1,
+                transform: 'translateY(0)'
+              }
+            }
+          }}
+        >
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
             <Breadcrumbs
               aria-label="breadcrumb"
@@ -485,7 +510,24 @@ const FilesPage = () => {
                 </Link>
               ))}
             </Breadcrumbs>
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+            <Box 
+              sx={{ 
+                display: 'flex', 
+                gap: 2, 
+                alignItems: 'center',
+                animation: 'slideInFromRight 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.25s both',
+                '@keyframes slideInFromRight': {
+                  '0%': {
+                    opacity: 0,
+                    transform: 'translateX(20px)'
+                  },
+                  '100%': {
+                    opacity: 1,
+                    transform: 'translateX(0)'
+                  }
+                }
+              }}
+            >
               <TextField
                 inputRef={searchInputRef}
                 value={searchQuery}
@@ -494,15 +536,26 @@ const FilesPage = () => {
                 size="small"
                 sx={{ 
                   minWidth: 200,
+                  transform: 'scale(1)',
+                  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  '&:focus-within': {
+                    transform: 'scale(1.02)',
+                  },
                   '& .MuiOutlinedInput-root': {
                     borderRadius: `${SIZES.borderRadius.medium}px`,
                     bgcolor: COLORS.background.paper,
+                    transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    '& fieldset': {
+                      transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    },
                     '&:hover fieldset': {
                       borderColor: COLORS.grey[400],
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
                     },
                     '&.Mui-focused fieldset': {
                       borderColor: COLORS.primary.main,
                       borderWidth: 2,
+                      boxShadow: `0 0 0 3px ${COLORS.primary.main}20`,
                     }
                   }
                 }}
@@ -532,10 +585,20 @@ const FilesPage = () => {
                   ),
                 }}
               />
-              <CreateFileButton
-                onCreateConfigFile={handleCreateConfigFile}
-                currentPath={currentPath}
-              />
+              <Box
+                sx={{
+                  transform: 'scale(1)',
+                  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  '&:hover': {
+                    transform: 'scale(1.05)',
+                  }
+                }}
+              >
+                <CreateFileButton
+                  onCreateConfigFile={handleCreateConfigFile}
+                  currentPath={currentPath}
+                />
+              </Box>
             </Box>
           </Box>
 
@@ -566,18 +629,34 @@ const FilesPage = () => {
           </Box>
         )}
 
-        <Box sx={{ 
-          bgcolor: COLORS.background.paper,
-          border: `1px solid ${COLORS.grey[200]}`,
-          borderRadius: `${SIZES.borderRadius.large}px`,
-          boxShadow: SIZES.shadow.card,
-          overflow: 'hidden',
-          minHeight: filteredFiles.length === 0 ? 'auto' : 'initial',
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-          '&:hover': {
-            boxShadow: SIZES.shadow.elevated,
-          }
-        }}>
+        <Box 
+          sx={{ 
+            bgcolor: COLORS.background.paper,
+            border: `1px solid ${COLORS.grey[200]}`,
+            borderRadius: `${SIZES.borderRadius.large}px`,
+            boxShadow: SIZES.shadow.card,
+            overflow: 'hidden',
+            minHeight: filteredFiles.length === 0 ? 'auto' : 'initial',
+            transform: 'translateY(0) scale(1)',
+            opacity: 1,
+            transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            animation: 'slideUpFade 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both',
+            '@keyframes slideUpFade': {
+              '0%': {
+                opacity: 0,
+                transform: 'translateY(30px) scale(0.98)'
+              },
+              '100%': {
+                opacity: 1,
+                transform: 'translateY(0) scale(1)'
+              }
+            },
+            '&:hover': {
+              boxShadow: SIZES.shadow.elevated,
+              transform: 'translateY(-2px) scale(1.01)',
+            }
+          }}
+        >
           {filteredFiles.length === 0 ? (
             <Box sx={{ 
               py: SIZES.spacing.md, 
@@ -602,22 +681,42 @@ const FilesPage = () => {
                   onClick={() => handleItemClick(item)}
                   sx={{
                     borderBottom: index < filteredFiles.length - 1 ? `1px solid ${COLORS.grey[100]}` : 'none',
-                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transform: 'translateX(0) scale(1)',
+                    opacity: 1,
+                    transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    animation: `fadeSlideIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.4 + index * 0.03}s both`,
+                    '@keyframes fadeSlideIn': {
+                      '0%': {
+                        opacity: 0,
+                        transform: 'translateX(-20px) scale(0.98)'
+                      },
+                      '100%': {
+                        opacity: 1,
+                        transform: 'translateX(0) scale(1)'
+                      }
+                    },
                     '&:hover': {
                       bgcolor: COLORS.hover.card,
-                      transform: 'translateX(4px)',
+                      transform: 'translateX(8px) scale(1.01)',
                       borderColor: COLORS.primary.light,
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
                       '& .action-buttons': {
                         opacity: 1,
-                        visibility: 'visible'
+                        visibility: 'visible',
+                        transform: 'translateX(0)',
                       },
                       '& .MuiListItemIcon-root': {
-                        transform: 'scale(1.1)',
+                        transform: 'scale(1.15) rotate(5deg)',
                       },
                       '& .MuiListItemText-primary': {
                         color: COLORS.text.primary,
                         fontWeight: 500,
+                        transform: 'translateX(4px)',
                       }
+                    },
+                    '&:active': {
+                      transform: 'translateX(4px) scale(1.005)',
+                      transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                     },
                     py: 2,
                     px: 3,
@@ -659,7 +758,8 @@ const FilesPage = () => {
                         gap: 0.5,
                         opacity: 0,
                         visibility: 'hidden',
-                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+                        transform: 'translateX(10px) scale(0.9)',
+                        transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                       }}
                     >
                       <IconButton
