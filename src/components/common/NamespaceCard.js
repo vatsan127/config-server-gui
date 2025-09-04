@@ -64,13 +64,16 @@ const NamespaceCard = ({ namespace, onClick, fileCount = 0, lastModified = null 
         position: 'relative',
         overflow: 'hidden',
         '&:hover': {
-          borderColor: COLORS.primary.main,
-          boxShadow: SIZES.shadow.hover,
+          borderColor: envType.color,
+          boxShadow: `0 6px 20px rgba(${envType.color === COLORS.error.border ? '239, 68, 68' : 
+                                        envType.color === COLORS.warning.border ? '245, 158, 11' : 
+                                        envType.color === COLORS.accent.blue ? '59, 130, 246' : 
+                                        envType.color === COLORS.accent.purple ? '147, 51, 234' : '107, 114, 128'}, 0.15)`,
           transform: 'translateY(-4px) scale(1.02)',
           bgcolor: COLORS.grey[25],
           '& .namespace-icon': {
             transform: 'scale(1.1)',
-            bgcolor: COLORS.primary.dark,
+            bgcolor: envType.color,
           },
           '& .quick-actions': {
             opacity: 1,
@@ -117,7 +120,7 @@ const NamespaceCard = ({ namespace, onClick, fileCount = 0, lastModified = null 
             sx={{
               width: 48,
               height: 48,
-              bgcolor: COLORS.primary.main,
+              bgcolor: envType.color,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -207,9 +210,17 @@ const NamespaceCard = ({ namespace, onClick, fileCount = 0, lastModified = null 
             sx={{
               bgcolor: COLORS.grey[100],
               color: COLORS.text.secondary,
+              border: `1px solid transparent`,
+              transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               '&:hover': {
-                bgcolor: COLORS.primary.main,
+                bgcolor: envType.color,
                 color: COLORS.text.white,
+                borderColor: envType.color,
+                boxShadow: `0 2px 8px rgba(${envType.color === COLORS.error.border ? '239, 68, 68' : 
+                                              envType.color === COLORS.warning.border ? '245, 158, 11' : 
+                                              envType.color === COLORS.accent.blue ? '59, 130, 246' : 
+                                              envType.color === COLORS.accent.purple ? '147, 51, 234' : '107, 114, 128'}, 0.3)`,
+                transform: 'scale(1.05)',
               }
             }}
           >
@@ -225,9 +236,17 @@ const NamespaceCard = ({ namespace, onClick, fileCount = 0, lastModified = null 
             sx={{
               bgcolor: COLORS.grey[100],
               color: COLORS.text.secondary,
+              border: `1px solid transparent`,
+              transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               '&:hover': {
                 bgcolor: COLORS.grey[200],
                 color: COLORS.text.primary,
+                borderColor: envType.color,
+                boxShadow: `0 2px 6px rgba(${envType.color === COLORS.error.border ? '239, 68, 68' : 
+                                              envType.color === COLORS.warning.border ? '245, 158, 11' : 
+                                              envType.color === COLORS.accent.blue ? '59, 130, 246' : 
+                                              envType.color === COLORS.accent.purple ? '147, 51, 234' : '107, 114, 128'}, 0.2)`,
+                transform: 'scale(1.05)',
               }
             }}
           >
