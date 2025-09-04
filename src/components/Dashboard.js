@@ -30,6 +30,7 @@ import { UI_CONSTANTS } from '../constants';
 import { useNamespaces } from '../hooks/useNamespaces';
 import { useDialog } from '../hooks/useDialog';
 import { validateNamespace } from '../utils/validation';
+import { getNamespaceColor } from '../utils/colorUtils';
 import EmptyState from './common/EmptyState';
 import { InlineSpinner } from './common/ProgressIndicator';
 
@@ -227,10 +228,15 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                     {/* Folder Icon */}
                     <FolderIcon
                       sx={{
-                        color: COLORS.primary.main,
+                        color: getNamespaceColor(namespace),
                         fontSize: 48,
                         mb: 2,
-                        transition: 'color 0.2s ease'
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))',
+                        '&:hover': {
+                          transform: 'scale(1.1)',
+                          filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15))',
+                        }
                       }}
                     />
 
