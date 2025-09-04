@@ -417,7 +417,7 @@ const FilesPage = () => {
       flexDirection: 'column',
       p: SIZES.spacing.xs,
       bgcolor: 'background.default',
-      height: '100%',
+      height: '100vh',
       overflow: 'hidden',
       animation: 'fadeInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both',
       '@keyframes fadeInUp': {
@@ -652,8 +652,6 @@ const FilesPage = () => {
             boxShadow: SIZES.shadow.card,
             overflow: 'auto',
             flex: 1,
-            minHeight: 'calc(100vh - 160px)',
-            height: 'calc(100vh - 160px)',
             transform: 'translateY(0) scale(1)',
             opacity: 1,
             transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
