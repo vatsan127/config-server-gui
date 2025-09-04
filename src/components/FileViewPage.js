@@ -193,7 +193,46 @@ const FileViewPage = () => {
   if (error) {
     return (
       <Box sx={{ p: SIZES.spacing.md }}>
-        <Alert severity="error">{error}</Alert>
+        <Alert 
+          severity="error"
+          sx={{
+            borderRadius: `${SIZES.borderRadius.large}px`,
+            border: `1px solid ${COLORS.error.main}`,
+            bgcolor: alpha(COLORS.error.light, 0.8),
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 4px 20px rgba(239, 68, 68, 0.15)',
+            animation: 'errorAlertSlideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            '@keyframes errorAlertSlideIn': {
+              '0%': {
+                opacity: 0,
+                transform: 'translateX(-30px) scale(0.9)',
+              },
+              '100%': {
+                opacity: 1,
+                transform: 'translateX(0) scale(1)',
+              }
+            },
+            '& .MuiAlert-icon': {
+              animation: 'errorIconShake 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+              '@keyframes errorIconShake': {
+                '0%, 100%': {
+                  transform: 'translateX(0)'
+                },
+                '25%': {
+                  transform: 'translateX(-3px) rotate(-5deg)'
+                },
+                '75%': {
+                  transform: 'translateX(3px) rotate(5deg)'
+                }
+              }
+            },
+            '& .MuiAlert-message': {
+              fontWeight: 500
+            }
+          }}
+        >
+          {error}
+        </Alert>
       </Box>
     );
   }

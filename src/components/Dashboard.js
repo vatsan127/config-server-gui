@@ -175,7 +175,48 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
   if (error) {
     return (
       <Box sx={{ p: SIZES.spacing.xs }}>
-        <Alert severity="error">{error}</Alert>
+        <Alert 
+          severity="error"
+          sx={{
+            borderRadius: `${SIZES.borderRadius.large}px`,
+            border: `1px solid ${COLORS.error.main}`,
+            bgcolor: alpha(COLORS.error.light, 0.8),
+            backdropFilter: 'blur(10px)',
+            boxShadow: '0 4px 20px rgba(239, 68, 68, 0.15)',
+            animation: 'errorAlertBounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+            '@keyframes errorAlertBounceIn': {
+              '0%': {
+                opacity: 0,
+                transform: 'scale(0.3) translateY(-30px)',
+              },
+              '50%': {
+                transform: 'scale(1.05) translateY(5px)',
+              },
+              '100%': {
+                opacity: 1,
+                transform: 'scale(1) translateY(0)',
+              }
+            },
+            '& .MuiAlert-icon': {
+              animation: 'errorIconPulse 2s ease-in-out infinite 0.5s',
+              '@keyframes errorIconPulse': {
+                '0%, 100%': {
+                  transform: 'scale(1)',
+                  filter: 'drop-shadow(0 0 2px rgba(239, 68, 68, 0.3))'
+                },
+                '50%': {
+                  transform: 'scale(1.1)',
+                  filter: 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.6))'
+                }
+              }
+            },
+            '& .MuiAlert-message': {
+              fontWeight: 500
+            }
+          }}
+        >
+          {error}
+        </Alert>
       </Box>
     );
   }

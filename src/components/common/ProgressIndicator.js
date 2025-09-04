@@ -168,13 +168,68 @@ export const StatusIndicator = ({
       sx={{
         bgcolor: config.bgColor,
         border: `1px solid ${config.color}`,
-        borderRadius: `${SIZES.borderRadius.medium}px`,
+        borderRadius: `${SIZES.borderRadius.large}px`,
+        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.08)',
+        backdropFilter: 'blur(10px)',
+        position: 'relative',
+        overflow: 'hidden',
+        animation: 'statusAlertSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        '@keyframes statusAlertSlideIn': {
+          '0%': {
+            opacity: 0,
+            transform: 'translateY(-10px) scale(0.95)',
+          },
+          '100%': {
+            opacity: 1,
+            transform: 'translateY(0) scale(1)',
+          }
+        },
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '2px',
+          background: `linear-gradient(90deg, ${config.color}, transparent)`,
+          animation: status === 'syncing' ? 'statusPulse 2s ease-in-out infinite' : 'none',
+          '@keyframes statusPulse': {
+            '0%, 100%': {
+              opacity: 0.5,
+              transform: 'scaleX(1)'
+            },
+            '50%': {
+              opacity: 1,
+              transform: 'scaleX(1.1)'
+            }
+          }
+        },
         '& .MuiAlert-message': {
           color: config.color,
           fontWeight: 500,
+          transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         },
         '& .MuiAlert-icon': {
           color: config.color,
+          animation: status === 'syncing' ? 'none' : 'iconPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.1s both',
+          '@keyframes iconPop': {
+            '0%': {
+              transform: 'scale(0) rotate(-180deg)',
+              opacity: 0
+            },
+            '100%': {
+              transform: 'scale(1) rotate(0deg)',
+              opacity: 1
+            }
+          }
+        },
+        '&:hover': {
+          transform: 'translateY(-2px) scale(1.02)',
+          boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)',
+          transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          '& .MuiAlert-message': {
+            transform: 'translateX(2px)'
+          }
         }
       }}
     >

@@ -11,31 +11,46 @@ const NOTIFICATION_CONFIG = {
     horizontal: 'right',
   },
   autoHideDuration: 5000,
-  dense: true,
+  dense: false,
   preventDuplicate: true,
   persist: false,
   hideIconVariant: false,
   iconVariant: {
     success: '✅',
     error: '❌',
-    warning: '❌',
-    info: '✅',
+    warning: '⚠️',
+    info: 'ℹ️',
   },
 };
 
-const createSnackbarSx = (color) => ({
-  backgroundColor: color,
+const createSnackbarSx = (color, bgColor) => ({
+  backgroundColor: bgColor || color,
   color: '#fff',
-  borderRadius: 0,
-  border: 'none',
+  borderRadius: '12px',
+  border: `1px solid ${color}`,
   fontWeight: 500,
+  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+  backdropFilter: 'blur(10px)',
+  '&.SnackbarContent-root': {
+    animation: 'notificationSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    '@keyframes notificationSlideIn': {
+      '0%': {
+        opacity: 0,
+        transform: 'translateX(100%) scale(0.8)',
+      },
+      '100%': {
+        opacity: 1,
+        transform: 'translateX(0) scale(1)',
+      }
+    }
+  }
 });
 
 const NOTIFICATION_STYLES = {
-  '&.notistack-MuiContent-success': createSnackbarSx(COLORS.alerts.success),
-  '&.notistack-MuiContent-error': createSnackbarSx(COLORS.alerts.error),
-  '&.notistack-MuiContent-warning': createSnackbarSx(COLORS.alerts.error),
-  '&.notistack-MuiContent-info': createSnackbarSx(COLORS.alerts.success),
+  '&.notistack-MuiContent-success': createSnackbarSx(COLORS.alerts.success, 'rgba(16, 185, 129, 0.95)'),
+  '&.notistack-MuiContent-error': createSnackbarSx(COLORS.alerts.error, 'rgba(239, 68, 68, 0.95)'),
+  '&.notistack-MuiContent-warning': createSnackbarSx(COLORS.alerts.warning, 'rgba(245, 158, 11, 0.95)'),
+  '&.notistack-MuiContent-info': createSnackbarSx(COLORS.alerts.info, 'rgba(59, 130, 246, 0.95)'),
 };
 
 const CloseButton = ({ snackbarId }) => (
@@ -43,7 +58,20 @@ const CloseButton = ({ snackbarId }) => (
     onClick={() => closeSnackbar(snackbarId)}
     sx={{ 
       color: 'rgba(255, 255, 255, 0.7)',
-      '&:hover': { color: 'rgba(255, 255, 255, 0.9)' }
+      transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+      borderRadius: '8px',
+      width: 32,
+      height: 32,
+      '&:hover': { 
+        color: 'rgba(255, 255, 255, 1)',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        transform: 'scale(1.1) rotate(90deg)',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+      },
+      '&:active': {
+        transform: 'scale(0.95) rotate(90deg)',
+        transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)'
+      }
     }}
   >
     <CloseIcon fontSize="small" />
