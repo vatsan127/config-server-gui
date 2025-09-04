@@ -4,11 +4,8 @@ import {
   Typography,
   List,
   ListItem,
-  Button,
   IconButton,
-  Divider,
-  CircularProgress,
-  alpha
+  CircularProgress
 } from '@mui/material';
 import {
   Close as CloseIcon,
@@ -31,7 +28,6 @@ const HistoryPanel = ({
   onCommitSelect, 
   selectedCommitId 
 }) => {
-  if (!isOpen) return null;
 
   return (
     <Box
@@ -47,7 +43,9 @@ const HistoryPanel = ({
         boxShadow: SIZES.shadow.xl,
         zIndex: 1200,
         transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
-        transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        opacity: isOpen ? 1 : 0,
+        visibility: isOpen ? 'visible' : 'hidden',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden'
@@ -61,7 +59,11 @@ const HistoryPanel = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          bgcolor: COLORS.grey[50]
+          bgcolor: COLORS.grey[50],
+          transform: isOpen ? 'translateY(0)' : 'translateY(-20px)',
+          opacity: isOpen ? 1 : 0,
+          transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transitionDelay: isOpen ? '0.1s' : '0s'
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1, minWidth: 0 }}>
@@ -154,7 +156,16 @@ const HistoryPanel = ({
       </Box>
 
       {/* Content */}
-      <Box sx={{ flex: 1, overflow: 'hidden' }}>
+      <Box 
+        sx={{ 
+          flex: 1, 
+          overflow: 'hidden',
+          transform: isOpen ? 'translateY(0)' : 'translateY(20px)',
+          opacity: isOpen ? 1 : 0,
+          transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transitionDelay: isOpen ? '0.2s' : '0s'
+        }}
+      >
         {historyLoading ? (
           <Box
             sx={{
@@ -163,7 +174,11 @@ const HistoryPanel = ({
               justifyContent: 'center',
               alignItems: 'center',
               height: '100%',
-              gap: 2
+              gap: 2,
+              transform: isOpen ? 'scale(1)' : 'scale(0.8)',
+              opacity: isOpen ? 1 : 0,
+              transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              transitionDelay: isOpen ? '0.2s' : '0s'
             }}
           >
             <CircularProgress size={40} sx={{ color: COLORS.primary.main }} />
@@ -181,7 +196,10 @@ const HistoryPanel = ({
                   justifyContent: 'center',
                   alignItems: 'center',
                   height: '100%',
-                  gap: 2
+                  gap: 2,
+                  transform: showChanges ? 'scale(1)' : 'scale(0.8)',
+                  opacity: showChanges ? 1 : 0,
+                  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                 }}
               >
                 <CircularProgress size={32} sx={{ color: COLORS.primary.main }} />
@@ -190,7 +208,16 @@ const HistoryPanel = ({
                 </Typography>
               </Box>
             ) : (
-              <DiffViewer diffText={changesData?.changes} />
+              <Box
+                sx={{
+                  transform: showChanges ? 'translateY(0)' : 'translateY(10px)',
+                  opacity: showChanges ? 1 : 0,
+                  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  transitionDelay: showChanges ? '0.1s' : '0s'
+                }}
+              >
+                <DiffViewer diffText={changesData?.changes} />
+              </Box>
             )}
           </Box>
         ) : historyData && historyData.commits && historyData.commits.length > 0 ? (
@@ -209,12 +236,16 @@ const HistoryPanel = ({
                   cursor: 'pointer',
                   bgcolor: selectedCommitId === commit.commitId ? 
                     COLORS.hover.button : 'transparent',
-                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transform: isOpen ? 'translateX(0)' : 'translateX(-20px)',
+                  opacity: isOpen ? 1 : 0,
+                  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  transitionDelay: isOpen ? `${0.3 + index * 0.05}s` : '0s',
                   '&:hover': {
                     bgcolor: selectedCommitId === commit.commitId ? 
                       COLORS.hover.button : 
                       COLORS.grey[50],
-                    transform: 'translateX(4px)'
+                    transform: isOpen ? 'translateX(4px)' : 'translateX(-20px)',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                   }
                 }}
               >
@@ -259,7 +290,11 @@ const HistoryPanel = ({
               alignItems: 'center',
               height: '100%',
               gap: 2,
-              px: 3
+              px: 3,
+              transform: isOpen ? 'translateY(0)' : 'translateY(20px)',
+              opacity: isOpen ? 1 : 0,
+              transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              transitionDelay: isOpen ? '0.3s' : '0s'
             }}
           >
             <HistoryIcon 
