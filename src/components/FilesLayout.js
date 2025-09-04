@@ -25,16 +25,16 @@ const FilesLayout = () => {
         bgcolor: 'background.default', 
         minHeight: '100vh',
         opacity: isVisible ? 1 : 0,
-        transform: isVisible ? 'translateX(0)' : 'translateX(20px)',
-        transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        transition: 'opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
       }}
     >
       <Box
         sx={{
-          transform: isVisible ? 'translateX(0)' : 'translateX(-50px)',
+          transform: isVisible ? 'translateX(0)' : 'translateX(-20px)',
           opacity: isVisible ? 1 : 0,
           transition: 'all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-          transitionDelay: '0.05s'
+          transitionDelay: '0.05s',
+          flexShrink: 0
         }}
       >
         <FilesSidebar namespace={namespace} />
@@ -45,10 +45,13 @@ const FilesLayout = () => {
         display: 'flex', 
         flexDirection: 'column',
         marginLeft: `${SIZES.sidebar.width}px`,
-        transform: isVisible ? 'translateX(0)' : 'translateX(30px)',
+        transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
         opacity: isVisible ? 1 : 0,
         transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-        transitionDelay: '0.1s'
+        transitionDelay: '0.1s',
+        width: `calc(100% - ${SIZES.sidebar.width}px)`,
+        maxWidth: `calc(100vw - ${SIZES.sidebar.width}px)`,
+        overflow: 'hidden'
       }}>
         <Routes>
           <Route path="files" element={<FilesPage />} />

@@ -84,7 +84,29 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
         variant="contained"
         startIcon={<AddIcon />}
         onClick={handleClick}
-        sx={BUTTON_STYLES.primary}
+        size="small"
+        sx={{
+          bgcolor: COLORS.primary.main,
+          color: COLORS.text.white,
+          borderRadius: `${SIZES.borderRadius.medium}px`,
+          fontWeight: 600,
+          textTransform: 'none',
+          fontSize: '0.875rem',
+          px: 2,
+          py: 1,
+          minWidth: 'auto',
+          whiteSpace: 'nowrap',
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          boxShadow: SIZES.shadow.sm,
+          '&:hover': {
+            bgcolor: COLORS.primary.dark,
+            boxShadow: SIZES.shadow.md,
+          },
+          '&:active': {
+            transform: 'translateY(0)',
+            boxShadow: SIZES.shadow.sm,
+          }
+        }}
       >
         Create Config
       </Button>

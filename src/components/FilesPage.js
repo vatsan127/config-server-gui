@@ -353,7 +353,7 @@ const FilesPage = () => {
         flexDirection: 'column',
         p: SIZES.spacing.xs,
         bgcolor: 'background.default',
-        minHeight: '100vh'
+        height: '100%'
       }}>
         <Box mb={0.5}>
           <Breadcrumbs
@@ -382,7 +382,9 @@ const FilesPage = () => {
 
   if (error) {
     return (
-      <Box sx={{ p: SIZES.spacing.xs }}>
+      <Box sx={{ 
+        p: SIZES.spacing.xs
+      }}>
         <Box mb={0.5}>
           <Breadcrumbs
             aria-label="breadcrumb"
@@ -415,7 +417,8 @@ const FilesPage = () => {
       flexDirection: 'column',
       p: SIZES.spacing.xs,
       bgcolor: 'background.default',
-      minHeight: '100vh',
+      height: '100%',
+      overflow: 'hidden',
       animation: 'fadeInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both',
       '@keyframes fadeInUp': {
         '0%': {
@@ -431,6 +434,9 @@ const FilesPage = () => {
         <Box 
           mb={0.5}
           sx={{
+            width: '100%',
+            maxWidth: '100%',
+            overflowX: 'hidden',
             animation: 'slideInFromTop 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
             '@keyframes slideInFromTop': {
               '0%': {
@@ -444,17 +450,28 @@ const FilesPage = () => {
             }
           }}
         >
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center', 
+            mb: 0.5,
+            width: '100%',
+            minWidth: 0,
+            gap: 2
+          }}>
             <Breadcrumbs
               aria-label="breadcrumb"
               separator="/"
               sx={{
+                flex: 1,
+                minWidth: 0,
                 '& .MuiBreadcrumbs-separator': {
                   color: COLORS.text.muted,
                   mx: 0.5,
                 },
                 '& .MuiBreadcrumbs-ol': {
                   flexWrap: 'nowrap',
+                  overflow: 'hidden',
                 },
               }}
             >
@@ -513,17 +530,19 @@ const FilesPage = () => {
             <Box 
               sx={{ 
                 display: 'flex', 
-                gap: 2, 
+                gap: 1, 
                 alignItems: 'center',
-                animation: 'slideInFromRight 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.25s both',
-                '@keyframes slideInFromRight': {
+                flexShrink: 0,
+                minWidth: 'min-content',
+                animation: 'fadeInScale 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.25s both',
+                '@keyframes fadeInScale': {
                   '0%': {
                     opacity: 0,
-                    transform: 'translateX(20px)'
+                    transform: 'scale(0.98)'
                   },
                   '100%': {
                     opacity: 1,
-                    transform: 'translateX(0)'
+                    transform: 'scale(1)'
                   }
                 }
               }}
@@ -535,12 +554,11 @@ const FilesPage = () => {
                 placeholder="Search files and folders..."
                 size="small"
                 sx={{ 
-                  minWidth: 200,
-                  transform: 'scale(1)',
+                  width: 200,
+                  minWidth: 150,
+                  maxWidth: 250,
+                  flexShrink: 1,
                   transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  '&:focus-within': {
-                    transform: 'scale(1.02)',
-                  },
                   '& .MuiOutlinedInput-root': {
                     borderRadius: `${SIZES.borderRadius.medium}px`,
                     bgcolor: COLORS.background.paper,
@@ -587,11 +605,8 @@ const FilesPage = () => {
               />
               <Box
                 sx={{
-                  transform: 'scale(1)',
                   transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  '&:hover': {
-                    transform: 'scale(1.05)',
-                  }
+                  flexShrink: 0
                 }}
               >
                 <CreateFileButton
@@ -635,8 +650,9 @@ const FilesPage = () => {
             border: `1px solid ${COLORS.grey[200]}`,
             borderRadius: `${SIZES.borderRadius.large}px`,
             boxShadow: SIZES.shadow.card,
-            overflow: 'hidden',
-            minHeight: filteredFiles.length === 0 ? 'auto' : 'initial',
+            overflow: 'auto',
+            flex: 1,
+            maxHeight: 'calc(100vh - 200px)',
             transform: 'translateY(0) scale(1)',
             opacity: 1,
             transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
@@ -684,15 +700,15 @@ const FilesPage = () => {
                     transform: 'translateX(0) scale(1)',
                     opacity: 1,
                     transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                    animation: `fadeSlideIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.4 + index * 0.03}s both`,
-                    '@keyframes fadeSlideIn': {
+                    animation: `fadeScaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.4 + index * 0.03}s both`,
+                    '@keyframes fadeScaleIn': {
                       '0%': {
                         opacity: 0,
-                        transform: 'translateX(-20px) scale(0.98)'
+                        transform: 'scale(0.95)'
                       },
                       '100%': {
                         opacity: 1,
-                        transform: 'translateX(0) scale(1)'
+                        transform: 'scale(1)'
                       }
                     },
                     '&:hover': {
