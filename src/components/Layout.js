@@ -16,14 +16,27 @@ import {
   Search as SearchIcon,
   Clear as ClearIcon,
   Logout as LogoutIcon,
-  Add as AddIcon
+  Add as AddIcon,
+  Dashboard as DashboardIcon
 } from '@mui/icons-material';
 import { theme } from '../theme/theme';
 import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
 import { UI_CONSTANTS, DOM_IDS } from '../constants';
+import { useAuth } from '../contexts/AuthContext';
 import ErrorBoundary from './common/ErrorBoundary';
 
 const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCreateNamespace, showCreateButton = false }) => {
+  const { user, logout, logoutLoading } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      console.log('User logged out successfully');
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Logout will still succeed locally even if server request fails
+    }
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -46,14 +59,18 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCr
         >
           <Toolbar sx={{ px: 2, py: 2, minHeight: '40px !important', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             {/* Left side - Title */}
-            <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <DashboardIcon sx={{ 
+                color: COLORS.text.white,
+                fontSize: '1.4rem'
+              }} />
               <Typography variant="h6" sx={{ 
                 fontWeight: 600, 
                 color: COLORS.text.white,
                 fontSize: '1.1rem',
                 letterSpacing: '-0.01em'
               }}>
-                Configuration Dashboard
+                Dashboard
               </Typography>
             </Box>
 
@@ -156,13 +173,11 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCr
                 </Button>
               )}
               
-              {/* Logout Button */}
+              {/* User Info & Logout Button */}
               <Button 
                 startIcon={<LogoutIcon sx={{ fontSize: 18 }} />}
-                onClick={() => {
-                  // TODO: Implement logout functionality when backend supports it
-                  console.log('Logout clicked - functionality to be implemented');
-                }}
+                onClick={handleLogout}
+                disabled={logoutLoading}
                 sx={{ 
                   color: COLORS.text.white,
                   bgcolor: alpha(COLORS.text.white, 0.1),
@@ -172,14 +187,20 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCr
                   border: `1px solid ${alpha(COLORS.text.white, 0.3)}`,
                   borderRadius: `${SIZES.borderRadius.medium}px`,
                   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                  '&:hover': {
+                  '&:hover:not(:disabled)': {
                     bgcolor: alpha(COLORS.text.white, 0.2),
                     borderColor: alpha(COLORS.text.white, 0.5),
                     transform: 'translateY(-1px)',
+                  },
+                  '&:disabled': {
+                    color: alpha(COLORS.text.white, 0.5),
+                    bgcolor: alpha(COLORS.text.white, 0.05),
+                    borderColor: alpha(COLORS.text.white, 0.2),
+                    transform: 'none'
                   }
                 }}
               >
-                Logout
+                {logoutLoading ? 'Logging out...' : `Logout (${user?.username || 'User'})`}
               </Button>
             </Box>
           </Toolbar>

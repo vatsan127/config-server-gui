@@ -21,8 +21,18 @@ const handleApiResponse = async (response, successMessage = null) => {
     const variant = getStatusCodeVariant(response.status);
     const message = await extractResponseMessage(response);
     
-    // Always show notification for error responses, even if no server message
-    if (response.status >= 400) {
+    // Check for authentication errors
+    if (response.status === 401 || response.status === 403) {
+      showNotification('Authentication required. Please log in again.', { 
+        variant: 'error',
+        preventDuplicate: true,
+        autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+        key: `auth-error-${Date.now()}`
+      });
+      // You might want to trigger a logout here or redirect to login
+      // For now, we'll just show the notification
+    } else if (response.status >= 400) {
+      // Always show notification for other error responses
       const finalMessage = message || response.statusText || 'Request failed';
       showNotification(finalMessage, { 
         variant,
@@ -48,7 +58,9 @@ export const apiService = {
   async getNamespaces() {
     try {
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.NAMESPACES.LIST}`;
-      console.log('Attempting to fetch from:', url);
+      console.log('🔍 getNamespaces - Attempting to fetch from:', url);
+      console.log('🔍 getNamespaces - API_CONFIG.BASE_URL:', API_CONFIG.BASE_URL);
+      console.log('🔍 getNamespaces - Full endpoint:', API_CONFIG.ENDPOINTS.NAMESPACES.LIST);
       
       const response = await makeApiRequest(url, {
         method: 'POST',
@@ -56,6 +68,9 @@ export const apiService = {
           'Content-Type': 'application/json',
         }
       });
+      
+      console.log('🔍 getNamespaces - Response status:', response.status);
+      console.log('🔍 getNamespaces - Response ok:', response.ok);
       
       // Handle response status and extract message
       await handleApiResponse(response);

@@ -3,13 +3,39 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import FilesLayout from './components/FilesLayout';
+import Login from './components/Login';
 import NotificationProvider from './components/common/NotificationProvider';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { useSearch } from './hooks/useSearch';
 import { useUniversalKeyboardShortcuts } from './hooks/useKeyboardShortcut';
+import { Box, CircularProgress, Typography } from '@mui/material';
+import { COLORS } from './theme/colors';
 
-const AppContent = () => {
+// Loading component
+const LoadingScreen = () => (
+  <Box sx={{
+    minHeight: '100vh',
+    bgcolor: COLORS.background.default,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2
+  }}>
+    <CircularProgress size={40} sx={{ color: COLORS.primary.main }} />
+    <Typography variant="body1" sx={{ color: COLORS.text.secondary }}>
+      Loading...
+    </Typography>
+  </Box>
+);
+
+// Authenticated app content
+const AuthenticatedAppContent = () => {
   const location = useLocation();
   const { searchQuery, setSearchQuery } = useSearch();
+  
+  // Reference to store the Dashboard's openCreateDialog function
+  const createDialogRef = useRef(null);
   
   // Set up universal keyboard shortcuts
   useUniversalKeyboardShortcuts();
@@ -23,7 +49,6 @@ const AppContent = () => {
     setSearchQuery('');
   }, [location.pathname, setSearchQuery]);
 
-
   const getSearchPlaceholder = () => {
     if (location.pathname.includes('/files')) {
       return 'Search files and folders... (Ctrl+K)';
@@ -32,9 +57,6 @@ const AppContent = () => {
   };
 
   const isDashboard = location.pathname === '/';
-
-  // Reference to store the Dashboard's openCreateDialog function
-  const createDialogRef = useRef(null);
 
   // Handle create namespace for navbar
   const handleCreateNamespace = () => {
@@ -71,13 +93,33 @@ const AppContent = () => {
   );
 };
 
+// Main app content with auth checking  
+const AppContent = () => {
+  const { isAuthenticated, checking, login } = useAuth();
+
+  // Show loading screen while checking authentication
+  if (checking) {
+    return <LoadingScreen />;
+  }
+
+  // Show login screen if not authenticated
+  if (!isAuthenticated) {
+    return <Login onLogin={login} />;
+  }
+
+  // Show authenticated app content
+  return <AuthenticatedAppContent />;
+};
+
 function App() {
   return (
-    <NotificationProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </NotificationProvider>
+    <AuthProvider>
+      <NotificationProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </NotificationProvider>
+    </AuthProvider>
   );
 }
 

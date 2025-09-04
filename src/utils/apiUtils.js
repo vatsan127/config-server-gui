@@ -35,14 +35,24 @@ export const clearControllerTimeout = (controller) => {
 export const makeApiRequest = async (url, options = {}, timeout) => {
   const controller = createTimeoutController(timeout);
   
+  console.log('🌐 makeApiRequest - URL:', url);
+  console.log('🌐 makeApiRequest - Options:', options);
+  console.log('🌐 makeApiRequest - Credentials will be included');
+  
   try {
     const response = await fetch(url, {
+      credentials: 'include', // Include cookies for authentication
       ...options,
       signal: controller.signal
     });
+    
+    console.log('🌐 makeApiRequest - Response received:', response.status, response.statusText);
+    console.log('🌐 makeApiRequest - Response headers:', Object.fromEntries(response.headers.entries()));
+    
     clearControllerTimeout(controller);
     return response;
   } catch (error) {
+    console.error('🌐 makeApiRequest - Error occurred:', error);
     clearControllerTimeout(controller);
     throw error;
   }
