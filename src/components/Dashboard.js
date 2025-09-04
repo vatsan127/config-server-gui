@@ -25,7 +25,7 @@ import {
 } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { setNotificationHandler } from '../services/api';
-import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
+import { COLORS, SIZES } from '../theme/colors';
 import { UI_CONSTANTS } from '../constants';
 import { useNamespaces } from '../hooks/useNamespaces';
 import { useDialog } from '../hooks/useDialog';
@@ -134,8 +134,39 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
 
   if (loading) {
     return (
-      <Box sx={{ p: SIZES.spacing.xs, bgcolor: 'background.default', minHeight: '100vh' }}>
-        <Typography>Loading namespaces...</Typography>
+      <Box sx={{ 
+        p: SIZES.spacing.xs, 
+        bgcolor: 'background.default', 
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 2
+      }}>
+        <Box
+          sx={{
+            animation: 'pulse 2s ease-in-out infinite',
+            '@keyframes pulse': {
+              '0%, 100%': { opacity: 1, transform: 'scale(1)' },
+              '50%': { opacity: 0.7, transform: 'scale(1.05)' }
+            }
+          }}
+        >
+          <InlineSpinner size={32} color={COLORS.primary.main} />
+        </Box>
+        <Typography
+          sx={{
+            color: COLORS.text.secondary,
+            animation: 'fadeInSlide 1s ease-out',
+            '@keyframes fadeInSlide': {
+              '0%': { opacity: 0, transform: 'translateY(10px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' }
+            }
+          }}
+        >
+          Loading namespaces...
+        </Typography>
       </Box>
     );
   }
@@ -151,11 +182,43 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
   return (
     <Box sx={{ p: SIZES.spacing.xs, bgcolor: 'background.default', minHeight: '100vh' }}>
       {/* Total Namespaces Count */}
-      <Box sx={{ mb: 3 }}>
+      <Box 
+        sx={{ 
+          mb: 3,
+          animation: 'slideInFromTop 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          '@keyframes slideInFromTop': {
+            '0%': {
+              opacity: 0,
+              transform: 'translateY(-20px)'
+            },
+            '100%': {
+              opacity: 1,
+              transform: 'translateY(0)'
+            }
+          }
+        }}
+      >
         <Typography variant="h5" sx={{ 
           color: COLORS.text.primary,
           fontWeight: 600,
-          mb: 1
+          mb: 1,
+          position: 'relative',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: -4,
+            left: 0,
+            width: 0,
+            height: 3,
+            bgcolor: COLORS.primary.main,
+            borderRadius: '2px',
+            transition: 'width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s',
+            animation: 'underlineExpand 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s both',
+          },
+          '@keyframes underlineExpand': {
+            '0%': { width: 0 },
+            '100%': { width: '60px' }
+          }
         }}>
           Namespaces ({namespaces.length})
         </Typography>
@@ -164,7 +227,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
       {/* Namespace Cards Grid */}
       {filteredNamespaces.length > 0 && (
         <Grid container spacing={3}>
-          {filteredNamespaces.map((namespace) => (
+          {filteredNamespaces.map((namespace, index) => (
             <Grid item xs={6} sm={4} md={3} lg={2} key={namespace}>
               <Card
                 sx={{
@@ -173,11 +236,29 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                   border: `1px solid ${COLORS.grey[200]}`,
                   borderRadius: `${SIZES.borderRadius.large}px`,
                   boxShadow: SIZES.shadow.card,
-                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transform: 'translateY(0) scale(1)',
+                  opacity: 1,
+                  transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  transitionDelay: `${index * 0.1}s`,
+                  animation: `slideInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${index * 0.1}s both`,
+                  '@keyframes slideInUp': {
+                    '0%': {
+                      transform: 'translateY(30px) scale(0.95)',
+                      opacity: 0
+                    },
+                    '100%': {
+                      transform: 'translateY(0) scale(1)',
+                      opacity: 1
+                    }
+                  },
                   '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: SIZES.shadow.elevated,
+                    transform: 'translateY(-8px) scale(1.02)',
+                    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.06)',
                     borderColor: COLORS.primary.light,
+                  },
+                  '&:active': {
+                    transform: 'translateY(-4px) scale(1.01)',
+                    transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                   }
                 }}
               >
@@ -214,11 +295,21 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                         bgcolor: 'transparent',
                         width: 32,
                         height: 32,
-                        transition: 'all 0.2s ease',
+                        opacity: 0,
+                        transform: 'scale(0.8) rotate(0deg)',
+                        transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                        '.MuiCard-root:hover &': {
+                          opacity: 1,
+                          transform: 'scale(1) rotate(0deg)',
+                        },
                         '&:hover': {
                           color: COLORS.text.primary,
                           bgcolor: COLORS.grey[100],
-                          transform: 'scale(1.1)',
+                          transform: 'scale(1.15) rotate(90deg)',
+                          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                        },
+                        '&:active': {
+                          transform: 'scale(1.05) rotate(90deg)',
                         }
                       }}
                     >
@@ -226,19 +317,56 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                     </IconButton>
 
                     {/* Folder Icon */}
-                    <FolderIcon
+                    <Box
                       sx={{
-                        color: getNamespaceColor(namespace),
-                        fontSize: 48,
+                        position: 'relative',
                         mb: 2,
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                        filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))',
-                        '&:hover': {
-                          transform: 'scale(1.1)',
-                          filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15))',
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          width: '120%',
+                          height: '120%',
+                          transform: 'translate(-50%, -50%) scale(0)',
+                          borderRadius: '50%',
+                          bgcolor: `${getNamespaceColor(namespace)}15`,
+                          transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                          zIndex: -1,
+                        },
+                        '.MuiCard-root:hover &::before': {
+                          transform: 'translate(-50%, -50%) scale(1)',
                         }
                       }}
-                    />
+                    >
+                      <FolderIcon
+                        sx={{
+                          color: getNamespaceColor(namespace),
+                          fontSize: 48,
+                          transform: 'rotate(0deg) scale(1)',
+                          transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                          filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))',
+                          animation: `iconFloat 3s ease-in-out infinite ${index * 0.2}s`,
+                          '@keyframes iconFloat': {
+                            '0%, 100%': {
+                              transform: 'rotate(0deg) scale(1) translateY(0px)',
+                            },
+                            '50%': {
+                              transform: 'rotate(2deg) scale(1.02) translateY(-2px)',
+                            }
+                          },
+                          '.MuiCard-root:hover &': {
+                            transform: 'rotate(-5deg) scale(1.15)',
+                            filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2))',
+                            animation: 'none',
+                          },
+                          '.MuiCard-root:active &': {
+                            transform: 'rotate(-3deg) scale(1.1)',
+                            transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
+                          }
+                        }}
+                      />
+                    </Box>
 
                     {/* Namespace Name */}
                     <Typography
@@ -249,7 +377,14 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                         fontSize: '1.1rem',
                         lineHeight: 1.2,
                         wordBreak: 'break-word',
-                        textAlign: 'center'
+                        textAlign: 'center',
+                        transform: 'translateY(0)',
+                        transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                        '.MuiCard-root:hover &': {
+                          transform: 'translateY(-2px)',
+                          color: COLORS.primary.main,
+                          textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                        }
                       }}
                     >
                       {namespace}
