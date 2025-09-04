@@ -551,7 +551,7 @@ const FilesPage = () => {
                 inputRef={searchInputRef}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search files and folders..."
+                placeholder="Search"
                 size="small"
                 sx={{ 
                   width: 200,
@@ -606,7 +606,10 @@ const FilesPage = () => {
               <Box
                 sx={{
                   transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  flexShrink: 0
+                  flexShrink: 0,
+                  padding: '4px 0',
+                  display: 'flex',
+                  alignItems: 'center'
                 }}
               >
                 <CreateFileButton

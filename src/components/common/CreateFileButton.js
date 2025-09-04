@@ -82,7 +82,10 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
     <>
       <Button
         variant="contained"
-        startIcon={<AddIcon />}
+        startIcon={<AddIcon sx={{ 
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          fontSize: 18 
+        }} />}
         onClick={handleClick}
         size="small"
         sx={{
@@ -92,19 +95,41 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
           fontWeight: 600,
           textTransform: 'none',
           fontSize: '0.875rem',
-          px: 2,
-          py: 1,
+          px: 2.5,
+          py: 1.25,
           minWidth: 'auto',
           whiteSpace: 'nowrap',
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          position: 'relative',
+          overflow: 'hidden',
+          transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           boxShadow: SIZES.shadow.sm,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: 'linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%)',
+            transform: 'translateX(-100%) skewX(-15deg)',
+            transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          },
           '&:hover': {
             bgcolor: COLORS.primary.dark,
-            boxShadow: SIZES.shadow.md,
+            boxShadow: SIZES.shadow.floating,
+            transform: 'translateY(-3px) scale(1.02)',
+            '&::before': {
+              transform: 'translateX(100%) skewX(-15deg)'
+            },
+            '& .MuiSvgIcon-root': {
+              transform: 'rotate(90deg) scale(1.1)',
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))'
+            }
           },
           '&:active': {
-            transform: 'translateY(0)',
-            boxShadow: SIZES.shadow.sm,
+            transform: 'translateY(-1px) scale(1.01)',
+            boxShadow: SIZES.shadow.md,
+            transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)'
           }
         }}
       >
@@ -265,24 +290,33 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
             onClick={handleDialogClose}
             disabled={creating}
             sx={{ 
-              px: 2,
-              py: 1,
+              px: 3,
+              py: 1.25,
               color: COLORS.text.secondary,
               bgcolor: 'transparent',
               border: `1px solid ${COLORS.grey[300]}`,
               borderRadius: `${SIZES.borderRadius.medium}px`,
               fontSize: '0.9rem',
               fontWeight: 500,
-              transition: 'all 0.2s ease',
-              '&:hover': {
+              transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              '&:hover:not(:disabled)': {
                 bgcolor: COLORS.grey[50],
                 borderColor: COLORS.grey[400],
                 color: COLORS.text.primary,
+                transform: 'translateY(-1px)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+              },
+              '&:active:not(:disabled)': {
+                transform: 'translateY(0)',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
+                transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)'
               },
               '&:disabled': {
                 color: COLORS.grey[400],
                 borderColor: COLORS.grey[200],
                 bgcolor: 'transparent',
+                transform: 'none',
+                boxShadow: 'none'
               }
             }}
           >
@@ -293,8 +327,8 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
             variant="contained"
             disabled={creating || !fileName.trim() || !path.trim()}
             sx={{ 
-              px: 2,
-              py: 1,
+              px: 3,
+              py: 1.25,
               minWidth: '120px',
               bgcolor: COLORS.primary.main,
               color: COLORS.text.white,
@@ -302,21 +336,41 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
               fontSize: '0.9rem',
               fontWeight: 600,
               boxShadow: SIZES.shadow.card,
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                bgcolor: COLORS.primary.dark,
-                boxShadow: SIZES.shadow.elevated,
-                transform: 'translateY(-1px)',
+              position: 'relative',
+              overflow: 'hidden',
+              transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                background: 'linear-gradient(45deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 50%)',
+                transform: 'translateX(-100%) skewX(-15deg)',
+                transition: 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
               },
-              '&:active': {
-                transform: 'translateY(0)',
-                boxShadow: SIZES.shadow.card,
+              '&:hover:not(:disabled)': {
+                bgcolor: COLORS.primary.dark,
+                boxShadow: SIZES.shadow.floating,
+                transform: 'translateY(-2px) scale(1.05)',
+                '&::before': {
+                  transform: 'translateX(100%) skewX(-15deg)'
+                }
+              },
+              '&:active:not(:disabled)': {
+                transform: 'translateY(-1px) scale(1.02)',
+                boxShadow: SIZES.shadow.elevated,
+                transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)'
               },
               '&:disabled': {
                 bgcolor: COLORS.grey[300],
                 color: COLORS.grey[500],
                 transform: 'none',
                 boxShadow: 'none',
+                '&::before': {
+                  display: 'none'
+                }
               }
             }}
           >
