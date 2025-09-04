@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, forwardRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { Zoom } from '@mui/material';
 import {
   Typography,
   Box,
@@ -35,6 +36,11 @@ import Editor from '@monaco-editor/react';
 import { apiService, setNotificationHandler } from '../services/api';
 import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
 import { normalizePath } from '../utils';
+
+// Custom transition for commit dialog
+const ZoomInTransition = forwardRef(function ZoomInTransition(props, ref) {
+  return <Zoom ref={ref} {...props} />;
+});
 
 const FileViewPage = () => {
   const { namespace } = useParams();
@@ -733,6 +739,13 @@ const FileViewPage = () => {
         onClose={handleCommitCancel} 
         maxWidth="sm" 
         fullWidth
+        TransitionComponent={ZoomInTransition}
+        TransitionProps={{
+          timeout: {
+            enter: 500,
+            exit: 400
+          }
+        }}
         PaperProps={{
           sx: {
             bgcolor: COLORS.background.paper,
@@ -779,17 +792,7 @@ const FileViewPage = () => {
           '& .MuiBackdrop-root': {
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             backdropFilter: 'blur(12px)',
-            animation: 'commitBackdropFade 0.4s ease-out'
-          },
-          '@keyframes commitBackdropFade': {
-            '0%': {
-              opacity: 0,
-              backdropFilter: 'blur(0px)'
-            },
-            '100%': {
-              opacity: 1,
-              backdropFilter: 'blur(12px)'
-            }
+            transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
           }
         }}
       >

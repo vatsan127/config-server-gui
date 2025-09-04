@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, forwardRef } from 'react';
 import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { Slide, Fade, Zoom } from '@mui/material';
 import {
   Typography,
   Box,
@@ -43,6 +44,15 @@ import CreateFileButton from './common/CreateFileButton';
 import { FileListSkeleton } from './common/SkeletonLoader';
 import { useSearchShortcut } from '../hooks/useKeyboardShortcut';
 import HistoryPanel from './common/HistoryPanel';
+
+// Custom transition component for smooth dialog animations
+const SlideUpTransition = forwardRef(function SlideUpTransition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+const ZoomTransition = forwardRef(function ZoomTransition(props, ref) {
+  return <Zoom ref={ref} {...props} />;
+});
 
 const getFileIcon = (fileName) => {
   const extension = fileName.split('.').pop().toLowerCase();
@@ -901,6 +911,13 @@ const FilesPage = () => {
           onClose={handleDeleteCancel} 
           maxWidth="sm" 
           fullWidth
+          TransitionComponent={SlideUpTransition}
+          TransitionProps={{
+            timeout: {
+              enter: 400,
+              exit: 300
+            }
+          }}
           PaperProps={{
             sx: {
               bgcolor: COLORS.background.paper,
@@ -936,17 +953,7 @@ const FilesPage = () => {
             '& .MuiBackdrop-root': {
               backgroundColor: 'rgba(0, 0, 0, 0.6)',
               backdropFilter: 'blur(8px)',
-              animation: 'backdropFadeIn 0.3s ease-out'
-            },
-            '@keyframes backdropFadeIn': {
-              '0%': {
-                opacity: 0,
-                backdropFilter: 'blur(0px)'
-              },
-              '100%': {
-                opacity: 1,
-                backdropFilter: 'blur(8px)'
-              }
+              transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
             }
           }}
         >

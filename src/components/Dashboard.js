@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, forwardRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Grow, Slide } from '@mui/material';
 import {
   Typography,
   Box,
@@ -34,6 +35,11 @@ import { validateNamespace } from '../utils/validation';
 import { getNamespaceColor } from '../utils/colorUtils';
 import EmptyState from './common/EmptyState';
 import { InlineSpinner } from './common/ProgressIndicator';
+
+// Custom transition for create namespace dialog
+const GrowTransition = forwardRef(function GrowTransition(props, ref) {
+  return <Grow ref={ref} {...props} />;
+});
 
 const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
   const navigate = useNavigate();
@@ -495,8 +501,13 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
         onClose={closeCreateDialog} 
         maxWidth="xs" 
         fullWidth
+        TransitionComponent={GrowTransition}
         TransitionProps={{
-          onEntered: handleDialogEntered
+          onEntered: handleDialogEntered,
+          timeout: {
+            enter: 500,
+            exit: 400
+          }
         }}
         PaperProps={{
           sx: {
@@ -536,17 +547,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
           '& .MuiBackdrop-root': {
             backgroundColor: 'rgba(0, 0, 0, 0.6)',
             backdropFilter: 'blur(10px)',
-            animation: 'backdropFadeIn 0.3s ease-out'
-          },
-          '@keyframes backdropFadeIn': {
-            '0%': {
-              opacity: 0,
-              backdropFilter: 'blur(0px)'
-            },
-            '100%': {
-              opacity: 1,
-              backdropFilter: 'blur(10px)'
-            }
+            transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
           }
         }}
       >

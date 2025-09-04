@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, forwardRef } from 'react';
+import { Fade, Slide } from '@mui/material';
 import {
   Button,
   Dialog,
@@ -16,6 +17,11 @@ import {
 } from '@mui/icons-material';
 import { COLORS, SIZES, BUTTON_STYLES } from '../../theme/colors';
 import { InlineSpinner } from './ProgressIndicator';
+
+// Custom transition for create config dialog
+const FadeSlideTransition = forwardRef(function FadeSlideTransition(props, ref) {
+  return <Slide direction="down" ref={ref} {...props} />;
+});
 
 const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -142,8 +148,13 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
         onClose={handleDialogClose}
         maxWidth="xs"
         fullWidth
+        TransitionComponent={FadeSlideTransition}
         TransitionProps={{
-          onEntered: handleDialogEntered
+          onEntered: handleDialogEntered,
+          timeout: {
+            enter: 500,
+            exit: 350
+          }
         }}
         PaperProps={{
           sx: {
@@ -189,17 +200,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
           '& .MuiBackdrop-root': {
             backgroundColor: 'rgba(0, 0, 0, 0.6)',
             backdropFilter: 'blur(10px)',
-            animation: 'configBackdropFade 0.3s ease-out'
-          },
-          '@keyframes configBackdropFade': {
-            '0%': {
-              opacity: 0,
-              backdropFilter: 'blur(0px)'
-            },
-            '100%': {
-              opacity: 1,
-              backdropFilter: 'blur(10px)'
-            }
+            transition: 'all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
           }
         }}
       >
