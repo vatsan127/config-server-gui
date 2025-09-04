@@ -16,7 +16,8 @@ import {
   Grid,
   IconButton,
   Menu,
-  MenuItem
+  MenuItem,
+  alpha
 } from '@mui/material';
 import { 
   Folder as FolderIcon,
@@ -460,32 +461,120 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
           sx: {
             bgcolor: COLORS.background.paper,
             border: `1px solid ${COLORS.grey[200]}`,
-            borderRadius: `${SIZES.borderRadius.medium}px`,
-            boxShadow: SIZES.shadow.md,
-            m: 1
+            borderRadius: `${SIZES.borderRadius.large}px`,
+            boxShadow: SIZES.shadow.floating,
+            m: 1,
+            position: 'relative',
+            overflow: 'hidden',
+            animation: 'dialogBounceIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            '@keyframes dialogBounceIn': {
+              '0%': {
+                opacity: 0,
+                transform: 'scale(0.3) translateY(-50px)'
+              },
+              '50%': {
+                transform: 'scale(1.05) translateY(0)'
+              },
+              '100%': {
+                opacity: 1,
+                transform: 'scale(1) translateY(0)'
+              }
+            },
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background: `linear-gradient(90deg, ${COLORS.primary.main}, ${COLORS.accent.blue})`,
+            }
           }
         }}
         sx={{
           '& .MuiBackdrop-root': {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            backdropFilter: 'blur(10px)',
+            animation: 'backdropFadeIn 0.3s ease-out'
+          },
+          '@keyframes backdropFadeIn': {
+            '0%': {
+              opacity: 0,
+              backdropFilter: 'blur(0px)'
+            },
+            '100%': {
+              opacity: 1,
+              backdropFilter: 'blur(10px)'
+            }
           }
         }}
       >
         <DialogTitle sx={{ 
           color: COLORS.text.primary, 
-          fontSize: '1.1rem', 
+          fontSize: '1.25rem', 
           fontWeight: 600,
           borderBottom: `1px solid ${COLORS.grey[200]}`,
-          px: 2,
-          py: 1.5
+          px: 3,
+          py: 2.5,
+          bgcolor: alpha(COLORS.primary.light, 0.05),
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1.5,
+          animation: 'titleSlideInLeft 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
+          '@keyframes titleSlideInLeft': {
+            '0%': {
+              opacity: 0,
+              transform: 'translateX(-30px)'
+            },
+            '100%': {
+              opacity: 1,
+              transform: 'translateX(0)'
+            }
+          }
         }}>
+          <Box
+            sx={{
+              width: 32,
+              height: 32,
+              borderRadius: `${SIZES.borderRadius.medium}px`,
+              bgcolor: alpha(COLORS.primary.main, 0.1),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: `1px solid ${alpha(COLORS.primary.main, 0.2)}`,
+              animation: 'iconSpin 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+              '@keyframes iconSpin': {
+                '0%': {
+                  transform: 'rotate(-180deg) scale(0.5)',
+                  opacity: 0
+                },
+                '100%': {
+                  transform: 'rotate(0deg) scale(1)',
+                  opacity: 1
+                }
+              }
+            }}
+          >
+            <Box sx={{ fontSize: 16, color: COLORS.primary.main }}>✨</Box>
+          </Box>
           {UI_CONSTANTS.DIALOG.CREATE_NAMESPACE.TITLE}
         </DialogTitle>
         <DialogContent sx={{ 
-          px: 2,
-          py: 2,
+          px: 3,
+          py: 3,
           '&.MuiDialogContent-root': {
-            paddingTop: 2
+            paddingTop: 3
+          },
+          animation: 'contentSlideInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+          '@keyframes contentSlideInUp': {
+            '0%': {
+              opacity: 0,
+              transform: 'translateY(20px)'
+            },
+            '100%': {
+              opacity: 1,
+              transform: 'translateY(0)'
+            }
           }
         }}>
           <TextField
@@ -541,10 +630,22 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
           />
         </DialogContent>
         <DialogActions sx={{ 
-          px: 2, 
-          py: 1.5, 
+          px: 3, 
+          py: 2.5, 
           borderTop: `1px solid ${COLORS.grey[200]}`,
-          gap: 1
+          bgcolor: alpha(COLORS.grey[25], 0.5),
+          gap: 1.5,
+          animation: 'actionsSlideInRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both',
+          '@keyframes actionsSlideInRight': {
+            '0%': {
+              opacity: 0,
+              transform: 'translateX(30px)'
+            },
+            '100%': {
+              opacity: 1,
+              transform: 'translateX(0)'
+            }
+          }
         }}>
           <Button 
             onClick={closeCreateDialog} 

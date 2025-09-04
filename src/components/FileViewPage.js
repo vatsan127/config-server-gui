@@ -702,6 +702,20 @@ const FileViewPage = () => {
             boxShadow: SIZES.shadow.floating,
             overflow: 'hidden',
             position: 'relative',
+            animation: 'commitDialogSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+            '@keyframes commitDialogSlideIn': {
+              '0%': {
+                opacity: 0,
+                transform: 'scale(0.8) translateY(-40px) rotateX(10deg)'
+              },
+              '60%': {
+                transform: 'scale(1.02) translateY(5px) rotateX(-2deg)'
+              },
+              '100%': {
+                opacity: 1,
+                transform: 'scale(1) translateY(0) rotateX(0deg)'
+              }
+            },
             '&::before': {
               content: '""',
               position: 'absolute',
@@ -710,18 +724,33 @@ const FileViewPage = () => {
               right: 0,
               height: '3px',
               background: `linear-gradient(90deg, ${COLORS.primary.main}, ${COLORS.accent.purple})`,
+              animation: 'progressBarSlide 0.8s ease-out 0.2s both',
+              '@keyframes progressBarSlide': {
+                '0%': {
+                  transform: 'translateX(-100%)'
+                },
+                '100%': {
+                  transform: 'translateX(0)'
+                }
+              }
             }
           }
         }}
         sx={{
           '& .MuiBackdrop-root': {
-            backgroundColor: 'transparent'
-          }
-        }}
-        BackdropProps={{
-          sx: {
-            backgroundColor: 'rgba(0, 0, 0, 0.4)',
-            backdropFilter: 'none'
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(12px)',
+            animation: 'commitBackdropFade 0.4s ease-out'
+          },
+          '@keyframes commitBackdropFade': {
+            '0%': {
+              opacity: 0,
+              backdropFilter: 'blur(0px)'
+            },
+            '100%': {
+              opacity: 1,
+              backdropFilter: 'blur(12px)'
+            }
           }
         }}
       >
@@ -746,10 +775,36 @@ const FileViewPage = () => {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              border: `1px solid ${alpha(COLORS.success.border, 0.2)}`
+              border: `1px solid ${alpha(COLORS.success.border, 0.2)}`,
+              animation: 'saveIconBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s both',
+              '@keyframes saveIconBounce': {
+                '0%': {
+                  transform: 'scale(0) rotate(-90deg)',
+                  opacity: 0
+                },
+                '50%': {
+                  transform: 'scale(1.2) rotate(-45deg)'
+                },
+                '100%': {
+                  transform: 'scale(1) rotate(0deg)',
+                  opacity: 1
+                }
+              }
             }}
           >
-            <SaveIcon sx={{ fontSize: 16, color: COLORS.success.border }} />
+            <SaveIcon sx={{ 
+              fontSize: 16, 
+              color: COLORS.success.border,
+              animation: 'iconGlow 2s ease-in-out infinite 1s',
+              '@keyframes iconGlow': {
+                '0%, 100%': {
+                  filter: 'drop-shadow(0 0 2px rgba(16, 185, 129, 0.3))'
+                },
+                '50%': {
+                  filter: 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.6))'
+                }
+              }
+            }} />
           </Box>
           Save Changes
         </DialogTitle>

@@ -8,7 +8,8 @@ import {
   TextField,
   Stack,
   Box,
-  Typography
+  Typography,
+  alpha
 } from '@mui/material';
 import {
   Add as AddIcon
@@ -148,33 +149,144 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
           sx: {
             bgcolor: COLORS.background.paper,
             border: `1px solid ${COLORS.grey[200]}`,
-            borderRadius: `${SIZES.borderRadius.medium}px`,
-            boxShadow: SIZES.shadow.md,
-            m: 1
+            borderRadius: `${SIZES.borderRadius.large}px`,
+            boxShadow: SIZES.shadow.floating,
+            m: 1,
+            position: 'relative',
+            overflow: 'hidden',
+            animation: 'createConfigDialogSlideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            '@keyframes createConfigDialogSlideIn': {
+              '0%': {
+                opacity: 0,
+                transform: 'translateY(-50px) scale(0.9) rotateX(15deg)'
+              },
+              '100%': {
+                opacity: 1,
+                transform: 'translateY(0) scale(1) rotateX(0deg)'
+              }
+            },
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background: `linear-gradient(90deg, ${COLORS.success.main}, ${COLORS.accent.green})`,
+              animation: 'configProgressSlide 0.7s ease-out 0.2s both',
+              '@keyframes configProgressSlide': {
+                '0%': {
+                  transform: 'translateX(-100%) scaleX(0.5)'
+                },
+                '100%': {
+                  transform: 'translateX(0) scaleX(1)'
+                }
+              }
+            }
           }
         }}
         sx={{
           '& .MuiBackdrop-root': {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)'
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            backdropFilter: 'blur(10px)',
+            animation: 'configBackdropFade 0.3s ease-out'
+          },
+          '@keyframes configBackdropFade': {
+            '0%': {
+              opacity: 0,
+              backdropFilter: 'blur(0px)'
+            },
+            '100%': {
+              opacity: 1,
+              backdropFilter: 'blur(10px)'
+            }
           }
         }}
       >
         <DialogTitle sx={{ 
           color: COLORS.text.primary, 
-          fontSize: '1.1rem', 
+          fontSize: '1.25rem', 
           fontWeight: 600,
           borderBottom: `1px solid ${COLORS.grey[200]}`,
-          px: 2,
-          py: 1.5
+          px: 3,
+          py: 2.5,
+          bgcolor: alpha(COLORS.success.light, 0.3),
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1.5,
+          animation: 'configTitleSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
+          '@keyframes configTitleSlideIn': {
+            '0%': {
+              opacity: 0,
+              transform: 'translateX(-25px)'
+            },
+            '100%': {
+              opacity: 1,
+              transform: 'translateX(0)'
+            }
+          }
         }}>
+          <Box
+            sx={{
+              width: 32,
+              height: 32,
+              borderRadius: `${SIZES.borderRadius.medium}px`,
+              bgcolor: alpha(COLORS.success.main, 0.15),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: `1px solid ${alpha(COLORS.success.main, 0.25)}`,
+              animation: 'configIconFloat 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+              '@keyframes configIconFloat': {
+                '0%': {
+                  transform: 'translateY(-20px) rotate(-45deg) scale(0.5)',
+                  opacity: 0
+                },
+                '50%': {
+                  transform: 'translateY(5px) rotate(0deg) scale(1.1)'
+                },
+                '100%': {
+                  transform: 'translateY(0) rotate(0deg) scale(1)',
+                  opacity: 1
+                }
+              }
+            }}
+          >
+            <Box sx={{ 
+              fontSize: 16, 
+              color: COLORS.success.main,
+              animation: 'configIconGlow 2s ease-in-out infinite 1s',
+              '@keyframes configIconGlow': {
+                '0%, 100%': {
+                  filter: 'drop-shadow(0 0 2px rgba(16, 185, 129, 0.4))'
+                },
+                '50%': {
+                  filter: 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.8))'
+                }
+              }
+            }}>
+              📄
+            </Box>
+          </Box>
           Create New Config File
         </DialogTitle>
 
         <DialogContent sx={{ 
-          px: 2,
-          py: 2,
+          px: 3,
+          py: 3,
           '&.MuiDialogContent-root': {
-            paddingTop: 2
+            paddingTop: 3
+          },
+          animation: 'configContentFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+          '@keyframes configContentFadeIn': {
+            '0%': {
+              opacity: 0,
+              transform: 'translateY(15px)'
+            },
+            '100%': {
+              opacity: 1,
+              transform: 'translateY(0)'
+            }
           }
         }}>
           <Stack spacing={2}>
@@ -281,10 +393,22 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
         </DialogContent>
 
         <DialogActions sx={{ 
-          px: 2, 
-          py: 1.5, 
+          px: 3, 
+          py: 2.5, 
           borderTop: `1px solid ${COLORS.grey[200]}`,
-          gap: 1
+          bgcolor: alpha(COLORS.grey[25], 0.5),
+          gap: 1.5,
+          animation: 'configActionsSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both',
+          '@keyframes configActionsSlideIn': {
+            '0%': {
+              opacity: 0,
+              transform: 'translateY(25px) scale(0.95)'
+            },
+            '100%': {
+              opacity: 1,
+              transform: 'translateY(0) scale(1)'
+            }
+          }
         }}>
           <Button 
             onClick={handleDialogClose}

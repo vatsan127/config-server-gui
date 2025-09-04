@@ -18,7 +18,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  alpha
 } from '@mui/material';
 import {
   Folder as FolderIcon,
@@ -854,32 +855,120 @@ const FilesPage = () => {
             sx: {
               bgcolor: COLORS.background.paper,
               border: `1px solid ${COLORS.grey[200]}`,
-              borderRadius: `${SIZES.borderRadius.medium}px`,
-              boxShadow: SIZES.shadow.md,
-              m: 1
+              borderRadius: `${SIZES.borderRadius.large}px`,
+              boxShadow: SIZES.shadow.floating,
+              m: 1,
+              position: 'relative',
+              overflow: 'hidden',
+              animation: 'dialogSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              '@keyframes dialogSlideIn': {
+                '0%': {
+                  opacity: 0,
+                  transform: 'translateY(-30px) scale(0.95)'
+                },
+                '100%': {
+                  opacity: 1,
+                  transform: 'translateY(0) scale(1)'
+                }
+              },
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '3px',
+                background: `linear-gradient(90deg, ${COLORS.error.main}, ${COLORS.warning.main})`,
+              }
             }
           }}
           sx={{
             '& .MuiBackdrop-root': {
-              backgroundColor: 'rgba(0, 0, 0, 0.5)'
+              backgroundColor: 'rgba(0, 0, 0, 0.6)',
+              backdropFilter: 'blur(8px)',
+              animation: 'backdropFadeIn 0.3s ease-out'
+            },
+            '@keyframes backdropFadeIn': {
+              '0%': {
+                opacity: 0,
+                backdropFilter: 'blur(0px)'
+              },
+              '100%': {
+                opacity: 1,
+                backdropFilter: 'blur(8px)'
+              }
             }
           }}
         >
           <DialogTitle sx={{ 
             color: COLORS.text.primary, 
-            fontSize: '1.1rem', 
+            fontSize: '1.25rem', 
             fontWeight: 600,
             borderBottom: `1px solid ${COLORS.grey[200]}`,
-            px: 2,
-            py: 1.5
+            px: 3,
+            py: 2.5,
+            bgcolor: alpha(COLORS.error.light, 0.05),
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1.5,
+            animation: 'titleSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
+            '@keyframes titleSlideIn': {
+              '0%': {
+                opacity: 0,
+                transform: 'translateX(-20px)'
+              },
+              '100%': {
+                opacity: 1,
+                transform: 'translateX(0)'
+              }
+            }
           }}>
+            <Box
+              sx={{
+                width: 32,
+                height: 32,
+                borderRadius: `${SIZES.borderRadius.medium}px`,
+                bgcolor: alpha(COLORS.error.main, 0.1),
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: `1px solid ${alpha(COLORS.error.main, 0.2)}`,
+                animation: 'iconPulse 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+                '@keyframes iconPulse': {
+                  '0%': {
+                    transform: 'scale(0.8)',
+                    opacity: 0
+                  },
+                  '50%': {
+                    transform: 'scale(1.1)'
+                  },
+                  '100%': {
+                    transform: 'scale(1)',
+                    opacity: 1
+                  }
+                }
+              }}
+            >
+              <Box sx={{ fontSize: 16, color: COLORS.error.main }}>⚠️</Box>
+            </Box>
             Delete File
           </DialogTitle>
           <DialogContent sx={{ 
-            px: 2,
-            py: 2,
+            px: 3,
+            py: 3,
             '&.MuiDialogContent-root': {
-              paddingTop: 2
+              paddingTop: 3
+            },
+            animation: 'contentFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+            '@keyframes contentFadeIn': {
+              '0%': {
+                opacity: 0,
+                transform: 'translateY(10px)'
+              },
+              '100%': {
+                opacity: 1,
+                transform: 'translateY(0)'
+              }
             }
           }}>
             <Typography variant="body2" sx={{ mb: 2, color: COLORS.text.secondary }}>
@@ -936,10 +1025,22 @@ const FilesPage = () => {
             </Typography>
           </DialogContent>
           <DialogActions sx={{ 
-            px: 2, 
-            py: 1.5, 
+            px: 3, 
+            py: 2.5, 
             borderTop: `1px solid ${COLORS.grey[200]}`,
-            gap: 1
+            bgcolor: alpha(COLORS.grey[25], 0.5),
+            gap: 1.5,
+            animation: 'actionsSlideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both',
+            '@keyframes actionsSlideUp': {
+              '0%': {
+                opacity: 0,
+                transform: 'translateY(20px)'
+              },
+              '100%': {
+                opacity: 1,
+                transform: 'translateY(0)'
+              }
+            }
           }}>
             <Button 
               onClick={handleDeleteCancel} 
