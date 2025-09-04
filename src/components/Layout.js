@@ -16,7 +16,8 @@ import {
   Search as SearchIcon,
   Clear as ClearIcon,
   Logout as LogoutIcon,
-  Add as AddIcon
+  Add as AddIcon,
+  Dashboard as DashboardIcon
 } from '@mui/icons-material';
 import { theme } from '../theme/theme';
 import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
@@ -46,14 +47,18 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCr
         >
           <Toolbar sx={{ px: 2, py: 2, minHeight: '40px !important', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             {/* Left side - Title */}
-            <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <DashboardIcon sx={{ 
+                color: COLORS.text.white,
+                fontSize: 24
+              }} />
               <Typography variant="h6" sx={{ 
                 fontWeight: 600, 
                 color: COLORS.text.white,
                 fontSize: '1.1rem',
                 letterSpacing: '-0.01em'
               }}>
-                Configuration Dashboard
+                Dashboard
               </Typography>
             </Box>
 

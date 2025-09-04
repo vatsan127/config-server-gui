@@ -39,7 +39,7 @@ const HistoryPanel = ({
         position: 'fixed',
         top: 0,
         right: 0,
-        width: '480px',
+        width: '600px',
         height: '100vh',
         bgcolor: COLORS.background.paper,
         backdropFilter: 'blur(20px)',
@@ -190,9 +190,7 @@ const HistoryPanel = ({
                 </Typography>
               </Box>
             ) : (
-              <Box sx={{ p: 3 }}>
-                <DiffViewer diffText={changesData?.changes} />
-              </Box>
+              <DiffViewer diffText={changesData?.changes} />
             )}
           </Box>
         ) : historyData && historyData.commits && historyData.commits.length > 0 ? (

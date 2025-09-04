@@ -18,22 +18,11 @@ const DiffViewer = ({ diffText }) => {
   const cleanAndParseDiff = (diffText) => {
     const lines = diffText.split('\n');
     const cleanedLines = [];
-    let currentOldLineNumber = 0;
-    let currentNewLineNumber = 0;
+    let currentOldLineNumber = 1;
+    let currentNewLineNumber = 1;
     
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      
-      // Skip unwanted git metadata
-      if (line.startsWith('diff --git') ||
-          line.startsWith('index ') ||
-          line.match(/^--- a\//) ||
-          line.match(/^\+\+\+ b\//) ||
-          line.match(/^--- \/dev\/null/) ||
-          line.match(/^\+\+\+ \/dev\/null/) ||
-          line.includes('No newline at end of file')) {
-        continue;
-      }
       
       // Parse hunk headers to extract line numbers but don't display them
       if (line.startsWith('@@')) {
@@ -41,7 +30,6 @@ const DiffViewer = ({ diffText }) => {
         if (match) {
           currentOldLineNumber = parseInt(match[1]);
           currentNewLineNumber = parseInt(match[2]);
-          // Don't add hunk headers to display - just parse for line numbers
         }
         continue;
       }
@@ -127,8 +115,9 @@ const DiffViewer = ({ diffText }) => {
           px: 1,
           py: 0.2,
           borderLeft,
-          whiteSpace: 'pre',
-          overflow: 'hidden'
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-all',
+          overflow: 'visible'
         }}
       >
         <Typography
@@ -154,7 +143,8 @@ const DiffViewer = ({ diffText }) => {
             color: 'inherit',
             fontWeight: 'inherit',
             flex: 1,
-            overflow: 'hidden',
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-all',
             pl: 1
           }}
         >
@@ -168,10 +158,8 @@ const DiffViewer = ({ diffText }) => {
 
   return (
     <Box sx={{ 
-      border: `1px solid ${COLORS.grey[200]}`,
-      borderRadius: `${SIZES.borderRadius.small}px`,
       backgroundColor: COLORS.background.paper,
-      maxHeight: '400px',
+      height: '100%',
       overflow: 'auto'
     }}>
       {parsedLines.map((lineData, index) => formatDiffLine(lineData, index))}
