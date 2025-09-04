@@ -205,10 +205,21 @@ const FileViewPage = () => {
       flexDirection: 'column',
       p: 0, // Remove padding
       bgcolor: COLORS.background.default,
-      minHeight: '100vh',
+      height: '100vh',
       width: 'calc(100vw - 220px)',
       maxWidth: 'calc(100vw - 220px)',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      animation: 'slideInRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both',
+      '@keyframes slideInRight': {
+        '0%': {
+          opacity: 0,
+          transform: 'translateX(30px)'
+        },
+        '100%': {
+          opacity: 1,
+          transform: 'translateX(0)'
+        }
+      }
     }}>
 
       <Paper 
@@ -241,6 +252,17 @@ const FileViewPage = () => {
             minHeight: '48px', // Reduce height
             position: 'relative',
             overflow: 'hidden',
+            animation: 'fadeInDown 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
+            '@keyframes fadeInDown': {
+              '0%': {
+                opacity: 0,
+                transform: 'translateY(-10px)'
+              },
+              '100%': {
+                opacity: 1,
+                transform: 'translateY(0)'
+              }
+            },
             '&::before': {
               content: '""',
               position: 'absolute',
@@ -505,6 +527,17 @@ const FileViewPage = () => {
             width: '100%',
             maxWidth: '100%',
             minWidth: 0,
+            animation: 'slideUpFade 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+            '@keyframes slideUpFade': {
+              '0%': {
+                opacity: 0,
+                transform: 'translateY(20px) scale(0.98)'
+              },
+              '100%': {
+                opacity: 1,
+                transform: 'translateY(0) scale(1)'
+              }
+            },
             '&::before': {
               content: '""',
               position: 'absolute',
