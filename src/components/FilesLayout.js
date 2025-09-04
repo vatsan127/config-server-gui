@@ -23,7 +23,8 @@ const FilesLayout = () => {
       sx={{ 
         display: 'flex', 
         bgcolor: 'background.default', 
-        minHeight: '100vh',
+        height: '100vh',
+        overflow: 'hidden',
         opacity: isVisible ? 1 : 0,
         transition: 'opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
       }}
