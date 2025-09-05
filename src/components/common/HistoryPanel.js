@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -28,6 +28,28 @@ const HistoryPanel = ({
   onCommitSelect, 
   selectedCommitId 
 }) => {
+
+  // Handle ESC key functionality
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === 'Escape' && isOpen) {
+        if (showChanges) {
+          // If in changes view, go back to history
+          onBackToHistory();
+        } else {
+          // If in history view, close the panel
+          onClose();
+        }
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscKey);
+      return () => {
+        document.removeEventListener('keydown', handleEscKey);
+      };
+    }
+  }, [isOpen, showChanges, onClose, onBackToHistory]);
 
   return (
     <Box
@@ -133,7 +155,9 @@ const HistoryPanel = ({
             sx={{ 
               color: COLORS.primary.main, 
               fontSize: 20,
-              flexShrink: 0
+              flexShrink: 0,
+              transform: showChanges ? 'rotate(180deg) scale(0.9)' : 'rotate(0deg) scale(1)',
+              transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
             }} 
           />
           
@@ -147,7 +171,9 @@ const HistoryPanel = ({
                 lineHeight: 1.2,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                transform: showChanges ? 'translateY(0)' : 'translateY(0)',
+                transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
               }}
             >
               {showChanges && changesData ? 
@@ -268,6 +294,9 @@ const HistoryPanel = ({
             height: '100%', 
             overflowY: 'auto', 
             overflowX: 'hidden',
+            transform: showChanges ? 'translateX(0)' : 'translateX(100%)',
+            opacity: showChanges ? 1 : 0,
+            transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             '&::-webkit-scrollbar': {
               width: 0,
               background: 'transparent',
@@ -320,10 +349,10 @@ const HistoryPanel = ({
             ) : (
               <Box
                 sx={{
-                  transform: showChanges ? 'translateY(0)' : 'translateY(10px)',
+                  transform: showChanges ? 'translateX(0) scale(1)' : 'translateX(20px) scale(0.95)',
                   opacity: showChanges ? 1 : 0,
-                  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  transitionDelay: showChanges ? '0.1s' : '0s'
+                  transition: 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  transitionDelay: showChanges ? '0.2s' : '0s'
                 }}
               >
                 <DiffViewer diffText={changesData?.changes} />
@@ -336,6 +365,9 @@ const HistoryPanel = ({
             overflowY: 'auto', 
             overflowX: 'hidden', 
             height: '100%',
+            transform: !showChanges ? 'translateX(0)' : 'translateX(-100%)',
+            opacity: !showChanges ? 1 : 0,
+            transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             '&::-webkit-scrollbar': {
               width: 0,
               background: 'transparent',
@@ -366,12 +398,18 @@ const HistoryPanel = ({
                   cursor: 'pointer',
                   bgcolor: selectedCommitId === commit.commitId ? 
                     COLORS.primary.main + '15' : 'transparent',
-                  transform: isOpen ? 'translateX(0)' : 'translateX(-20px)',
-                  opacity: isOpen ? 1 : 0,
-                  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  transitionDelay: isOpen ? `${0.3 + index * 0.05}s` : '0s',
+                  transform: (isOpen && !showChanges) ? 'translate3d(0, 0, 0)' : 'translate3d(-30px, 0, 0)',
+                  WebkitTransform: (isOpen && !showChanges) ? 'translate3d(0, 0, 0)' : 'translate3d(-30px, 0, 0)',
+                  opacity: (isOpen && !showChanges) ? 1 : 0,
+                  transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.2s ease, margin-left 0.2s ease',
+                  transitionDelay: (isOpen && !showChanges) ? `${0.3 + index * 0.03}s` : '0s',
                   position: 'relative',
                   overflow: 'hidden',
+                  willChange: 'transform, opacity',
+                  WebkitPerspective: 1000,
+                  perspective: 1000,
+                  transformStyle: 'preserve-3d',
+                  WebkitTransformStyle: 'preserve-3d',
                   '&::before': {
                     content: '""',
                     position: 'absolute',
@@ -397,8 +435,8 @@ const HistoryPanel = ({
                     bgcolor: selectedCommitId === commit.commitId ? 
                       COLORS.primary.main + '20' : 
                       COLORS.grey[50],
-                    transform: isOpen ? 'translateX(8px) scale(1.01)' : 'translateX(-20px)',
-                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)',
+                    marginLeft: (isOpen && !showChanges) ? '6px' : '0px',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
                     '&::before': {
                       opacity: 1,
                     }
@@ -414,7 +452,15 @@ const HistoryPanel = ({
                     lineHeight: 1.4,
                     width: '100%',
                     wordBreak: 'break-word',
-                    overflowWrap: 'break-word'
+                    overflowWrap: 'break-word',
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    WebkitFontSmoothing: 'antialiased',
+                    MozOsxFontSmoothing: 'grayscale',
+                    textRendering: 'optimizeLegibility',
+                    transform: 'translateZ(0)',
+                    WebkitTransform: 'translateZ(0)',
+                    filter: 'none'
                   }}
                 >
                   {commit.commitMessage || commit.message || 'No commit message'}
@@ -427,7 +473,15 @@ const HistoryPanel = ({
                     fontSize: '0.8rem',
                     width: '100%',
                     wordBreak: 'break-word',
-                    overflowWrap: 'break-word'
+                    overflowWrap: 'break-word',
+                    backfaceVisibility: 'hidden',
+                    WebkitBackfaceVisibility: 'hidden',
+                    WebkitFontSmoothing: 'antialiased',
+                    MozOsxFontSmoothing: 'grayscale',
+                    textRendering: 'optimizeLegibility',
+                    transform: 'translateZ(0)',
+                    WebkitTransform: 'translateZ(0)',
+                    filter: 'none'
                   }}
                 >
                   {commit.author && commit.email ? 
