@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useDialogKeyboard } from '../../hooks/useTextInputKeyboard';
 import {
   Box,
   Typography,
@@ -29,6 +30,19 @@ const HistoryPanel = ({
   selectedCommitId 
 }) => {
 
+  // Enhanced keyboard support for panel
+  const panelKeyboard = useDialogKeyboard(
+    onClose,
+    null,
+    () => {
+      if (showChanges) {
+        onBackToHistory();
+      } else {
+        onClose();
+      }
+    }
+  );
+
   // Handle ESC key functionality
   useEffect(() => {
     const handleEscKey = (event) => {
@@ -53,6 +67,8 @@ const HistoryPanel = ({
 
   return (
     <Box
+      onKeyDown={panelKeyboard.handleKeyDown}
+      tabIndex={-1}
       sx={{
         position: 'fixed',
         top: 0,

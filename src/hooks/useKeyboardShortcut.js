@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 
 /**
  * Custom hook for handling keyboard shortcuts
@@ -7,9 +7,12 @@ import { useEffect } from 'react';
  * @param {Object} options - Modifier keys {ctrl, meta, alt, shift}
  */
 export const useKeyboardShortcut = (key, callback, options = {}) => {
+  const memoizedOptions = useMemo(() => options, [JSON.stringify(options)]);
+  const stableCallback = useCallback(callback, [callback]);
+  
   useEffect(() => {
     const handleKeyDown = (e) => {
-      const { ctrl = false, meta = false, alt = false, shift = false } = options;
+      const { ctrl = false, meta = false, alt = false, shift = false } = memoizedOptions;
       
       if (
         e.key === key &&
@@ -18,21 +21,23 @@ export const useKeyboardShortcut = (key, callback, options = {}) => {
         (shift ? e.shiftKey : !e.shiftKey)
       ) {
         e.preventDefault();
-        callback(e);
+        stableCallback(e);
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [key, callback, options]);
+  }, [key, stableCallback, memoizedOptions]);
 };
 
 /**
  * Hook for universal search functionality (Ctrl/Cmd+K)
  * Automatically focuses the active search input on the page
  */
+const CTRL_OPTIONS = { ctrl: true };
+
 export const useSearchShortcut = (callback) => {
-  const universalSearchHandler = callback || (() => {
+  const universalSearchHandler = useCallback(callback || (() => {
     // Find any search input on the page and focus it
     const searchInputs = document.querySelectorAll('input[type="text"], input[placeholder*="search" i], input[id*="search" i], input[class*="search" i]');
     if (searchInputs.length > 0) {
@@ -44,17 +49,19 @@ export const useSearchShortcut = (callback) => {
         }
       }
     }
-  });
+  }), [callback]);
   
-  return useKeyboardShortcut('k', universalSearchHandler, { ctrl: true });
+  return useKeyboardShortcut('k', universalSearchHandler, CTRL_OPTIONS);
 };
 
 /**
  * Hook for universal escape key functionality
  * Automatically blurs any focused search input
  */
+const EMPTY_OPTIONS = {};
+
 export const useEscapeKey = (callback) => {
-  const universalEscapeHandler = callback || (() => {
+  const universalEscapeHandler = useCallback(callback || (() => {
     const activeElement = document.activeElement;
     if (activeElement && (
       activeElement.type === 'text' || 
@@ -65,9 +72,9 @@ export const useEscapeKey = (callback) => {
     )) {
       activeElement.blur();
     }
-  });
+  }), [callback]);
   
-  return useKeyboardShortcut('Escape', universalEscapeHandler);
+  return useKeyboardShortcut('Escape', universalEscapeHandler, EMPTY_OPTIONS);
 };
 
 /**

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, forwardRef } from 'react';
+import React, { useEffect, useMemo, useRef, forwardRef, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Grow, Slide } from '@mui/material';
 import {
@@ -35,6 +35,7 @@ import { validateNamespace } from '../utils/validation';
 import { getNamespaceColor } from '../utils/colorUtils';
 import EmptyState from './common/EmptyState';
 import { InlineSpinner } from './common/ProgressIndicator';
+import { useDialogKeyboard } from '../hooks/useTextInputKeyboard';
 
 // Custom transition for create namespace dialog
 const GrowTransition = forwardRef(function GrowTransition(props, ref) {
@@ -51,10 +52,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
   const [namespaceToDelete, setNamespaceToDelete] = React.useState(null);
   const [isDeleting, setIsDeleting] = React.useState(false);
   
-  console.log('🏠 Dashboard component rendered', {
-    timestamp: new Date().toISOString(),
-    searchQuery
-  });
+  // Removed console.log to prevent excessive logging
 
   // Custom hooks for state management
   const { 
@@ -100,14 +98,23 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
   };
 
   // Handle namespace creation
-  const handleCreateNamespace = async (formData) => {
+  const handleCreateNamespace = useCallback(async (formData) => {
     const validation = validateNamespace(formData.namespaceName);
     if (!validation.isValid) {
       throw new Error(validation.error);
     }
     
     await createNamespace(formData.namespaceName);
-  };
+  }, [createNamespace]);
+
+  // Dialog keyboard shortcuts with stable references
+  const handleCreateDialogSubmit = useCallback(() => {
+    if (!creating && namespaceName.trim()) {
+      handleDialogSubmit(handleCreateNamespace);
+    }
+  }, [creating, namespaceName, handleDialogSubmit, handleCreateNamespace]);
+
+  const createDialogKeyboard = useDialogKeyboard(closeCreateDialog, handleCreateDialogSubmit);
 
   // Handle namespace click
   const handleNamespaceClick = (namespace) => {
@@ -134,7 +141,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
   };
 
   // Handle namespace delete
-  const handleDeleteNamespace = async () => {
+  const handleDeleteNamespace = useCallback(async () => {
     if (!namespaceToDelete) return;
     
     try {
@@ -148,15 +155,24 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
     } finally {
       setIsDeleting(false);
     }
-  };
+  }, [namespaceToDelete, deleteNamespace]);
 
   // Handle delete dialog close
-  const handleDeleteDialogClose = () => {
+  const handleDeleteDialogClose = useCallback(() => {
     if (!isDeleting) {
       setDeleteDialogOpen(false);
       setNamespaceToDelete(null);
     }
-  };
+  }, [isDeleting]);
+
+  // Delete dialog keyboard support
+  const handleDeleteDialogSubmit = useCallback(() => {
+    if (!isDeleting) {
+      handleDeleteNamespace();
+    }
+  }, [isDeleting, handleDeleteNamespace]);
+
+  const deleteDialogKeyboard = useDialogKeyboard(handleDeleteDialogClose, handleDeleteDialogSubmit);
 
   // Filter namespaces based on search query
   const filteredNamespaces = useMemo(() => {
@@ -529,6 +545,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
         maxWidth="xs" 
         fullWidth
         TransitionComponent={GrowTransition}
+        onKeyDown={createDialogKeyboard.handleKeyDown}
         TransitionProps={{
           onEntered: handleDialogEntered,
           timeout: {
@@ -663,9 +680,19 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
               tabIndex: 0,
             }}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !creating && namespaceName.trim()) {
+              // Basic keyboard support - Enter to submit (only without modifiers)
+              if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey && !creating && namespaceName.trim()) {
                 e.preventDefault();
                 handleDialogSubmit(handleCreateNamespace);
+              }
+              // Escape to clear or close (only if not handled by dialog)
+              if (e.key === 'Escape' && !e.ctrlKey && !e.metaKey) {
+                if (namespaceName) {
+                  updateFormData({ namespaceName: '' });
+                } else {
+                  closeCreateDialog();
+                }
+                e.preventDefault();
               }
             }}
             sx={{ 
@@ -794,6 +821,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
         maxWidth="xs"
         fullWidth
         TransitionComponent={GrowTransition}
+        onKeyDown={deleteDialogKeyboard.handleKeyDown}
         PaperProps={{
           sx: {
             bgcolor: COLORS.background.paper,
@@ -936,4 +964,4 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
   );
 };
 
-export default Dashboard;
+export default memo(Dashboard);

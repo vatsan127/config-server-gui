@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
@@ -16,10 +16,6 @@ const AppContent = () => {
 
   // Clear search when route changes
   React.useEffect(() => {
-    console.log('🔄 Route changed - clearing search', {
-      pathname: location.pathname,
-      timestamp: new Date().toISOString()
-    });
     setSearchQuery('');
   }, [location.pathname, setSearchQuery]);
 
@@ -37,16 +33,16 @@ const AppContent = () => {
   const createDialogRef = useRef(null);
 
   // Handle create namespace for navbar
-  const handleCreateNamespace = () => {
+  const handleCreateNamespace = useCallback(() => {
     if (createDialogRef.current) {
       createDialogRef.current();
     }
-  };
+  }, []);
 
   // Callback to receive Dashboard's openCreateDialog function
-  const setCreateDialogFunction = (openDialogFn) => {
+  const setCreateDialogFunction = useCallback((openDialogFn) => {
     createDialogRef.current = openDialogFn;
-  };
+  }, []);
 
   if (isDashboard) {
     return (

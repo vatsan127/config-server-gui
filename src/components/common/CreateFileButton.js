@@ -17,6 +17,7 @@ import {
 } from '@mui/icons-material';
 import { COLORS, SIZES, BUTTON_STYLES } from '../../theme/colors';
 import { InlineSpinner } from './ProgressIndicator';
+import { useTextInputKeyboard, useDialogKeyboard } from '../../hooks/useTextInputKeyboard';
 
 // Custom transition for create config dialog
 const FadeSlideTransition = forwardRef(function FadeSlideTransition(props, ref) {
@@ -63,17 +64,72 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
     }
   };
 
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter' && event.target.name === 'path') {
-      // Move focus to create button or submit if both fields are filled
-      if (fileName.trim() && path.trim()) {
+  // Keyboard support for dialog
+  const createFileDialogKeyboard = useDialogKeyboard(
+    handleDialogClose,
+    () => {
+      if (!creating && fileName.trim() && path.trim()) {
         handleCreate();
       }
-    } else if (event.key === 'Enter' && event.target.name === 'fileName') {
+    }
+  );
+
+  const fileNameInputKeyboard = useTextInputKeyboard(
+    setFileName,
+    (value) => {
+      if (value) {
+        setFileName('');
+      } else {
+        handleDialogClose();
+      }
+    },
+    () => {
       // Move to path field if filename is entered
       const pathInput = document.querySelector('input[name="path"]');
       if (pathInput) {
         pathInput.focus();
+      }
+    }
+  );
+
+  const pathInputKeyboard = useTextInputKeyboard(
+    setPath,
+    (value) => {
+      if (value) {
+        setPath('');
+      } else {
+        // Move back to filename field
+        const nameInput = document.querySelector('input[name="fileName"]');
+        if (nameInput) {
+          nameInput.focus();
+        }
+      }
+    },
+    () => {
+      if (fileName.trim() && path.trim()) {
+        handleCreate();
+      }
+    }
+  );
+
+  const handleKeyPress = (event) => {
+    // Only handle Enter without modifiers to avoid conflicts with dialog keyboard handler
+    if (event.key === 'Enter' && !event.ctrlKey && !event.metaKey) {
+      if (event.target.name === 'path') {
+        // Submit if both fields are filled
+        if (fileName.trim() && path.trim()) {
+          event.preventDefault();
+          event.stopPropagation();
+          handleCreate();
+        }
+      } else if (event.target.name === 'fileName') {
+        // Move to path field if filename is entered
+        event.preventDefault();
+        event.stopPropagation();
+        const pathInput = document.querySelector('input[name="path"]');
+        if (pathInput) {
+          pathInput.focus();
+        }
       }
     }
   };
@@ -149,6 +205,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
         maxWidth="xs"
         fullWidth
         TransitionComponent={FadeSlideTransition}
+        onKeyDown={createFileDialogKeyboard.handleKeyDown}
         TransitionProps={{
           onEntered: handleDialogEntered,
           timeout: {
@@ -300,7 +357,10 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
               label="File Name"
               value={fileName}
               onChange={(e) => setFileName(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={(e) => {
+                fileNameInputKeyboard.handleKeyDown(e);
+                handleKeyPress(e);
+              }}
               placeholder="application name"
               variant="outlined"
               disabled={creating}
@@ -349,7 +409,10 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
                 label="Path"
                 value={path}
                 onChange={(e) => setPath(e.target.value)}
-                onKeyPress={handleKeyPress}
+                onKeyDown={(e) => {
+                  pathInputKeyboard.handleKeyDown(e);
+                  handleKeyPress(e);
+                }}
                 placeholder="/configs/app/"
                 variant="outlined"
                 disabled={creating}

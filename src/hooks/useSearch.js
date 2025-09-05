@@ -6,7 +6,11 @@ import { DOM_IDS } from '../constants';
  * Custom hook for managing search functionality
  */
 export const useSearch = (items = [], searchKeys = []) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQueryState] = useState('');
+
+  const setSearchQuery = useCallback((query) => {
+    setSearchQueryState(query);
+  }, []);
 
   // Global keyboard shortcut handler
   const focusSearch = useCallback(() => {
