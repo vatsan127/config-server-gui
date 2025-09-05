@@ -204,9 +204,25 @@ const Sidebar = ({
                     '&:hover': {
                       bgcolor: COLORS.primary.main,
                       color: COLORS.text.white,
-                      transform: 'scale(1.1)',
+                      transform: 'scale(1.15) rotate(5deg)',
+                      boxShadow: '0 4px 12px rgba(0, 123, 255, 0.3)',
                     },
-                    transition: 'all 0.2s ease'
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: '-100%',
+                      width: '100%',
+                      height: '100%',
+                      background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                      transition: 'left 0.5s ease',
+                    },
+                    '&:hover::before': {
+                      left: '100%',
+                    }
                   }}
                 >
                   <AddIcon fontSize="small" />
@@ -316,12 +332,45 @@ const Sidebar = ({
                           '&.Mui-selected': {
                             bgcolor: alpha(COLORS.primary.main, 0.1),
                             borderLeft: `3px solid ${COLORS.primary.main}`,
+                            position: 'relative',
+                            '&::after': {
+                              content: '""',
+                              position: 'absolute',
+                              right: 0,
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              width: 0,
+                              height: 0,
+                              borderLeft: '8px solid',
+                              borderLeftColor: COLORS.primary.main,
+                              borderTop: '8px solid transparent',
+                              borderBottom: '8px solid transparent',
+                            },
                             '&:hover': {
                               bgcolor: alpha(COLORS.primary.main, 0.15),
+                              transform: 'translateX(4px)',
                             }
                           },
                           '&:hover': {
                             bgcolor: COLORS.grey[50],
+                            transform: 'translateX(2px)',
+                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                          },
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                          position: 'relative',
+                          '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            left: 0,
+                            top: 0,
+                            width: '100%',
+                            height: '100%',
+                            background: `linear-gradient(90deg, transparent 0%, ${alpha(COLORS.primary.main, 0.05)} 50%, transparent 100%)`,
+                            opacity: 0,
+                            transition: 'opacity 0.3s ease',
+                          },
+                          '&:hover::before': {
+                            opacity: 1,
                           }
                         }}
                       >
@@ -435,8 +484,14 @@ const Sidebar = ({
         '& .MuiDrawer-paper': {
           width: collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH,
           boxSizing: 'border-box',
-          transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
           borderRight: 'none',
+          background: `linear-gradient(180deg, ${COLORS.background.paper} 0%, ${COLORS.grey[25]} 100%)`,
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.1)',
+          backdropFilter: 'blur(12px)',
+          '&:hover': {
+            boxShadow: '0 6px 30px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.1)',
+          }
         },
       }}
     >

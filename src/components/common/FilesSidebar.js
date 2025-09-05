@@ -36,10 +36,25 @@ const FilesSidebar = ({ namespace }) => {
       sx={{
         width: SIZES.sidebar.width,
         height: '100vh',
-        bgcolor: alpha(COLORS.background.sidebar, 0.95),
-        backdropFilter: 'blur(20px)',
-        borderRight: `1px solid ${alpha(COLORS.grey[300], 0.3)}`,
-        boxShadow: SIZES.shadow.lg,
+        background: `linear-gradient(180deg, ${alpha(COLORS.background.sidebar, 0.98)} 0%, ${alpha(COLORS.background.sidebar, 0.92)} 100%)`,
+        backdropFilter: 'blur(24px) saturate(1.2)',
+        borderRight: `1px solid ${alpha(COLORS.grey[300], 0.2)}`,
+        boxShadow: '0 8px 32px rgba(6, 57, 112, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1)',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `linear-gradient(135deg, ${alpha('#4F46E5', 0.1)} 0%, transparent 50%, ${alpha('#10B981', 0.05)} 100%)`,
+          pointerEvents: 'none',
+          opacity: 0,
+          transition: 'opacity 0.5s ease',
+        },
+        '&:hover::before': {
+          opacity: 1,
+        },
         display: 'flex',
         flexDirection: 'column',
         position: 'fixed',
@@ -60,12 +75,45 @@ const FilesSidebar = ({ namespace }) => {
         mb: 0.5
       }}>
         <Box sx={{
-          width: 6,
-          height: 6,
+          width: 8,
+          height: 8,
           borderRadius: '50%',
           bgcolor: '#4ade80',
           mr: 1.5,
-          boxShadow: `0 0 8px ${alpha('#4ade80', 0.4)}`
+          boxShadow: `0 0 12px ${alpha('#4ade80', 0.6)}, 0 0 24px ${alpha('#4ade80', 0.3)}`,
+          position: 'relative',
+          animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          '@keyframes pulse': {
+            '0%, 100%': {
+              opacity: 1,
+              transform: 'scale(1)'
+            },
+            '50%': {
+              opacity: 0.8,
+              transform: 'scale(1.1)'
+            }
+          },
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            top: -2,
+            left: -2,
+            right: -2,
+            bottom: -2,
+            borderRadius: '50%',
+            border: `1px solid ${alpha('#4ade80', 0.3)}`,
+            animation: 'ripple 3s linear infinite',
+            '@keyframes ripple': {
+              '0%': {
+                transform: 'scale(0.8)',
+                opacity: 1
+              },
+              '100%': {
+                transform: 'scale(2.5)',
+                opacity: 0
+              }
+            }
+          }
         }} />
         <Typography 
           variant="h6" 
@@ -94,16 +142,23 @@ const FilesSidebar = ({ namespace }) => {
             position: 'relative',
             overflow: 'hidden',
             '&:hover': { 
-              bgcolor: alpha('#6366f1', 0.12),
-              transform: 'translateX(2px)',
+              bgcolor: alpha('#6366f1', 0.15),
+              transform: 'translateX(4px) scale(1.02)',
+              boxShadow: '0 4px 16px rgba(99, 102, 241, 0.2)',
               '& .MuiListItemIcon-root': {
-                color: '#6366f1'
+                color: '#6366f1',
+                transform: 'scale(1.1)'
               },
               '& .MuiListItemText-primary': {
-                color: '#e2e8f0'
+                color: '#ffffff',
+                fontWeight: 600
               },
               '&::before': {
                 transform: 'scaleY(1)'
+              },
+              '&::after': {
+                opacity: 1,
+                transform: 'translateX(0)'
               }
             },
             '&::before': {
@@ -116,7 +171,19 @@ const FilesSidebar = ({ namespace }) => {
               bgcolor: '#6366f1',
               transform: 'scaleY(0)',
               transformOrigin: 'bottom',
-              transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+              transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+            },
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: '100%',
+              height: '100%',
+              background: `linear-gradient(90deg, transparent 0%, ${alpha('#6366f1', 0.1)} 100%)`,
+              opacity: 0,
+              transform: 'translateX(100%)',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
             }
           }}
         >
@@ -158,16 +225,23 @@ const FilesSidebar = ({ namespace }) => {
             overflow: 'hidden',
             bgcolor: (isFilesActive || isFileViewActive) ? alpha('#10b981', 0.15) : 'transparent',
             '&:hover': { 
-              bgcolor: (isFilesActive || isFileViewActive) ? alpha('#10b981', 0.2) : alpha('#10b981', 0.08),
-              transform: 'translateX(2px)',
+              bgcolor: (isFilesActive || isFileViewActive) ? alpha('#10b981', 0.25) : alpha('#10b981', 0.12),
+              transform: 'translateX(4px) scale(1.02)',
+              boxShadow: '0 4px 16px rgba(16, 185, 129, 0.25)',
               '& .MuiListItemIcon-root': {
-                color: '#10b981'
+                color: '#10b981',
+                transform: 'scale(1.15) rotate(5deg)'
               },
               '& .MuiListItemText-primary': {
-                color: '#e2e8f0'
+                color: '#ffffff',
+                fontWeight: 700
               },
               '&::before': {
                 transform: 'scaleY(1)'
+              },
+              '&::after': {
+                opacity: 1,
+                transform: 'translateX(0)'
               }
             },
             '&::before': {
@@ -180,7 +254,19 @@ const FilesSidebar = ({ namespace }) => {
               bgcolor: '#10b981',
               transform: (isFilesActive || isFileViewActive) ? 'scaleY(1)' : 'scaleY(0)',
               transformOrigin: 'bottom',
-              transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+              transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+            },
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: '100%',
+              height: '100%',
+              background: `linear-gradient(90deg, transparent 0%, ${alpha('#10b981', 0.1)} 100%)`,
+              opacity: 0,
+              transform: 'translateX(100%)',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
             }
           }}
         >
