@@ -47,6 +47,9 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
   const nameInputRef = useRef(null);
   const [menuAnchorEl, setMenuAnchorEl] = React.useState(null);
   const [selectedNamespace, setSelectedNamespace] = React.useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [namespaceToDelete, setNamespaceToDelete] = React.useState(null);
+  const [isDeleting, setIsDeleting] = React.useState(false);
   
   console.log('🏠 Dashboard component rendered', {
     timestamp: new Date().toISOString(),
@@ -123,11 +126,35 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
     setSelectedNamespace(null);
   };
 
+  // Handle opening delete confirmation dialog
+  const handleDeleteClick = () => {
+    setNamespaceToDelete(selectedNamespace);
+    setDeleteDialogOpen(true);
+    handleMenuClose();
+  };
+
   // Handle namespace delete
   const handleDeleteNamespace = async () => {
-    if (selectedNamespace && window.confirm(`Are you sure you want to delete the namespace "${selectedNamespace}"?`)) {
-      await deleteNamespace(selectedNamespace);
-      handleMenuClose();
+    if (!namespaceToDelete) return;
+    
+    try {
+      setIsDeleting(true);
+      await deleteNamespace(namespaceToDelete);
+      setDeleteDialogOpen(false);
+      setNamespaceToDelete(null);
+    } catch (error) {
+      // Error is already handled by the notification system in the hook
+      console.error('Failed to delete namespace:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  // Handle delete dialog close
+  const handleDeleteDialogClose = () => {
+    if (!isDeleting) {
+      setDeleteDialogOpen(false);
+      setNamespaceToDelete(null);
     }
   };
 
@@ -461,7 +488,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
         }}
       >
         <MenuItem
-          onClick={handleDeleteNamespace}
+          onClick={handleDeleteClick}
           sx={{
             color: COLORS.error.main,
             py: 1.5,
@@ -755,6 +782,152 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
               </Box>
             ) : (
               'Create Namespace'
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteDialogClose}
+        maxWidth="xs"
+        fullWidth
+        TransitionComponent={GrowTransition}
+        PaperProps={{
+          sx: {
+            bgcolor: COLORS.background.paper,
+            border: `1px solid ${COLORS.error.light}`,
+            borderRadius: `${SIZES.borderRadius.large}px`,
+            boxShadow: SIZES.shadow.floating,
+            m: 1,
+            position: 'relative',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background: `linear-gradient(90deg, ${COLORS.error.main}, ${COLORS.error.dark})`,
+            }
+          }
+        }}
+        sx={{
+          '& .MuiBackdrop-root': {
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            backdropFilter: 'blur(10px)',
+          }
+        }}
+      >
+        <DialogTitle sx={{
+          color: COLORS.text.primary,
+          fontSize: '1.25rem',
+          fontWeight: 600,
+          borderBottom: `1px solid ${COLORS.grey[200]}`,
+          px: 3,
+          py: 2.5,
+          bgcolor: alpha(COLORS.error.light, 0.05),
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1.5
+        }}>
+          <Box
+            sx={{
+              width: 32,
+              height: 32,
+              borderRadius: `${SIZES.borderRadius.medium}px`,
+              bgcolor: alpha(COLORS.error.main, 0.1),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              border: `1px solid ${alpha(COLORS.error.main, 0.2)}`,
+            }}
+          >
+            <DeleteIcon sx={{ fontSize: 16, color: COLORS.error.main }} />
+          </Box>
+          Delete Namespace
+        </DialogTitle>
+        <DialogContent sx={{
+          px: 3,
+          py: 3,
+          '&.MuiDialogContent-root': {
+            paddingTop: 3
+          }
+        }}>
+          <Typography variant="body1" sx={{ color: COLORS.text.primary, mb: 2 }}>
+            Are you sure you want to delete the namespace <strong>"{namespaceToDelete}"</strong>?
+          </Typography>
+          <Typography variant="body2" sx={{ color: COLORS.text.secondary }}>
+            This action will permanently delete the namespace directory and all its contents. This cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{
+          px: 3,
+          py: 2.5,
+          borderTop: `1px solid ${COLORS.grey[200]}`,
+          bgcolor: alpha(COLORS.grey[25], 0.5),
+          gap: 1.5
+        }}>
+          <Button
+            onClick={handleDeleteDialogClose}
+            disabled={isDeleting}
+            sx={{
+              px: 2,
+              py: 1,
+              color: COLORS.text.secondary,
+              bgcolor: 'transparent',
+              border: `1px solid ${COLORS.grey[300]}`,
+              borderRadius: `${SIZES.borderRadius.medium}px`,
+              fontSize: '0.9rem',
+              fontWeight: 500,
+              '&:hover': {
+                bgcolor: COLORS.grey[50],
+                borderColor: COLORS.grey[400],
+                color: COLORS.text.primary,
+              },
+              '&:disabled': {
+                color: COLORS.grey[400],
+                borderColor: COLORS.grey[200],
+                bgcolor: 'transparent',
+              }
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteNamespace}
+            variant="contained"
+            disabled={isDeleting}
+            sx={{
+              px: 2,
+              py: 1,
+              minWidth: '120px',
+              bgcolor: COLORS.error.main,
+              color: COLORS.text.white,
+              borderRadius: `${SIZES.borderRadius.medium}px`,
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              boxShadow: SIZES.shadow.card,
+              '&:hover': {
+                bgcolor: COLORS.error.dark,
+                boxShadow: SIZES.shadow.elevated,
+              },
+              '&:disabled': {
+                bgcolor: COLORS.grey[300],
+                color: COLORS.grey[500],
+                boxShadow: 'none',
+              }
+            }}
+          >
+            {isDeleting ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <InlineSpinner size={16} color={COLORS.text.white} />
+                Deleting...
+              </Box>
+            ) : (
+              'Delete Namespace'
             )}
           </Button>
         </DialogActions>

@@ -6,6 +6,7 @@ export const API_CONFIG = {
     NAMESPACES: {
       LIST: '/namespace/list',
       CREATE: '/namespace/create',
+      DELETE: '/namespace/delete',
       FILES: '/namespace/files'
     },
     CONFIG: {
@@ -33,7 +34,8 @@ export const UI_CONSTANTS = {
     EMPTY_NAMESPACES: 'No namespaces found',
     EMPTY_NAMESPACES_DESC: 'Get started by creating your first namespace',
     NO_SEARCH_RESULTS: 'No matching namespaces',
-    NAMESPACE_CREATED: (name) => `Namespace "${name}" created successfully`
+    NAMESPACE_CREATED: (name) => `Namespace "${name}" created successfully`,
+    NAMESPACE_DELETED: (name) => `Namespace "${name}" deleted successfully`
   }
 };
 

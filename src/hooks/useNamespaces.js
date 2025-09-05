@@ -59,6 +59,22 @@ export const useNamespaces = () => {
     }
   }, [fetchNamespaces]);
 
+  const deleteNamespace = useCallback(async (namespaceName) => {
+    if (!namespaceName?.trim()) {
+      throw new Error('Namespace name is required');
+    }
+    
+    try {
+      await apiService.deleteNamespace(namespaceName.trim());
+      // Refresh the namespace list after deletion
+      await fetchNamespaces();
+      return true;
+    } catch (error) {
+      console.error('Failed to delete namespace:', error);
+      throw error;
+    }
+  }, [fetchNamespaces]);
+
   useEffect(() => {
     console.log('🎯 useNamespaces useEffect triggered', {
       timestamp: new Date().toISOString(),
@@ -79,6 +95,7 @@ export const useNamespaces = () => {
     loading,
     error,
     fetchNamespaces,
-    createNamespace
+    createNamespace,
+    deleteNamespace
   };
 };

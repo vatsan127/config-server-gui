@@ -603,6 +603,60 @@ export const apiService = {
     }
   },
 
+  async deleteNamespace(namespace) {
+    try {
+      console.log('Deleting namespace:', namespace);
+      
+      const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.NAMESPACES.DELETE}`;
+      const response = await makeApiRequest(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ namespace })
+      });
+      
+      // Handle response status and extract message
+      await handleApiResponse(response, UI_CONSTANTS.MESSAGES.NAMESPACE_DELETED(namespace));
+      
+      if (!response.ok) {
+        // Don't show additional error - handleApiResponse already handled it
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      console.log('Successfully deleted namespace:', namespace);
+      return true;
+      
+    } catch (error) {
+      console.error('Error deleting namespace:', error);
+      
+      // Only show connection errors, not HTTP errors (which are already handled by handleApiResponse)
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'delete namespace');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+            key: `connection-error-${Date.now()}`
+          });
+        }
+        
+        throw new Error(friendlyMessage);
+      }
+      
+      // For HTTP errors, just re-throw without additional notifications
+      // The error message from handleApiResponse is already shown
+      throw error;
+    }
+  },
+
   async deleteFile(namespace, path, fileName, message, email = 'user@example.com') {
     try {
       const url = `${API_CONFIG.BASE_URL}/config/delete`;
