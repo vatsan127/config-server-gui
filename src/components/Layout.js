@@ -32,20 +32,25 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCr
       <Box sx={{ 
         display: 'flex', 
         flexDirection: 'column',
-        minHeight: '100vh',
+        height: '100vh',
         bgcolor: 'background.default',
+        overflow: 'hidden'
       }}>
         {/* Navbar */}
         <AppBar 
-          position="static" 
+          position="sticky" 
+          elevation={0}
           sx={{ 
             bgcolor: alpha(COLORS.background.sidebar, 0.95),
             backdropFilter: 'blur(20px)',
-            boxShadow: SIZES.shadow.sm,
+            boxShadow: 'none',
             borderBottom: `1px solid ${alpha(COLORS.grey[300], 0.5)}`,
+            position: 'sticky',
+            top: 0,
+            zIndex: 1100
           }}
         >
-          <Toolbar sx={{ px: 2, py: 2, minHeight: '40px !important', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Toolbar sx={{ px: 2, py: 2, minHeight: '56px !important', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             {/* Left side - Title */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               <DashboardIcon sx={{ 
@@ -62,20 +67,19 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCr
               </Typography>
             </Box>
 
-            {/* Center - Search Bar (absolutely positioned) */}
+            {/* Center - Search Bar */}
             <Box sx={{ 
-              position: 'absolute', 
-              left: '50%', 
-              top: '50%', 
-              transform: 'translate(-50%, -50%)',
-              width: '320px'
+              flex: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              mx: 3
             }}>
               <TextField
                 id={DOM_IDS.GLOBAL_SEARCH}
-                placeholder={searchPlaceholder || UI_CONSTANTS.SEARCH.PLACEHOLDER}
+                placeholder="Search"
                 value={searchQuery || ''}
                 onChange={(e) => onSearchChange?.(e.target.value)}
-                fullWidth
+                sx={{ maxWidth: '400px', minWidth: '300px' }}
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
@@ -195,9 +199,9 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCr
           component="main"
           sx={{
             flexGrow: 1,
-            minHeight: 'calc(100vh - 40px)',
-            position: 'relative',
-            overflow: 'auto'
+            height: 'calc(100vh - 56px)',
+            overflow: 'auto',
+            position: 'relative'
           }}
         >
           <ErrorBoundary>

@@ -171,7 +171,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
       <Box sx={{ 
         p: SIZES.spacing.xs, 
         bgcolor: 'background.default', 
-        minHeight: '100vh',
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -255,7 +255,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
   }
 
   return (
-    <Box sx={{ p: SIZES.spacing.xs, bgcolor: 'background.default', minHeight: '100vh' }}>
+    <Box sx={{ p: SIZES.spacing.xs, bgcolor: 'background.default', height: '100%' }}>
       {/* Total Namespaces Count */}
       <Box 
         sx={{ 
