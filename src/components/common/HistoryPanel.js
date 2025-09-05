@@ -37,10 +37,22 @@ const HistoryPanel = ({
         right: 0,
         width: '600px',
         height: '100vh',
-        bgcolor: COLORS.background.paper,
-        backdropFilter: 'blur(20px)',
-        borderLeft: `1px solid ${COLORS.grey[300]}`,
-        boxShadow: SIZES.shadow.xl,
+        background: `linear-gradient(135deg, ${COLORS.background.paper} 0%, ${COLORS.grey[25]} 100%)`,
+        backdropFilter: 'blur(24px) saturate(1.1)',
+        borderLeft: `1px solid ${COLORS.grey[200]}`,
+        boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.1), 0 8px 32px rgba(0, 0, 0, 0.08)',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: `linear-gradient(45deg, ${COLORS.primary.main}05 0%, transparent 25%, ${COLORS.accent.green}03 75%, transparent 100%)`,
+          pointerEvents: 'none',
+          opacity: isOpen ? 0.7 : 0,
+          transition: 'opacity 0.6s ease',
+        },
         zIndex: 1200,
         transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
         transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
@@ -48,7 +60,8 @@ const HistoryPanel = ({
         visibility: isOpen ? 'visible' : 'hidden',
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        maxWidth: '600px'
       }}
     >
       {/* Header */}
@@ -59,7 +72,19 @@ const HistoryPanel = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          bgcolor: COLORS.grey[50],
+          background: `linear-gradient(135deg, ${COLORS.grey[50]} 0%, ${COLORS.background.paper} 100%)`,
+          backdropFilter: 'blur(12px)',
+          position: 'relative',
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            bottom: 0,
+            left: '10%',
+            right: '10%',
+            height: '1px',
+            background: `linear-gradient(90deg, transparent 0%, ${COLORS.primary.main} 50%, transparent 100%)`,
+            opacity: 0.3,
+          },
           transform: isOpen ? 'translateY(0)' : 'translateY(-20px)',
           opacity: isOpen ? 1 : 0,
           transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
@@ -74,13 +99,29 @@ const HistoryPanel = ({
               sx={{
                 color: COLORS.text.secondary,
                 bgcolor: COLORS.grey[100],
-                borderRadius: '8px',
-                p: 1,
-                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                borderRadius: '12px',
+                p: 1.2,
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                position: 'relative',
+                overflow: 'hidden',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: '-100%',
+                  width: '100%',
+                  height: '100%',
+                  background: `linear-gradient(90deg, transparent, ${COLORS.primary.main}20, transparent)`,
+                  transition: 'left 0.5s ease',
+                },
                 '&:hover': {
-                  color: COLORS.text.primary,
-                  bgcolor: COLORS.grey[100],
-                  transform: 'translateX(-2px)'
+                  color: COLORS.primary.main,
+                  bgcolor: COLORS.primary.main + '10',
+                  transform: 'translateX(-4px) scale(1.05)',
+                  boxShadow: `0 4px 12px ${COLORS.primary.main}30`,
+                  '&::before': {
+                    left: '100%',
+                  }
                 }
               }}
             >
@@ -140,14 +181,34 @@ const HistoryPanel = ({
           sx={{
             color: COLORS.text.secondary,
             bgcolor: COLORS.grey[100],
-            borderRadius: '8px',
-            p: 1,
+            borderRadius: '12px',
+            p: 1.2,
             ml: 2,
-            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            position: 'relative',
+            overflow: 'hidden',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: 0,
+              height: 0,
+              borderRadius: '50%',
+              background: COLORS.error.main,
+              transform: 'translate(-50%, -50%)',
+              transition: 'all 0.3s ease',
+              opacity: 0.1,
+            },
             '&:hover': {
-              color: COLORS.error.border,
+              color: COLORS.error.main,
               bgcolor: COLORS.error.background,
-              transform: 'rotate(90deg)'
+              transform: 'rotate(90deg) scale(1.1)',
+              boxShadow: `0 4px 16px ${COLORS.error.main}30`,
+              '&::before': {
+                width: '100%',
+                height: '100%',
+              }
             }
           }}
         >
@@ -181,13 +242,48 @@ const HistoryPanel = ({
               transitionDelay: isOpen ? '0.2s' : '0s'
             }}
           >
-            <CircularProgress size={40} sx={{ color: COLORS.primary.main }} />
+            <CircularProgress 
+              size={40} 
+              sx={{ 
+                color: COLORS.primary.main,
+                animation: 'pulse 2s ease-in-out infinite',
+                '@keyframes pulse': {
+                  '0%, 100%': {
+                    transform: 'scale(1)',
+                    opacity: 1,
+                  },
+                  '50%': {
+                    transform: 'scale(1.1)',
+                    opacity: 0.7,
+                  }
+                }
+              }} 
+            />
             <Typography variant="body2" sx={{ color: COLORS.text.secondary }}>
               Loading history...
             </Typography>
           </Box>
         ) : showChanges ? (
-          <Box sx={{ height: '100%', overflow: 'auto' }}>
+          <Box sx={{ 
+            height: '100%', 
+            overflowY: 'auto', 
+            overflowX: 'hidden',
+            '&::-webkit-scrollbar': {
+              width: 0,
+              background: 'transparent',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: 'transparent',
+            },
+            '&::-webkit-scrollbar-corner': {
+              background: 'transparent',
+            },
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
+          }}>
             {changesLoading ? (
               <Box
                 sx={{
@@ -202,7 +298,21 @@ const HistoryPanel = ({
                   transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                 }}
               >
-                <CircularProgress size={32} sx={{ color: COLORS.primary.main }} />
+                <CircularProgress 
+                  size={32} 
+                  sx={{ 
+                    color: COLORS.primary.main,
+                    animation: 'spin 1s linear infinite, glow 2s ease-in-out infinite alternate',
+                    '@keyframes spin': {
+                      '0%': { transform: 'rotate(0deg)' },
+                      '100%': { transform: 'rotate(360deg)' }
+                    },
+                    '@keyframes glow': {
+                      '0%': { filter: 'drop-shadow(0 0 2px currentColor)' },
+                      '100%': { filter: 'drop-shadow(0 0 8px currentColor)' }
+                    }
+                  }} 
+                />
                 <Typography variant="body2" sx={{ color: COLORS.text.secondary }}>
                   Loading changes...
                 </Typography>
@@ -221,7 +331,27 @@ const HistoryPanel = ({
             )}
           </Box>
         ) : historyData && historyData.commits && historyData.commits.length > 0 ? (
-          <List sx={{ py: 0, overflow: 'auto', height: '100%' }}>
+          <List sx={{ 
+            py: 0, 
+            overflowY: 'auto', 
+            overflowX: 'hidden', 
+            height: '100%',
+            '&::-webkit-scrollbar': {
+              width: 0,
+              background: 'transparent',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: 'transparent',
+            },
+            '&::-webkit-scrollbar-corner': {
+              background: 'transparent',
+            },
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none'
+          }}>
             {historyData.commits.map((commit, index) => (
               <ListItem
                 key={commit.commitId || index}
@@ -235,17 +365,43 @@ const HistoryPanel = ({
                   alignItems: 'flex-start',
                   cursor: 'pointer',
                   bgcolor: selectedCommitId === commit.commitId ? 
-                    COLORS.hover.button : 'transparent',
+                    COLORS.primary.main + '15' : 'transparent',
                   transform: isOpen ? 'translateX(0)' : 'translateX(-20px)',
                   opacity: isOpen ? 1 : 0,
                   transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                   transitionDelay: isOpen ? `${0.3 + index * 0.05}s` : '0s',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    width: '100%',
+                    height: '100%',
+                    background: `linear-gradient(90deg, transparent 0%, ${COLORS.primary.main}08 50%, transparent 100%)`,
+                    opacity: 0,
+                    transition: 'opacity 0.3s ease',
+                  },
+                  '&::after': selectedCommitId === commit.commitId ? {
+                    content: '""',
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    width: '4px',
+                    height: '100%',
+                    background: `linear-gradient(180deg, ${COLORS.primary.main}, ${COLORS.primary.dark})`,
+                    borderRadius: '0 2px 2px 0',
+                  } : {},
                   '&:hover': {
                     bgcolor: selectedCommitId === commit.commitId ? 
-                      COLORS.hover.button : 
+                      COLORS.primary.main + '20' : 
                       COLORS.grey[50],
-                    transform: isOpen ? 'translateX(4px)' : 'translateX(-20px)',
-                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                    transform: isOpen ? 'translateX(8px) scale(1.01)' : 'translateX(-20px)',
+                    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08)',
+                    '&::before': {
+                      opacity: 1,
+                    }
                   }
                 }}
               >
@@ -256,7 +412,9 @@ const HistoryPanel = ({
                     fontWeight: 500,
                     mb: 0.5,
                     lineHeight: 1.4,
-                    width: '100%'
+                    width: '100%',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'break-word'
                   }}
                 >
                   {commit.commitMessage || commit.message || 'No commit message'}
@@ -267,7 +425,9 @@ const HistoryPanel = ({
                   sx={{
                     color: COLORS.text.secondary,
                     fontSize: '0.8rem',
-                    width: '100%'
+                    width: '100%',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'break-word'
                   }}
                 >
                   {commit.author && commit.email ? 
@@ -301,7 +461,16 @@ const HistoryPanel = ({
               sx={{ 
                 fontSize: 48, 
                 color: COLORS.text.secondary,
-                opacity: 0.5 
+                opacity: 0.5,
+                animation: 'float 3s ease-in-out infinite',
+                '@keyframes float': {
+                  '0%, 100%': {
+                    transform: 'translateY(0px)',
+                  },
+                  '50%': {
+                    transform: 'translateY(-10px)',
+                  }
+                }
               }} 
             />
             <Typography variant="h6" sx={{ 

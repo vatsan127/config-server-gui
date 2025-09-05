@@ -75,16 +75,17 @@ const DiffViewer = ({ diffText }) => {
     switch (lineData.type) {
       case 'added':
         backgroundColor = '#e6ffed';
-        color = '#28a745';
+        color = '#22863a';
         borderLeft = `3px solid #28a745`;
         break;
       case 'removed':
-        backgroundColor = '#ffebee';
-        color = '#dc3545';
-        borderLeft = `3px solid #dc3545`;
+        backgroundColor = '#ffeaea';
+        color = '#d73a49';
+        borderLeft = `3px solid #d73a49`;
         break;
       case 'context':
         color = COLORS.text.primary;
+        backgroundColor = 'transparent';
         break;
     }
 
@@ -107,29 +108,40 @@ const DiffViewer = ({ diffText }) => {
         sx={{
           display: 'flex',
           fontFamily: 'Monaco, "Lucida Console", "Courier New", monospace',
-          fontSize: '0.75rem',
-          lineHeight: 1.4,
+          fontSize: '0.7rem',
+          lineHeight: 1.3,
           backgroundColor,
           color,
           fontWeight,
-          px: 1,
-          py: 0.2,
+          px: 0.5,
+          py: 0.1,
           borderLeft,
           whiteSpace: 'pre-wrap',
-          wordBreak: 'break-all',
-          overflow: 'visible'
+          wordBreak: 'break-word',
+          overflowWrap: 'break-word',
+          overflow: 'hidden',
+          maxWidth: '100%',
+          transition: 'background-color 0.1s ease',
+          '&:hover': {
+            backgroundColor: lineData.type === 'added' ? '#d4edda' :
+                            lineData.type === 'removed' ? '#f8d7da' :
+                            COLORS.grey[50],
+          }
         }}
       >
         <Typography
           component="span"
           sx={{
-            minWidth: '50px',
+            minWidth: '40px',
+            maxWidth: '40px',
+            width: '40px',
             color: COLORS.text.muted,
             fontSize: 'inherit',
             fontFamily: 'inherit',
             userSelect: 'none',
             mr: 1,
-            textAlign: 'right'
+            textAlign: 'right',
+            flexShrink: 0
           }}
         >
           {getLineNumberDisplay(lineData)}
@@ -144,8 +156,11 @@ const DiffViewer = ({ diffText }) => {
             fontWeight: 'inherit',
             flex: 1,
             whiteSpace: 'pre-wrap',
-            wordBreak: 'break-all',
-            pl: 1
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+            pl: 1,
+            minWidth: 0,
+            overflow: 'hidden'
           }}
         >
           {lineData.content || ' '}
@@ -158,9 +173,28 @@ const DiffViewer = ({ diffText }) => {
 
   return (
     <Box sx={{ 
-      backgroundColor: COLORS.background.paper,
+      background: '#f8f9fa',
       height: '100%',
-      overflow: 'auto'
+      overflowY: 'auto',
+      overflowX: 'hidden',
+      position: 'relative',
+      border: `1px solid ${COLORS.grey[200]}`,
+      borderRadius: '4px',
+      '&::-webkit-scrollbar': {
+        width: 0,
+        background: 'transparent',
+      },
+      '&::-webkit-scrollbar-track': {
+        background: 'transparent',
+      },
+      '&::-webkit-scrollbar-thumb': {
+        background: 'transparent',
+      },
+      '&::-webkit-scrollbar-corner': {
+        background: 'transparent',
+      },
+      scrollbarWidth: 'none',
+      msOverflowStyle: 'none'
     }}>
       {parsedLines.map((lineData, index) => formatDiffLine(lineData, index))}
     </Box>
