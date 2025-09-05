@@ -619,13 +619,13 @@ const FilesPage = () => {
                   minWidth: 150,
                   maxWidth: 250,
                   flexShrink: 1,
-                  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                   '& .MuiOutlinedInput-root': {
                     borderRadius: `${SIZES.borderRadius.medium}px`,
                     bgcolor: COLORS.background.paper,
-                    transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                     '& fieldset': {
-                      transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                      transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                     },
                     '&:hover fieldset': {
                       borderColor: COLORS.grey[400],
@@ -666,7 +666,7 @@ const FilesPage = () => {
               />
               <Box
                 sx={{
-                  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                   flexShrink: 0,
                   padding: '4px 0',
                   display: 'flex',
@@ -718,7 +718,7 @@ const FilesPage = () => {
             flex: 1,
             transform: 'translateY(0) scale(1)',
             opacity: 1,
-            transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             animation: 'slideUpFade 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both',
             '@keyframes slideUpFade': {
               '0%': {
@@ -762,7 +762,7 @@ const FilesPage = () => {
                     borderBottom: index < filteredFiles.length - 1 ? `1px solid ${COLORS.grey[100]}` : 'none',
                     transform: 'translateX(0) scale(1)',
                     opacity: 1,
-                    transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                     animation: `fadeScaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.4 + index * 0.03}s both`,
                     '@keyframes fadeScaleIn': {
                       '0%': {
@@ -804,7 +804,7 @@ const FilesPage = () => {
                 >
                   <ListItemIcon sx={{ 
                     minWidth: 40,
-                    transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+                    transition: 'transform 0.1s cubic-bezier(0.4, 0, 0.2, 1)'
                   }}>
                     {item.endsWith('/') ? (
                       <FolderIcon sx={{ 
@@ -822,7 +822,7 @@ const FilesPage = () => {
                         color: item.endsWith('/') ? COLORS.primary.main : COLORS.text.primary,
                         fontWeight: item.endsWith('/') ? 600 : 400,
                         fontSize: '0.9rem',
-                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                        transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                         lineHeight: 1.4
                       }
                     }}
@@ -846,7 +846,7 @@ const FilesPage = () => {
                         onClick={(e) => handleDownloadFile(item, e)}
                         sx={{
                           color: COLORS.text.secondary,
-                          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                          transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                           '&:hover': {
                             color: '#10b981',
                             bgcolor: 'rgba(16, 185, 129, 0.1)',
@@ -864,7 +864,7 @@ const FilesPage = () => {
                         onClick={(e) => handleHistoryClick(item, e)}
                         sx={{
                           color: COLORS.text.secondary,
-                          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                          transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                           '&:hover': {
                             color: '#3b82f6',
                             bgcolor: 'rgba(59, 130, 246, 0.1)',
@@ -882,7 +882,7 @@ const FilesPage = () => {
                         onClick={(e) => handleDeleteClick(item, e)}
                         sx={{
                           color: COLORS.text.secondary,
-                          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                          transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                           '&:hover': {
                             color: '#ef4444',
                             bgcolor: 'rgba(239, 68, 68, 0.1)',

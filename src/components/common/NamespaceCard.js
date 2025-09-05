@@ -60,7 +60,7 @@ const NamespaceCard = ({ namespace, onClick, fileCount = 0, lastModified = null 
         border: `1px solid ${COLORS.grey[200]}`,
         borderRadius: `${SIZES.borderRadius.large}px`,
         boxShadow: SIZES.shadow.card,
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
         position: 'relative',
         overflow: 'hidden',
         '&:hover': {
@@ -126,7 +126,7 @@ const NamespaceCard = ({ namespace, onClick, fileCount = 0, lastModified = null 
               justifyContent: 'center',
               borderRadius: `${SIZES.borderRadius.large}px`,
               boxShadow: SIZES.shadow.md,
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
               mr: 2,
             }}
             className="namespace-icon"
@@ -197,7 +197,7 @@ const NamespaceCard = ({ namespace, onClick, fileCount = 0, lastModified = null 
             gap: 1,
             opacity: 0,
             visibility: 'hidden',
-            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
             mt: 'auto'
           }}
         >
@@ -211,7 +211,7 @@ const NamespaceCard = ({ namespace, onClick, fileCount = 0, lastModified = null 
               bgcolor: COLORS.grey[100],
               color: COLORS.text.secondary,
               border: `1px solid transparent`,
-              transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              transition: 'all 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               '&:hover': {
                 bgcolor: envType.color,
                 color: COLORS.text.white,
@@ -237,7 +237,7 @@ const NamespaceCard = ({ namespace, onClick, fileCount = 0, lastModified = null 
               bgcolor: COLORS.grey[100],
               color: COLORS.text.secondary,
               border: `1px solid transparent`,
-              transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              transition: 'all 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               '&:hover': {
                 bgcolor: COLORS.grey[200],
                 color: COLORS.text.primary,

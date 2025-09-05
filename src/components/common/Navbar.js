@@ -85,7 +85,7 @@ const Navbar = ({
         {/* Dashboard Button */}
         <Button
           startIcon={<DashboardIcon sx={{ 
-            transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             fontSize: 20
           }} />}
           onClick={handleDashboardClick}
@@ -176,7 +176,7 @@ const Navbar = ({
                 borderRadius: `${SIZES.borderRadius.medium}px`,
                 bgcolor: alpha(COLORS.primary.main, 0.05),
                 border: `1px solid ${alpha(COLORS.primary.main, 0.15)}`,
-                transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                 '&::before': {
                   content: '""',
                   position: 'absolute',
@@ -231,7 +231,7 @@ const Navbar = ({
                 bgcolor: alpha(COLORS.grey[50], 0.5),
                 backdropFilter: 'blur(10px)',
                 border: `1px solid ${alpha(COLORS.grey[300], 0.5)}`,
-                transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                 '& fieldset': {
                   border: 'none'
                 },
@@ -254,7 +254,7 @@ const Navbar = ({
                 <InputAdornment position="start">
                   <SearchIcon sx={{ 
                     color: COLORS.text.muted,
-                    transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                    transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                     fontSize: 20
                   }} />
                 </InputAdornment>

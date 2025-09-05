@@ -207,7 +207,7 @@ const Sidebar = ({
                       transform: 'scale(1.15) rotate(5deg)',
                       boxShadow: '0 4px 12px rgba(0, 123, 255, 0.3)',
                     },
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
                     position: 'relative',
                     overflow: 'hidden',
                     '&::before': {
@@ -356,7 +356,7 @@ const Sidebar = ({
                             transform: 'translateX(2px)',
                             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                           },
-                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                          transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
                           position: 'relative',
                           '&::before': {
                             content: '""',

@@ -136,7 +136,7 @@ export const theme = createTheme({
           fontWeight: 500,
           textTransform: 'none',
           padding: '8px 16px',
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
         },
         contained: {
           boxShadow: SIZES.shadow.sm,

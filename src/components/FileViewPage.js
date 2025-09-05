@@ -350,7 +350,7 @@ const FileViewPage = () => {
                   px: 1,
                   py: 0.5,
                   borderRadius: `${SIZES.borderRadius.small}px`,
-                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                   '&:hover': {
                     bgcolor: alpha(COLORS.primary.main, 0.08),
                     color: COLORS.primary.dark,
@@ -382,7 +382,7 @@ const FileViewPage = () => {
                     px: 1,
                     py: 0.5,
                     borderRadius: `${SIZES.borderRadius.small}px`,
-                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                     '&:hover': {
                       bgcolor: alpha(COLORS.primary.main, 0.08),
                       color: COLORS.primary.dark,
@@ -444,7 +444,7 @@ const FileViewPage = () => {
                       borderRadius: `${SIZES.borderRadius.medium}px`,
                       width: 32,
                       height: 32,
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                      transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
                         bgcolor: alpha(COLORS.primary.main, 0.1),
                         color: COLORS.primary.main,
@@ -467,7 +467,7 @@ const FileViewPage = () => {
                       borderRadius: `${SIZES.borderRadius.medium}px`,
                       width: 32,
                       height: 32,
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                      transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
                         bgcolor: alpha(COLORS.accent.blue, 0.1),
                         color: COLORS.accent.blue,
@@ -490,7 +490,7 @@ const FileViewPage = () => {
                       borderRadius: `${SIZES.borderRadius.medium}px`,
                       width: 32,
                       height: 32,
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                      transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
                         bgcolor: alpha(COLORS.success.border, 0.1),
                         color: COLORS.success.border,
@@ -517,7 +517,7 @@ const FileViewPage = () => {
                         borderRadius: `${SIZES.borderRadius.medium}px`,
                         width: 32,
                         height: 32,
-                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                        transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                         border: hasChanges ? `1px solid ${alpha(COLORS.success.border, 0.2)}` : 'none',
                         '&:hover:not(:disabled)': {
                           bgcolor: alpha(COLORS.success.border, 0.15),
@@ -545,7 +545,7 @@ const FileViewPage = () => {
                       borderRadius: `${SIZES.borderRadius.medium}px`,
                       width: 32,
                       height: 32,
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                      transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
                         bgcolor: alpha(COLORS.error.border, 0.1),
                         color: COLORS.error.border,
@@ -792,7 +792,7 @@ const FileViewPage = () => {
           '& .MuiBackdrop-root': {
             backgroundColor: 'rgba(0, 0, 0, 0.5)',
             backdropFilter: 'blur(12px)',
-            transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
           }
         }}
       >
@@ -977,7 +977,7 @@ const FileViewPage = () => {
                 bottom: 0,
                 background: `linear-gradient(135deg, ${alpha('#ffffff', 0.2)}, transparent)`,
                 opacity: 0,
-                transition: 'opacity 0.2s ease',
+                transition: 'opacity 0.1s ease',
               },
               '&:hover:not(:disabled)': {
                 boxShadow: SIZES.shadow.floating,

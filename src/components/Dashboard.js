@@ -303,7 +303,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
             height: 3,
             bgcolor: COLORS.primary.main,
             borderRadius: '2px',
-            transition: 'width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s',
+            transition: 'width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s',
             animation: 'underlineExpand 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s both',
           },
           '@keyframes underlineExpand': {
@@ -329,7 +329,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                   boxShadow: SIZES.shadow.card,
                   transform: 'translateY(0) scale(1)',
                   opacity: 1,
-                  transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                   transitionDelay: `${index * 0.1}s`,
                   animation: `slideInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${index * 0.1}s both`,
                   '@keyframes slideInUp': {
@@ -388,7 +388,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                         height: 32,
                         opacity: 0,
                         transform: 'scale(0.8) rotate(0deg)',
-                        transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                        transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                         '.MuiCard-root:hover &': {
                           opacity: 1,
                           transform: 'scale(1) rotate(0deg)',
@@ -422,7 +422,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                           transform: 'translate(-50%, -50%) scale(0)',
                           borderRadius: '50%',
                           bgcolor: `${getNamespaceColor(namespace)}15`,
-                          transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                          transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                           zIndex: -1,
                         },
                         '.MuiCard-root:hover &::before': {
@@ -435,7 +435,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                           color: getNamespaceColor(namespace),
                           fontSize: 48,
                           transform: 'rotate(0deg) scale(1)',
-                          transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                          transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                           filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))',
                           animation: `iconFloat 3s ease-in-out infinite ${index * 0.2}s`,
                           '@keyframes iconFloat': {
@@ -470,7 +470,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                         wordBreak: 'break-word',
                         textAlign: 'center',
                         transform: 'translateY(0)',
-                        transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                        transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                         '.MuiCard-root:hover &': {
                           transform: 'translateY(-2px)',
                           color: COLORS.primary.main,
@@ -755,7 +755,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
               borderRadius: `${SIZES.borderRadius.medium}px`,
               fontSize: '0.9rem',
               fontWeight: 500,
-              transition: 'all 0.2s ease',
+              transition: 'all 0.1s ease',
               '&:hover': {
                 bgcolor: COLORS.grey[50],
                 borderColor: COLORS.grey[400],
@@ -784,7 +784,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
               fontSize: '0.9rem',
               fontWeight: 600,
               boxShadow: SIZES.shadow.card,
-              transition: 'all 0.2s ease',
+              transition: 'all 0.1s ease',
               '&:hover': {
                 bgcolor: COLORS.primary.dark,
                 boxShadow: SIZES.shadow.elevated,

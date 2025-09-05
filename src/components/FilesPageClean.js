@@ -440,7 +440,7 @@ const FilesPage = () => {
                       alignItems: 'center',
                       width: '100%',
                       py: 1.5,
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                      transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                       cursor: 'pointer',
                       '&:hover': {
                         bgcolor: COLORS.hover.card,
@@ -483,7 +483,7 @@ const FilesPage = () => {
                           gap: 0.5,
                           opacity: 0,
                           visibility: 'hidden',
-                          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+                          transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)'
                         }}
                       >
                         <IconButton
@@ -635,7 +635,7 @@ const FilesPage = () => {
                         '&:hover': {
                           bgcolor: selectedCommitId === commit.commitId ? COLORS.primary.light : COLORS.grey[50]
                         },
-                        transition: 'background-color 0.2s ease'
+                        transition: 'background-color 0.1s ease'
                       }}
                     >
                       <Typography variant="body2" sx={{ 

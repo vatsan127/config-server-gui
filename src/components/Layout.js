@@ -296,7 +296,7 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCr
                     height: 40,
                     border: `1px solid ${alpha(COLORS.grey[300], 0.5)}`,
                     backdropFilter: 'blur(10px)',
-                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                     '& fieldset': {
                       border: 'none',
                     },
@@ -337,7 +337,7 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCr
                     fontSize: '0.8rem',
                     border: `1px solid ${alpha(COLORS.text.white, 0.3)}`,
                     borderRadius: `${SIZES.borderRadius.medium}px`,
-                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                     '&:hover': {
                       bgcolor: alpha(COLORS.text.white, 0.2),
                       borderColor: alpha(COLORS.text.white, 0.5),
