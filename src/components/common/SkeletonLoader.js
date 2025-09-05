@@ -24,7 +24,7 @@ export const NamespaceCardSkeleton = () => (
       left: 0,
       background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent)',
       transform: 'translateX(-100%)',
-      animation: 'shimmer 0.8s infinite',
+      animation: 'shimmer 0.15s infinite',
     },
     '@keyframes shimmer': {
       '100%': {

@@ -50,7 +50,7 @@ const FilesSidebar = ({ namespace }) => {
           background: `linear-gradient(135deg, ${alpha('#4F46E5', 0.1)} 0%, transparent 50%, ${alpha('#10B981', 0.05)} 100%)`,
           pointerEvents: 'none',
           opacity: 0,
-          transition: 'opacity 0.5s ease',
+          transition: 'opacity 0.15s ease',
         },
         '&:hover::before': {
           opacity: 1,
@@ -171,7 +171,7 @@ const FilesSidebar = ({ namespace }) => {
               bgcolor: '#6366f1',
               transform: 'scaleY(0)',
               transformOrigin: 'bottom',
-              transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
             },
             '&::after': {
               content: '""',
@@ -183,7 +183,7 @@ const FilesSidebar = ({ namespace }) => {
               background: `linear-gradient(90deg, transparent 0%, ${alpha('#6366f1', 0.1)} 100%)`,
               opacity: 0,
               transform: 'translateX(100%)',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
             }
           }}
         >
@@ -254,7 +254,7 @@ const FilesSidebar = ({ namespace }) => {
               bgcolor: '#10b981',
               transform: (isFilesActive || isFileViewActive) ? 'scaleY(1)' : 'scaleY(0)',
               transformOrigin: 'bottom',
-              transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
             },
             '&::after': {
               content: '""',
@@ -266,7 +266,7 @@ const FilesSidebar = ({ namespace }) => {
               background: `linear-gradient(90deg, transparent 0%, ${alpha('#10b981', 0.1)} 100%)`,
               opacity: 0,
               transform: 'translateX(100%)',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+              transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
             }
           }}
         >

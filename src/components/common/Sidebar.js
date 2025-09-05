@@ -218,7 +218,7 @@ const Sidebar = ({
                       width: '100%',
                       height: '100%',
                       background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
-                      transition: 'left 0.5s ease',
+                      transition: 'left 0.15s ease',
                     },
                     '&:hover::before': {
                       left: '100%',
@@ -367,7 +367,7 @@ const Sidebar = ({
                             height: '100%',
                             background: `linear-gradient(90deg, transparent 0%, ${alpha(COLORS.primary.main, 0.05)} 50%, transparent 100%)`,
                             opacity: 0,
-                            transition: 'opacity 0.3s ease',
+                            transition: 'opacity 0.15s ease',
                           },
                           '&:hover::before': {
                             opacity: 1,
@@ -484,7 +484,7 @@ const Sidebar = ({
         '& .MuiDrawer-paper': {
           width: collapsed ? SIDEBAR_COLLAPSED_WIDTH : SIDEBAR_WIDTH,
           boxSizing: 'border-box',
-          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
           borderRight: 'none',
           background: `linear-gradient(180deg, ${COLORS.background.paper} 0%, ${COLORS.grey[25]} 100%)`,
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.1)',

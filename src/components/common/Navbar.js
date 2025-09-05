@@ -46,7 +46,7 @@ const Navbar = ({
         color: COLORS.text.primary,
         backdropFilter: 'blur(10px)',
         boxShadow: '0 1px 0 rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1)',
-        animation: 'navbarSlideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        animation: 'navbarSlideIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         '@keyframes navbarSlideIn': {
           '0%': {
             opacity: 0,
@@ -101,7 +101,7 @@ const Navbar = ({
             border: '1px solid transparent',
             position: 'relative',
             overflow: 'hidden',
-            animation: 'dashboardButtonSlide 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
+            animation: 'dashboardButtonSlide 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
             '@keyframes dashboardButtonSlide': {
               '0%': {
                 opacity: 0,
@@ -121,7 +121,7 @@ const Navbar = ({
               height: '100%',
               background: `linear-gradient(45deg, ${COLORS.primary.main}20, ${COLORS.accent.blue}20)`,
               opacity: 0,
-              transition: 'opacity 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+              transition: 'opacity 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
             },
             '&:hover': {
               bgcolor: alpha(COLORS.primary.main, 0.08),
@@ -151,7 +151,7 @@ const Navbar = ({
           <Box
             sx={{
               mr: 2,
-              animation: 'namespaceSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+              animation: 'namespaceSlideIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
               '@keyframes namespaceSlideIn': {
                 '0%': {
                   opacity: 0,
@@ -215,7 +215,7 @@ const Navbar = ({
             sx={{ 
               minWidth: 280,
               mr: 2,
-              animation: 'searchBarSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both',
+              animation: 'searchBarSlideIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both',
               '@keyframes searchBarSlideIn': {
                 '0%': {
                   opacity: 0,

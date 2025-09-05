@@ -173,7 +173,7 @@ export const StatusIndicator = ({
         backdropFilter: 'blur(10px)',
         position: 'relative',
         overflow: 'hidden',
-        animation: 'statusAlertSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        animation: 'statusAlertSlideIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         '@keyframes statusAlertSlideIn': {
           '0%': {
             opacity: 0,
@@ -211,7 +211,7 @@ export const StatusIndicator = ({
         },
         '& .MuiAlert-icon': {
           color: config.color,
-          animation: status === 'syncing' ? 'none' : 'iconPop 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.1s both',
+          animation: status === 'syncing' ? 'none' : 'iconPop 0.15s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.1s both',
           '@keyframes iconPop': {
             '0%': {
               transform: 'scale(0) rotate(-180deg)',
@@ -226,7 +226,7 @@ export const StatusIndicator = ({
         '&:hover': {
           transform: 'translateY(-2px) scale(1.02)',
           boxShadow: '0 8px 25px rgba(0, 0, 0, 0.15)',
-          transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           '& .MuiAlert-message': {
             transform: 'translateX(2px)'
           }
@@ -306,7 +306,7 @@ export const StepProgress = ({
             justifyContent: 'center',
             fontSize: '0.8rem',
             fontWeight: 600,
-            transition: 'all 0.3s ease'
+            transition: 'all 0.15s ease'
           }}>
             {index < currentStep ? '✓' : index + 1}
           </Box>
@@ -316,7 +316,7 @@ export const StepProgress = ({
               height: 2,
               bgcolor: index < currentStep ? COLORS.primary.main : COLORS.grey[300],
               borderRadius: 1,
-              transition: 'all 0.3s ease'
+              transition: 'all 0.15s ease'
             }} />
           )}
         </React.Fragment>

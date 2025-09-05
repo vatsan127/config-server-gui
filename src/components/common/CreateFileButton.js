@@ -146,7 +146,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
       <Button
         variant="contained"
         startIcon={<AddIcon sx={{ 
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: 18 
         }} />}
         onClick={handleClick}
@@ -164,7 +164,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
           whiteSpace: 'nowrap',
           position: 'relative',
           overflow: 'hidden',
-          transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           boxShadow: SIZES.shadow.sm,
           '&::before': {
             content: '""',
@@ -175,7 +175,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
             height: '100%',
             background: 'linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%)',
             transform: 'translateX(-100%) skewX(-15deg)',
-            transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            transition: 'transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
           },
           '&:hover': {
             bgcolor: COLORS.primary.dark,
@@ -222,7 +222,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
             m: 1,
             position: 'relative',
             overflow: 'hidden',
-            animation: 'createConfigDialogSlideIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            animation: 'createConfigDialogSlideIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             '@keyframes createConfigDialogSlideIn': {
               '0%': {
                 opacity: 0,
@@ -241,7 +241,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
               right: 0,
               height: '3px',
               background: `linear-gradient(90deg, ${COLORS.success.main}, ${COLORS.accent.green})`,
-              animation: 'configProgressSlide 0.7s ease-out 0.2s both',
+              animation: 'configProgressSlide 0.15s ease-out 0.2s both',
               '@keyframes configProgressSlide': {
                 '0%': {
                   transform: 'translateX(-100%) scaleX(0.5)'
@@ -272,7 +272,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
           display: 'flex',
           alignItems: 'center',
           gap: 1.5,
-          animation: 'configTitleSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
+          animation: 'configTitleSlideIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
           '@keyframes configTitleSlideIn': {
             '0%': {
               opacity: 0,
@@ -294,7 +294,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
               alignItems: 'center',
               justifyContent: 'center',
               border: `1px solid ${alpha(COLORS.success.main, 0.25)}`,
-              animation: 'configIconFloat 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+              animation: 'configIconFloat 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
               '@keyframes configIconFloat': {
                 '0%': {
                   transform: 'translateY(-20px) rotate(-45deg) scale(0.5)',
@@ -335,7 +335,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
           '&.MuiDialogContent-root': {
             paddingTop: 3
           },
-          animation: 'configContentFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+          animation: 'configContentFadeIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
           '@keyframes configContentFadeIn': {
             '0%': {
               opacity: 0,
@@ -462,7 +462,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
           borderTop: `1px solid ${COLORS.grey[200]}`,
           bgcolor: alpha(COLORS.grey[25], 0.5),
           gap: 1.5,
-          animation: 'configActionsSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both',
+          animation: 'configActionsSlideIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both',
           '@keyframes configActionsSlideIn': {
             '0%': {
               opacity: 0,
@@ -486,7 +486,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
               borderRadius: `${SIZES.borderRadius.medium}px`,
               fontSize: '0.9rem',
               fontWeight: 500,
-              transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               '&:hover:not(:disabled)': {
                 bgcolor: COLORS.grey[50],
                 borderColor: COLORS.grey[400],
@@ -526,7 +526,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
               boxShadow: SIZES.shadow.card,
               position: 'relative',
               overflow: 'hidden',
-              transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               '&::before': {
                 content: '""',
                 position: 'absolute',
@@ -536,7 +536,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
                 height: '100%',
                 background: 'linear-gradient(45deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 50%)',
                 transform: 'translateX(-100%) skewX(-15deg)',
-                transition: 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                transition: 'transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
               },
               '&:hover:not(:disabled)': {
                 bgcolor: COLORS.primary.dark,

@@ -89,11 +89,11 @@ const HistoryPanel = ({
           background: `linear-gradient(45deg, ${COLORS.primary.main}05 0%, transparent 25%, ${COLORS.accent.green}03 75%, transparent 100%)`,
           pointerEvents: 'none',
           opacity: isOpen ? 0.7 : 0,
-          transition: 'opacity 0.6s ease',
+          transition: 'opacity 0.15s ease',
         },
         zIndex: 1200,
         transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
-        transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         opacity: isOpen ? 1 : 0,
         visibility: isOpen ? 'visible' : 'hidden',
         display: 'flex',
@@ -125,7 +125,7 @@ const HistoryPanel = ({
           },
           transform: isOpen ? 'translateY(0)' : 'translateY(-20px)',
           opacity: isOpen ? 1 : 0,
-          transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           transitionDelay: isOpen ? '0.1s' : '0s'
         }}
       >
@@ -139,7 +139,7 @@ const HistoryPanel = ({
                 bgcolor: COLORS.grey[100],
                 borderRadius: '12px',
                 p: 1.2,
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
                 position: 'relative',
                 overflow: 'hidden',
                 '&::before': {
@@ -150,7 +150,7 @@ const HistoryPanel = ({
                   width: '100%',
                   height: '100%',
                   background: `linear-gradient(90deg, transparent, ${COLORS.primary.main}20, transparent)`,
-                  transition: 'left 0.5s ease',
+                  transition: 'left 0.15s ease',
                 },
                 '&:hover': {
                   color: COLORS.primary.main,
@@ -173,7 +173,7 @@ const HistoryPanel = ({
               fontSize: 20,
               flexShrink: 0,
               transform: showChanges ? 'rotate(180deg) scale(0.9)' : 'rotate(0deg) scale(1)',
-              transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+              transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
             }} 
           />
           
@@ -189,7 +189,7 @@ const HistoryPanel = ({
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
                 transform: showChanges ? 'translateY(0)' : 'translateY(0)',
-                transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
               }}
             >
               {showChanges && changesData ? 
@@ -226,7 +226,7 @@ const HistoryPanel = ({
             borderRadius: '12px',
             p: 1.2,
             ml: 2,
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
             position: 'relative',
             overflow: 'hidden',
             '&::before': {
@@ -239,7 +239,7 @@ const HistoryPanel = ({
               borderRadius: '50%',
               background: COLORS.error.main,
               transform: 'translate(-50%, -50%)',
-              transition: 'all 0.3s ease',
+              transition: 'all 0.15s ease',
               opacity: 0.1,
             },
             '&:hover': {
@@ -265,7 +265,7 @@ const HistoryPanel = ({
           overflow: 'hidden',
           transform: isOpen ? 'translateY(0)' : 'translateY(20px)',
           opacity: isOpen ? 1 : 0,
-          transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           transitionDelay: isOpen ? '0.2s' : '0s'
         }}
       >
@@ -280,7 +280,7 @@ const HistoryPanel = ({
               gap: 2,
               transform: isOpen ? 'scale(1)' : 'scale(0.8)',
               opacity: isOpen ? 1 : 0,
-              transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               transitionDelay: isOpen ? '0.2s' : '0s'
             }}
           >
@@ -312,7 +312,7 @@ const HistoryPanel = ({
             overflowX: 'hidden',
             transform: showChanges ? 'translateX(0)' : 'translateX(100%)',
             opacity: showChanges ? 1 : 0,
-            transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             '&::-webkit-scrollbar': {
               width: 0,
               background: 'transparent',
@@ -340,7 +340,7 @@ const HistoryPanel = ({
                   gap: 2,
                   transform: showChanges ? 'scale(1)' : 'scale(0.8)',
                   opacity: showChanges ? 1 : 0,
-                  transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                  transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
                 }}
               >
                 <CircularProgress 
@@ -367,7 +367,7 @@ const HistoryPanel = ({
                 sx={{
                   transform: showChanges ? 'translateX(0) scale(1)' : 'translateX(20px) scale(0.95)',
                   opacity: showChanges ? 1 : 0,
-                  transition: 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                   transitionDelay: showChanges ? '0.2s' : '0s'
                 }}
               >
@@ -383,7 +383,7 @@ const HistoryPanel = ({
             height: '100%',
             transform: !showChanges ? 'translateX(0)' : 'translateX(-100%)',
             opacity: !showChanges ? 1 : 0,
-            transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             '&::-webkit-scrollbar': {
               width: 0,
               background: 'transparent',
@@ -417,7 +417,7 @@ const HistoryPanel = ({
                   transform: (isOpen && !showChanges) ? 'translate3d(0, 0, 0)' : 'translate3d(-30px, 0, 0)',
                   WebkitTransform: (isOpen && !showChanges) ? 'translate3d(0, 0, 0)' : 'translate3d(-30px, 0, 0)',
                   opacity: (isOpen && !showChanges) ? 1 : 0,
-                  transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.2s ease, margin-left 0.2s ease',
+                  transition: 'transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94), background-color 0.2s ease, margin-left 0.2s ease',
                   transitionDelay: (isOpen && !showChanges) ? `${0.3 + index * 0.03}s` : '0s',
                   position: 'relative',
                   overflow: 'hidden',
@@ -435,7 +435,7 @@ const HistoryPanel = ({
                     height: '100%',
                     background: `linear-gradient(90deg, transparent 0%, ${COLORS.primary.main}08 50%, transparent 100%)`,
                     opacity: 0,
-                    transition: 'opacity 0.3s ease',
+                    transition: 'opacity 0.15s ease',
                   },
                   '&::after': selectedCommitId === commit.commitId ? {
                     content: '""',
@@ -523,8 +523,8 @@ const HistoryPanel = ({
               px: 3,
               transform: isOpen ? 'translateY(0)' : 'translateY(20px)',
               opacity: isOpen ? 1 : 0,
-              transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-              transitionDelay: isOpen ? '0.3s' : '0s'
+              transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              transitionDelay: isOpen ? '0.15s' : '0s'
             }}
           >
             <HistoryIcon 
