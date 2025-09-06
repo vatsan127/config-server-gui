@@ -688,5 +688,225 @@ export const apiService = {
       // For HTTP errors, just re-throw without additional notifications
       throw error;
     }
+  },
+
+  // Vault API functions
+  async getVaultSecrets(namespace) {
+    try {
+      const url = `${API_CONFIG.BASE_URL}/vault/get`;
+      
+      const response = await makeApiRequest(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          namespace: namespace
+        })
+      });
+      
+      await handleApiResponse(response);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data;
+      
+    } catch (error) {
+      console.error('Error fetching vault secrets:', error);
+      
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'fetch vault secrets');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+            key: `connection-error-${Date.now()}`
+          });
+        }
+        
+        throw new Error(friendlyMessage);
+      }
+      
+      throw error;
+    }
+  },
+
+  async updateVaultSecrets(namespace, email, commitMessage, secrets) {
+    try {
+      const url = `${API_CONFIG.BASE_URL}/vault/update`;
+      
+      const requestBody = {
+        namespace: namespace,
+        email: email,
+        commitMessage: commitMessage,
+        ...secrets
+      };
+      
+      const response = await makeApiRequest(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      });
+      
+      await handleApiResponse(response, `Vault secrets updated successfully`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data;
+      
+    } catch (error) {
+      console.error('Error updating vault secrets:', error);
+      
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'update vault secrets');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+            key: `connection-error-${Date.now()}`
+          });
+        }
+        
+        throw new Error(friendlyMessage);
+      }
+      
+      throw error;
+    }
+  },
+
+  async getVaultHistory(namespace) {
+    try {
+      const url = `${API_CONFIG.BASE_URL}/vault/history`;
+      
+      const response = await makeApiRequest(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          namespace: namespace
+        })
+      });
+      
+      await handleApiResponse(response);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      return {
+        namespace: data.namespace,
+        vaultFile: data.vaultFile,
+        commits: data.commits || [],
+        totalCommits: data.totalCommits || 0
+      };
+      
+    } catch (error) {
+      console.error('Error fetching vault history:', error);
+      
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'fetch vault history');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+            key: `connection-error-${Date.now()}`
+          });
+        }
+        
+        throw new Error(friendlyMessage);
+      }
+      
+      throw error;
+    }
+  },
+
+  async getVaultChanges(namespace, commitId) {
+    try {
+      const url = `${API_CONFIG.BASE_URL}/vault/changes`;
+      
+      const response = await makeApiRequest(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          namespace: namespace,
+          commitId: commitId
+        })
+      });
+      
+      await handleApiResponse(response);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      return {
+        commitId: data.commitId,
+        commitMessage: data.commitMessage,
+        author: data.author,
+        commitTime: data.commitTime,
+        changes: data.changes || ''
+      };
+      
+    } catch (error) {
+      console.error('Error fetching vault changes:', error);
+      
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'fetch vault changes');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+            key: `connection-error-${Date.now()}`
+          });
+        }
+        
+        throw new Error(friendlyMessage);
+      }
+      
+      throw error;
+    }
   }
 };
