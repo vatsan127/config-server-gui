@@ -23,13 +23,6 @@ import {
 } from '@mui/material';
 import {
   Folder as FolderIcon,
-  InsertDriveFile as FileIcon,
-  Search as SearchIcon,
-  Clear as ClearIcon,
-  Code as CodeIcon,
-  DataObject as JsonIcon,
-  Description as TextIcon,
-  Image as ImageIcon,
   History as HistoryIcon,
   Close as CloseIcon,
   ArrowBack as ArrowBackIcon,
@@ -39,7 +32,7 @@ import {
 import { useSnackbar } from 'notistack';
 import { apiService, setNotificationHandler } from '../services/api';
 import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
-import { normalizePath } from '../utils';
+import { normalizePath, getFileIconComponent } from '../utils';
 import EmptyState from './common/EmptyState';
 import CreateFileButton from './common/CreateFileButton';
 import { FileListSkeleton } from './common/SkeletonLoader';
@@ -47,28 +40,6 @@ import { useSearchShortcut } from '../hooks/useKeyboardShortcut';
 import DiffViewer from './common/DiffViewer';
 import Navbar from './common/Navbar';
 
-const getFileIcon = (fileName) => {
-  const extension = fileName.split('.').pop().toLowerCase();
-  switch (extension) {
-    case 'js':
-    case 'jsx':
-    case 'ts':
-    case 'tsx':
-      return <CodeIcon sx={{ color: COLORS.accent.blue, fontSize: 20 }} />;
-    case 'json':
-      return <JsonIcon sx={{ color: COLORS.accent.orange, fontSize: 20 }} />;
-    case 'md':
-    case 'txt':
-      return <TextIcon sx={{ color: COLORS.text.secondary, fontSize: 20 }} />;
-    case 'png':
-    case 'jpg':
-    case 'jpeg':
-    case 'gif':
-      return <ImageIcon sx={{ color: COLORS.accent.purple, fontSize: 20 }} />;
-    default:
-      return <FileIcon sx={{ color: COLORS.text.secondary, fontSize: 20 }} />;
-  }
-};
 
 const FilesPage = () => {
   const { namespace } = useParams();
@@ -459,7 +430,7 @@ const FilesPage = () => {
                           fontSize: 20
                         }} />
                       ) : (
-                        getFileIcon(item)
+                        getFileIconComponent(item)
                       )}
                     </ListItemIcon>
                     <ListItemText 

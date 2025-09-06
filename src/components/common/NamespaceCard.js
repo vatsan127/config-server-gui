@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent, Typography, Box, Chip, IconButton } from '@mui/material';
 import { 
   Folder as FolderIcon,
@@ -8,45 +8,23 @@ import {
   MoreVert as MoreVertIcon
 } from '@mui/icons-material';
 import { COLORS, SIZES } from '../../theme/colors';
+import { formatLastModified, getEnvironmentType } from '../../utils';
 
 const NamespaceCard = ({ namespace, onClick, fileCount = 0, lastModified = null }) => {
-  const getNamespaceIcon = (namespace) => {
+  const getNamespaceIcon = useMemo(() => {
     const firstWord = namespace.split('-')[0];
     return firstWord.toUpperCase();
-  };
+  }, [namespace]);
 
-  const getNamespaceInitials = (namespace) => {
+  const getNamespaceInitials = useMemo(() => {
     const words = namespace.split(/[-_\s]+/).filter(word => word.length > 0);
     if (words.length >= 2) {
       return (words[0][0] + words[1][0]).toUpperCase();
     }
     return namespace.substring(0, 2).toUpperCase();
-  };
+  }, [namespace]);
 
-  const getEnvironmentType = (namespace) => {
-    const lower = namespace.toLowerCase();
-    if (lower.includes('prod')) return { label: 'PROD', color: COLORS.error.border };
-    if (lower.includes('staging') || lower.includes('stage')) return { label: 'STAGE', color: COLORS.warning.border };
-    if (lower.includes('dev') || lower.includes('development')) return { label: 'DEV', color: COLORS.accent.blue };
-    if (lower.includes('test')) return { label: 'TEST', color: COLORS.accent.purple };
-    return { label: 'OTHER', color: COLORS.grey[500] };
-  };
-
-  const formatLastModified = (dateString) => {
-    if (!dateString) return 'No recent changes';
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = now - date;
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const days = Math.floor(hours / 24);
-    
-    if (hours < 1) return 'Just now';
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
-    return date.toLocaleDateString();
-  };
-
-  const envType = getEnvironmentType(namespace);
+  const envType = useMemo(() => getEnvironmentType(namespace), [namespace]);
 
   return (
     <Card 
@@ -184,7 +162,7 @@ const NamespaceCard = ({ namespace, onClick, fileCount = 0, lastModified = null 
               color: COLORS.text.secondary,
               fontSize: '0.8rem'
             }}>
-              {formatLastModified(lastModified)}
+              {formatLastModified(lastModified) || 'No recent changes'}
             </Typography>
           </Box>
         </Box>

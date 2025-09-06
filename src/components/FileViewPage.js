@@ -66,7 +66,6 @@ const FileViewPage = () => {
   // Keep ref in sync with state
   useEffect(() => {
     commitIdRef.current = commitId;
-    console.log('CommitId state changed to:', commitId);
   }, [commitId]);
 
   // Set up notification handler with ref to avoid dependency issues
@@ -129,8 +128,6 @@ const FileViewPage = () => {
     }
 
     const currentCommitId = commitIdRef.current;
-    console.log('Saving with commitId (from ref):', currentCommitId);
-    console.log('Saving with commitId (from state):', commitId);
     setSaving(true);
     try {
       const result = await apiService.updateFileContent(
@@ -144,7 +141,6 @@ const FileViewPage = () => {
       
       // Update commitId with the new one from the server response
       if (result && result.commitId) {
-        console.log('Updating commitId from', currentCommitId, 'to', result.commitId);
         setCommitId(result.commitId);
         commitIdRef.current = result.commitId;
       }

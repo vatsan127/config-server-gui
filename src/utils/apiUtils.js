@@ -71,7 +71,6 @@ export const extractResponseMessage = async (response) => {
         message = textData;
       }
     } catch (textError) {
-      console.log('Could not parse response as JSON or text');
     }
   }
   
@@ -85,7 +84,6 @@ export const extractResponseMessage = async (response) => {
  * @returns {string} - User-friendly error message
  */
 export const createConnectionErrorMessage = (error, operation = 'request') => {
-  console.log('Error details:', error);
   
   // Network/Connection errors
   if (error.name === 'AbortError') {

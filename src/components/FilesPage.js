@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo, useRef, forwardRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, forwardRef, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
-import { Slide, Fade, Zoom } from '@mui/material';
+import { Slide, Zoom } from '@mui/material';
 import {
   Typography,
   Box,
@@ -24,13 +24,8 @@ import {
 } from '@mui/material';
 import {
   Folder as FolderIcon,
-  InsertDriveFile as FileIcon,
   Search as SearchIcon,
   Clear as ClearIcon,
-  Code as CodeIcon,
-  DataObject as JsonIcon,
-  Description as TextIcon,
-  Image as ImageIcon,
   History as HistoryIcon,
   Download as DownloadIcon,
   Delete as DeleteIcon
@@ -38,8 +33,7 @@ import {
 import { useSnackbar } from 'notistack';
 import { apiService, setNotificationHandler } from '../services/api';
 import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
-import { normalizePath } from '../utils';
-import EmptyState from './common/EmptyState';
+import { normalizePath, getFileIconComponent } from '../utils';
 import CreateFileButton from './common/CreateFileButton';
 import { FileListSkeleton } from './common/SkeletonLoader';
 import { useSearchShortcut } from '../hooks/useKeyboardShortcut';
@@ -50,32 +44,7 @@ const SlideUpTransition = forwardRef(function SlideUpTransition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const ZoomTransition = forwardRef(function ZoomTransition(props, ref) {
-  return <Zoom ref={ref} {...props} />;
-});
 
-const getFileIcon = (fileName) => {
-  const extension = fileName.split('.').pop().toLowerCase();
-  switch (extension) {
-    case 'js':
-    case 'jsx':
-    case 'ts':
-    case 'tsx':
-      return <CodeIcon sx={{ color: COLORS.accent.blue }} />;
-    case 'json':
-      return <JsonIcon sx={{ color: COLORS.accent.orange }} />;
-    case 'md':
-    case 'txt':
-      return <TextIcon sx={{ color: COLORS.accent.green }} />;
-    case 'png':
-    case 'jpg':
-    case 'jpeg':
-    case 'svg':
-      return <ImageIcon sx={{ color: COLORS.accent.pink }} />;
-    default:
-      return <FileIcon sx={{ color: COLORS.text.secondary }} />;
-  }
-};
 
 const FilesPage = () => {
   const { namespace } = useParams();
@@ -114,60 +83,48 @@ const FilesPage = () => {
   }, []); // Empty dependency array - runs only once
 
   // Handle Ctrl+K to focus search
-  const handleSearchFocus = () => {
+  const handleSearchFocus = useCallback(() => {
     if (searchInputRef.current) {
       searchInputRef.current.focus();
     }
-  };
+  }, []);
 
   useSearchShortcut(handleSearchFocus);
 
-  const fetchFiles = async (path = '/') => {
-    console.log('fetchFiles called with path:', path);
+  const fetchFiles = useCallback(async (path = '/') => {
     setLoading(true);
     setError(null);
     
     try {
       const normalizedPath = normalizePath(path);
-      console.log('fetchFiles normalizedPath:', normalizedPath);
       const data = await apiService.getNamespaceFiles(namespace, normalizedPath);
-      console.log('fetchFiles received data:', data);
       setFiles(data);
       setCurrentPath(normalizedPath);
-      console.log('fetchFiles completed successfully');
     } catch (err) {
       setError('Failed to load files');
       console.error('Error fetching files:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [namespace]);
 
   useEffect(() => {
-    console.log('useEffect triggered - namespace:', namespace, 'searchParams:', searchParams.toString());
     if (namespace) {
       const pathParam = searchParams.get('path');
-      console.log('pathParam from URL:', pathParam);
       if (pathParam) {
         const decodedPath = decodeURIComponent(pathParam);
-        console.log('decodedPath:', decodedPath);
         fetchFiles(decodedPath);
       } else {
-        console.log('No path param, fetching root');
         fetchFiles();
       }
     }
-  }, [namespace, location.search]);
+  }, [namespace, location.search, fetchFiles]);
 
-  const handleItemClick = (item) => {
-    console.log('handleItemClick called with item:', item);
-    console.log('currentPath:', currentPath);
-    console.log('namespace:', namespace);
+  const handleItemClick = useCallback((item) => {
     if (item.endsWith('/')) {
       // For folders, construct the new path and directly fetch files
       const newPath = currentPath === '/' ? item : currentPath + item;
       const normalizedPath = normalizePath(newPath);
-      console.log('Direct folder navigation to:', normalizedPath);
       
       // Try direct fetchFiles call instead of navigation
       fetchFiles(normalizedPath);
@@ -175,18 +132,15 @@ const FilesPage = () => {
       // Also update URL manually
       const fullUrl = `/namespace/${namespace}/files?path=${encodeURIComponent(normalizedPath)}`;
       window.history.pushState({}, '', fullUrl);
-      console.log('Updated URL to:', fullUrl);
       
     } else {
       // Navigate to file view page
       const encodedPath = encodeURIComponent(currentPath);
       const encodedFileName = encodeURIComponent(item);
       const fullUrl = `/namespace/${namespace}/file?path=${encodedPath}&file=${encodedFileName}`;
-      console.log('Navigating to file:', encodedFileName, 'in path:', encodedPath);
-      console.log('Full navigation URL:', fullUrl);
       navigate(fullUrl);
     }
-  };
+  }, [currentPath, namespace, navigate, fetchFiles]);
 
 
   const pathSegments = useMemo(() => {
@@ -202,7 +156,7 @@ const FilesPage = () => {
     );
   }, [files, searchQuery]);
 
-  const handleBreadcrumbClick = (index) => {
+  const handleBreadcrumbClick = useCallback((index) => {
     if (index === -1) {
       fetchFiles('/');
     } else {
@@ -210,9 +164,9 @@ const FilesPage = () => {
       const newPath = '/' + pathParts.join('/') + '/';
       fetchFiles(newPath);
     }
-  };
+  }, [pathSegments, fetchFiles]);
 
-  const handleCreateConfigFile = async (fileName, path) => {
+  const handleCreateConfigFile = useCallback(async (fileName, path) => {
     try {
       await apiService.createConfigFile(namespace, path, fileName);
       // Refresh the current directory to show updated file list
@@ -223,15 +177,15 @@ const FilesPage = () => {
       // Error notification is already handled by the API service
       // Don't show duplicate error messages
     }
-  };
+  }, [namespace, currentPath, fetchFiles]);
 
-  const handleDeleteClick = (fileName, event) => {
+  const handleDeleteClick = useCallback((fileName, event) => {
     event.stopPropagation(); // Prevent file click when delete button is clicked
     setFileToDelete(fileName);
     setDeleteDialogOpen(true);
-  };
+  }, []);
 
-  const handleDeleteConfirm = async () => {
+  const handleDeleteConfirm = useCallback(async () => {
     if (!deleteMessage.trim()) {
       enqueueSnackbar('Delete message is required', { variant: 'error' });
       return;
@@ -256,15 +210,15 @@ const FilesPage = () => {
     } finally {
       setDeleting(false);
     }
-  };
+  }, [deleteMessage, enqueueSnackbar, namespace, currentPath, fileToDelete, fetchFiles]);
 
-  const handleDeleteCancel = () => {
+  const handleDeleteCancel = useCallback(() => {
     setDeleteDialogOpen(false);
     setFileToDelete(null);
     setDeleteMessage('');
-  };
+  }, []);
 
-  const handleHistoryClick = async (fileName, event) => {
+  const handleHistoryClick = useCallback(async (fileName, event) => {
     event.stopPropagation(); // Prevent file click when history button is clicked
     
     setSelectedFile(fileName);
@@ -283,29 +237,28 @@ const FilesPage = () => {
     } finally {
       setHistoryLoading(false);
     }
-  };
+  }, [namespace, currentPath]);
 
-  const handleHistoryClose = () => {
+  const handleHistoryClose = useCallback(() => {
     setHistoryPanelOpen(false);
     setHistoryData(null);
     setSelectedFile(null);
     setSelectedCommitId(null);
     setChangesData(null);
     setShowChanges(false);
-  };
+  }, []);
 
-  const handleBackToHistory = () => {
+  const handleBackToHistory = useCallback(() => {
     setShowChanges(false);
     setSelectedCommitId(null);
     setChangesData(null);
-  };
+  }, []);
 
-  const handleCommitSelect = async (commitId) => {
+  const handleCommitSelect = useCallback(async (commitId) => {
     setSelectedCommitId(commitId);
     setShowChanges(true);
     setChangesLoading(true);
     setChangesData(null);
-    console.log('Selected commit ID:', commitId, 'for file:', selectedFile);
     
     try {
       const changes = await apiService.getCommitChanges(namespace, currentPath, selectedFile, commitId);
@@ -316,13 +269,12 @@ const FilesPage = () => {
     } finally {
       setChangesLoading(false);
     }
-  };
+  }, [namespace, currentPath, selectedFile]);
 
-  const handleDownloadFile = async (fileName, event) => {
+  const handleDownloadFile = useCallback(async (fileName, event) => {
     event.stopPropagation(); // Prevent file click when download button is clicked
     
     try {
-      console.log('Downloading file:', fileName, 'from path:', currentPath);
       const fileData = await apiService.getFileContent(namespace, currentPath, fileName);
       
       // Create blob with YAML content
@@ -347,13 +299,11 @@ const FilesPage = () => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
-      console.log('File downloaded successfully:', downloadFileName);
-      
     } catch (error) {
       console.error('Error downloading file:', error);
       // Error notification is already handled by the API service
     }
-  };
+  }, [namespace, currentPath]);
 
 
   if (loading) {
@@ -753,7 +703,6 @@ const FilesPage = () => {
           ) : (
             <List sx={{ py: 0 }}>
               {filteredFiles.map((item, index) => {
-                console.log('Rendering item:', item, 'is folder:', item.endsWith('/'));
                 return (
                 <ListItem
                   key={item}
@@ -812,7 +761,7 @@ const FilesPage = () => {
                         fontSize: 22
                       }} />
                     ) : (
-                      getFileIcon(item)
+                      getFileIconComponent(item)
                     )}
                   </ListItemIcon>
                   <ListItemText 

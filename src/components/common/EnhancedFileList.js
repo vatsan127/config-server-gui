@@ -17,12 +17,6 @@ import {
   Divider
 } from '@mui/material';
 import {
-  Folder as FolderIcon,
-  InsertDriveFile as FileIcon,
-  Code as CodeIcon,
-  DataObject as JsonIcon,
-  Description as TextIcon,
-  Image as ImageIcon,
   Edit as EditIcon,
   Download as DownloadIcon,
   History as HistoryIcon,
@@ -33,58 +27,8 @@ import {
   OpenInNew as OpenInNewIcon
 } from '@mui/icons-material';
 import { COLORS, SIZES } from '../../theme/colors';
+import { getFileIconComponent, formatFileSize, formatLastModified } from '../../utils';
 
-const getFileIcon = (fileName, isFolder = false) => {
-  if (isFolder) {
-    return <FolderIcon sx={{ color: COLORS.primary.main }} />;
-  }
-  
-  const extension = fileName.split('.').pop()?.toLowerCase();
-  switch (extension) {
-    case 'js':
-    case 'jsx':
-    case 'ts':
-    case 'tsx':
-      return <CodeIcon sx={{ color: COLORS.accent.blue }} />;
-    case 'json':
-      return <JsonIcon sx={{ color: COLORS.accent.orange }} />;
-    case 'yml':
-    case 'yaml':
-      return <CodeIcon sx={{ color: COLORS.accent.green }} />;
-    case 'md':
-    case 'txt':
-      return <TextIcon sx={{ color: COLORS.accent.green }} />;
-    case 'png':
-    case 'jpg':
-    case 'jpeg':
-    case 'svg':
-      return <ImageIcon sx={{ color: COLORS.accent.pink }} />;
-    default:
-      return <FileIcon sx={{ color: COLORS.text.secondary }} />;
-  }
-};
-
-const formatFileSize = (bytes) => {
-  if (bytes === 0) return '0 Bytes';
-  const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-};
-
-const formatLastModified = (dateString) => {
-  if (!dateString) return 'Unknown';
-  const date = new Date(dateString);
-  const now = new Date();
-  const diff = now - date;
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  const days = Math.floor(hours / 24);
-  
-  if (hours < 1) return 'Just now';
-  if (hours < 24) return `${hours}h ago`;
-  if (days < 7) return `${days}d ago`;
-  return date.toLocaleDateString();
-};
 
 const FileItem = ({ 
   item, 
@@ -102,16 +46,16 @@ const FileItem = ({
   const isFolder = item.name?.endsWith('/') || item.type === 'folder';
   const displayName = isFolder ? item.name?.replace('/', '') : item.name;
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = useCallback((event) => {
     event.stopPropagation();
     setMenuAnchor(event.currentTarget);
-  };
+  }, []);
 
-  const handleMenuClose = () => {
+  const handleMenuClose = useCallback(() => {
     setMenuAnchor(null);
-  };
+  }, []);
 
-  const handleAction = (action, event) => {
+  const handleAction = useCallback((action, event) => {
     event.stopPropagation();
     handleMenuClose();
     
@@ -132,9 +76,9 @@ const FileItem = ({
         onCopy?.(item);
         break;
     }
-  };
+  }, [handleMenuClose, onEdit, onDownload, onHistory, onDelete, onCopy, item]);
 
-  const quickActions = [
+  const quickActions = useMemo(() => [
     { 
       id: 'edit', 
       icon: EditIcon, 
@@ -163,16 +107,16 @@ const FileItem = ({
       color: COLORS.error.border,
       show: true 
     }
-  ];
+  ], [isFolder]);
 
-  const menuActions = [
+  const menuActions = useMemo(() => [
     { id: 'edit', icon: EditIcon, label: 'Edit File', show: !isFolder },
     { id: 'copy', icon: CopyIcon, label: 'Copy Path', show: true },
     { id: 'download', icon: DownloadIcon, label: 'Download', show: !isFolder },
     { id: 'history', icon: HistoryIcon, label: 'View History', show: !isFolder },
     { divider: true },
     { id: 'delete', icon: DeleteIcon, label: 'Delete', show: true, danger: true }
-  ];
+  ], [isFolder]);
 
   return (
     <ListItem 
@@ -201,7 +145,7 @@ const FileItem = ({
         }}
       >
         <ListItemIcon sx={{ minWidth: 40 }}>
-          {getFileIcon(displayName, isFolder)}
+          {getFileIconComponent(displayName, isFolder)}
         </ListItemIcon>
         
         <ListItemText 
@@ -385,6 +329,9 @@ const FileItem = ({
   );
 };
 
+// Memoize FileItem to prevent unnecessary re-renders
+const MemoizedFileItem = React.memo(FileItem);
+
 const EnhancedFileList = ({
   files = [],
   onItemClick,
@@ -453,7 +400,7 @@ const EnhancedFileList = ({
       <List sx={{ py: 0 }}>
         {files.map((file, index) => (
           <React.Fragment key={file.name || index}>
-            <FileItem
+            <MemoizedFileItem
               item={file}
               onItemClick={onItemClick}
               onEdit={onEdit}
@@ -473,4 +420,4 @@ const EnhancedFileList = ({
   );
 };
 
-export default EnhancedFileList;
+export default React.memo(EnhancedFileList);

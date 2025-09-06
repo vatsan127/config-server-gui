@@ -48,7 +48,6 @@ export const apiService = {
   async getNamespaces() {
     try {
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.NAMESPACES.LIST}`;
-      console.log('Attempting to fetch from:', url);
       
       const response = await makeApiRequest(url, {
         method: 'POST',
@@ -65,7 +64,6 @@ export const apiService = {
       }
       
       const data = await response.json();
-      console.log('Successfully fetched namespaces:', data);
       return data;
       
     } catch (error) {
@@ -99,7 +97,6 @@ export const apiService = {
 
   async createNamespace(namespace) {
     try {
-      console.log('Creating namespace:', namespace);
       
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.NAMESPACES.CREATE}`;
       const response = await makeApiRequest(url, {
@@ -118,7 +115,6 @@ export const apiService = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      console.log('Successfully created namespace:', namespace);
       return true;
       
     } catch (error) {
@@ -154,7 +150,6 @@ export const apiService = {
   async getNamespaceFiles(namespace, path = '/') {
     try {
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.NAMESPACES.FILES}`;
-      console.log('Attempting to fetch files from:', url, 'for namespace:', namespace, 'path:', path);
       
       const response = await makeApiRequest(url, {
         method: 'POST',
@@ -174,7 +169,6 @@ export const apiService = {
       }
       
       const data = await response.json();
-      console.log('Successfully fetched files:', data);
       return data;
       
     } catch (error) {
@@ -211,7 +205,6 @@ export const apiService = {
     try {
       // Path contains folder structure only, filename is separate
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CONFIG.FETCH}`;
-      console.log('Attempting to get file content from:', url, 'for namespace:', namespace, 'path:', path, 'file:', fileName);
       
       const response = await makeApiRequest(url, {
         method: 'POST',
@@ -234,7 +227,6 @@ export const apiService = {
       }
       
       const data = await response.json();
-      console.log('Successfully fetched file content:', data);
       
       // Return both content and commitId for update operations
       return {
@@ -275,7 +267,6 @@ export const apiService = {
   async createFile(namespace, path, fileName) {
     try {
       const url = `${API_CONFIG.BASE_URL}/file/create`;
-      console.log('Attempting to create file:', fileName, 'in namespace:', namespace, 'path:', path);
       
       const response = await makeApiRequest(url, {
         method: 'POST',
@@ -296,7 +287,6 @@ export const apiService = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      console.log('Successfully created file:', fileName);
       return true;
       
     } catch (error) {
@@ -309,7 +299,6 @@ export const apiService = {
   async createConfigFile(namespace, path, fileName, email = 'user@example.com') {
     try {
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CONFIG.CREATE}`;
-      console.log('Attempting to create config file:', fileName, 'in namespace:', namespace, 'path:', path);
       
       const response = await makeApiRequest(url, {
         method: 'POST',
@@ -332,7 +321,6 @@ export const apiService = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      console.log('Successfully created config file:', fileName);
       return true;
       
     } catch (error) {
@@ -368,7 +356,6 @@ export const apiService = {
   async createFolder(namespace, path, folderName) {
     try {
       const url = `${API_CONFIG.BASE_URL}/folder/create`;
-      console.log('Attempting to create folder:', folderName, 'in namespace:', namespace, 'path:', path);
       
       const response = await makeApiRequest(url, {
         method: 'POST',
@@ -388,7 +375,6 @@ export const apiService = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      console.log('Successfully created folder:', folderName);
       return true;
       
     } catch (error) {
@@ -401,7 +387,6 @@ export const apiService = {
   async updateFileContent(namespace, path, fileName, content, commitId, message) {
     try {
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CONFIG.UPDATE}`;
-      console.log('Attempting to update file:', fileName, 'in namespace:', namespace, 'path:', path);
       
       const requestBody = {
         action: 'update',
@@ -414,7 +399,6 @@ export const apiService = {
         email: 'user@example.com'
       };
       
-      console.log('Update request body:', JSON.stringify(requestBody, null, 2));
       
       const response = await makeApiRequest(url, {
         method: 'POST',
@@ -432,13 +416,10 @@ export const apiService = {
       }
       
       const responseData = await response.json();
-      console.log('Full update response:', responseData);
-      console.log('Successfully updated file:', fileName, 'New commitId:', responseData.commitId);
       
       // Return the new commitId from the update response
       // Check different possible field names for commitId
       const newCommitId = responseData.commitId || responseData.commit_id || responseData.id;
-      console.log('Extracted commitId:', newCommitId);
       
       return {
         success: true,
@@ -478,7 +459,6 @@ export const apiService = {
   async getFileHistory(namespace, path, fileName, email = 'user@example.com') {
     try {
       const url = `${API_CONFIG.BASE_URL}/config/history`;
-      console.log('Attempting to fetch file history for:', fileName, 'in namespace:', namespace, 'path:', path);
       
       const response = await makeApiRequest(url, {
         method: 'POST',
@@ -501,7 +481,6 @@ export const apiService = {
       }
       
       const data = await response.json();
-      console.log('Successfully fetched file history:', data);
       
       return {
         filePath: data.filePath,
@@ -540,7 +519,6 @@ export const apiService = {
   async getCommitChanges(namespace, path, fileName, commitId, email = 'user@example.com') {
     try {
       const url = `${API_CONFIG.BASE_URL}/config/changes`;
-      console.log('Attempting to fetch commit changes for:', fileName, 'commitId:', commitId);
       
       const response = await makeApiRequest(url, {
         method: 'POST',
@@ -564,7 +542,6 @@ export const apiService = {
       }
       
       const data = await response.json();
-      console.log('Successfully fetched commit changes:', data);
       
       return {
         commitId: data.commitId,
@@ -605,7 +582,6 @@ export const apiService = {
 
   async deleteNamespace(namespace) {
     try {
-      console.log('Deleting namespace:', namespace);
       
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.NAMESPACES.DELETE}`;
       const response = await makeApiRequest(url, {
@@ -624,7 +600,6 @@ export const apiService = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      console.log('Successfully deleted namespace:', namespace);
       return true;
       
     } catch (error) {
@@ -660,7 +635,6 @@ export const apiService = {
   async deleteFile(namespace, path, fileName, message, email = 'user@example.com') {
     try {
       const url = `${API_CONFIG.BASE_URL}/config/delete`;
-      console.log('Attempting to delete file:', fileName, 'in namespace:', namespace, 'path:', path);
       
       const response = await makeApiRequest(url, {
         method: 'POST',
@@ -684,7 +658,6 @@ export const apiService = {
       }
       
       const data = await response.json();
-      console.log('Successfully deleted file:', fileName);
       
       return data;
       

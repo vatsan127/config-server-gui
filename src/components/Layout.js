@@ -354,7 +354,6 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCr
                 startIcon={<LogoutIcon sx={{ fontSize: 18 }} />}
                 onClick={() => {
                   // TODO: Implement logout functionality when backend supports it
-                  console.log('Logout clicked - functionality to be implemented');
                 }}
                 sx={{ 
                   color: COLORS.text.white,

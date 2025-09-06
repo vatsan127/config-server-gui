@@ -151,7 +151,6 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
       setNamespaceToDelete(null);
     } catch (error) {
       // Error is already handled by the notification system in the hook
-      console.error('Failed to delete namespace:', error);
     } finally {
       setIsDeleting(false);
     }

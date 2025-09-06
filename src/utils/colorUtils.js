@@ -6,8 +6,6 @@ import { COLORS } from '../theme/colors';
  * @returns {string} - The hex color code
  */
 export const getNamespaceColor = (namespaceName) => {
-  console.log('🎨 getNamespaceColor called with:', namespaceName);
-  
   if (!namespaceName) return COLORS.accent.blue;
   
   // Enhanced vibrant color palette for better visual distinction
@@ -54,7 +52,6 @@ export const getNamespaceColor = (namespaceName) => {
   const colorIndex = combinedHash % namespaceColors.length;
   const selectedColor = namespaceColors[colorIndex];
   
-  console.log('🎨 Generated color:', selectedColor, 'for namespace:', namespaceName);
   return selectedColor;
 };
 
@@ -65,20 +62,14 @@ export const getNamespaceColor = (namespaceName) => {
  * @returns {string} - The hex color code
  */
 export const getFileTypeColor = (fileName, isFolder = false) => {
-  console.log('📄 getFileTypeColor called with:', fileName, 'isFolder:', isFolder);
-  
   if (isFolder) {
-    console.log('📄 Returning folder color:', COLORS.accent.blue);
     return COLORS.accent.blue;
   }
   
   if (!fileName) return COLORS.accent.blue;
   
   // Since files will always be yml, return the yml color
-  const selectedColor = COLORS.accent.purple;
-  
-  console.log('📄 Returning yml color:', selectedColor, 'for file:', fileName);
-  return selectedColor;
+  return COLORS.accent.purple;
 };
 
 /**
