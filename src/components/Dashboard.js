@@ -13,7 +13,6 @@ import {
   TextField,
   Card,
   CardContent,
-  CardActionArea,
   Grid,
   IconButton,
   Menu,
@@ -352,14 +351,15 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                   }
                 }}
               >
-                <CardActionArea
+                <Box
                   onClick={() => handleNamespaceClick(namespace)}
                   sx={{
                     height: '100%',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'flex-start',
-                    p: 0
+                    p: 0,
+                    cursor: 'pointer'
                   }}
                 >
                   <CardContent
@@ -376,7 +376,10 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                   >
                     {/* Options Menu Button */}
                     <IconButton
-                      onClick={(e) => handleOptionsClick(e, namespace)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOptionsClick(e, namespace);
+                      }}
                       sx={{
                         position: 'absolute',
                         top: 8,
@@ -480,7 +483,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                       {namespace}
                     </Typography>
                   </CardContent>
-                </CardActionArea>
+                </Box>
               </Card>
             </Grid>
           ))}
