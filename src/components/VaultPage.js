@@ -3,10 +3,6 @@ import { useParams } from 'react-router-dom';
 import {
   Typography,
   Box,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   Alert,
   Button,
   TextField,
@@ -15,22 +11,18 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  Tooltip,
-  alpha
+  DialogActions
 } from '@mui/material';
 import {
   Security as SecurityIcon,
-  Search as SearchIcon,
-  Clear as ClearIcon,
-  History as HistoryIcon,
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   Save as SaveIcon,
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
-  VpnKey as VpnKeyIcon
+  VpnKey as VpnKeyIcon,
+  History as HistoryIcon
 } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { apiService, setNotificationHandler } from '../services/api';
@@ -39,6 +31,9 @@ import { FileListSkeleton } from './common/SkeletonLoader';
 import { useSearchShortcut } from '../hooks/useKeyboardShortcut';
 import { getStandardDialogProps, getDialogTitleAnimationStyles, getDialogContentAnimationStyles, getDialogActionsAnimationStyles } from '../utils/dialogAnimations';
 import HistoryPanel from './common/HistoryPanel';
+import PageHeader from './common/PageHeader';
+import SearchResultInfo from './common/SearchResultInfo';
+import ModernList, { ModernActionButton } from './common/ModernList';
 
 const VaultPage = () => {
   const { namespace } = useParams();
@@ -119,13 +114,14 @@ const VaultPage = () => {
   }, [fetchSecrets]);
 
   // Filter secrets based on search query
+  const secretKeys = useMemo(() => Object.keys(secrets), [secrets]);
+  
   const filteredSecrets = useMemo(() => {
-    const secretKeys = Object.keys(secrets);
     if (!searchQuery.trim()) return secretKeys;
     return secretKeys.filter(key =>
       key.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [secrets, searchQuery]);
+  }, [secretKeys, searchQuery]);
 
   const handleSecretClick = useCallback((secretKey) => {
     setSelectedSecret(secretKey);
@@ -163,7 +159,7 @@ const VaultPage = () => {
       setSecretModalOpen(false);
       setEditMode(false);
       setCommitMessage('');
-      await fetchSecrets(); // Refresh to get latest data
+      await fetchSecrets();
     } catch (err) {
       console.error('Error saving secret:', err);
     } finally {
@@ -171,8 +167,7 @@ const VaultPage = () => {
     }
   };
 
-  const handleHistoryClick = async (secretKey, event) => {
-    event.stopPropagation();
+  const handleHistoryClick = useCallback(async () => {
     setHistoryLoading(true);
     setHistoryPanelOpen(true);
     
@@ -180,7 +175,6 @@ const VaultPage = () => {
       const data = await apiService.getVaultHistory(namespace);
       setHistoryData({
         ...data,
-        // Use vault file name instead of individual secret
         filePath: data.vaultFile || 'Vault'
       });
     } catch (err) {
@@ -188,7 +182,7 @@ const VaultPage = () => {
     } finally {
       setHistoryLoading(false);
     }
-  };
+  }, [namespace]);
 
   const handleCommitSelect = async (commitId) => {
     if (selectedCommitId === commitId && showChanges) {
@@ -279,6 +273,47 @@ const VaultPage = () => {
     }
   };
 
+  // Render functions for ModernList
+  const renderIcon = useCallback(() => (
+    <VpnKeyIcon sx={{ 
+      color: COLORS.primary.main,
+      fontSize: 22
+    }} />
+  ), []);
+
+  const renderActions = useCallback((secretKey) => [
+    <ModernActionButton
+      key="edit"
+      icon={<EditIcon fontSize="small" />}
+      onClick={(e) => {
+        e.stopPropagation();
+        handleSecretClick(secretKey);
+      }}
+      tooltip="Edit Secret"
+    />,
+    <ModernActionButton
+      key="delete"
+      icon={<DeleteIcon fontSize="small" />}
+      onClick={(e) => handleDeleteClick(secretKey, e)}
+      hoverColor="#ef4444"
+      hoverBg="rgba(239, 68, 68, 0.1)"
+      hoverShadow="0 2px 8px rgba(239, 68, 68, 0.2)"
+      tooltip="Delete Secret"
+    />
+  ], [handleSecretClick, handleDeleteClick]);
+
+  const emptyState = useMemo(() => (
+    <Box sx={{ textAlign: 'center' }}>
+      <SecurityIcon sx={{ fontSize: 64, mb: 2, opacity: 0.3, color: COLORS.text.secondary }} />
+      <Typography variant="h6" sx={{ mb: 1, color: COLORS.text.primary, fontWeight: 500 }}>
+        {secretKeys.length === 0 ? 'No secrets found' : 'No matching secrets'}
+      </Typography>
+      <Typography variant="body2" sx={{ color: COLORS.text.secondary, fontSize: '0.85rem' }}>
+        {secretKeys.length === 0 ? 'Add your first secret to get started' : 'Try adjusting your search query'}
+      </Typography>
+    </Box>
+  ), [secretKeys.length]);
+
   if (loading) {
     return (
       <Box sx={{ p: 4, pt: 2 }}>
@@ -295,203 +330,72 @@ const VaultPage = () => {
     );
   }
 
-  const secretKeys = Object.keys(secrets);
-
   return (
-    <Box sx={{ p: 4, pt: 2 }}>
-      {/* Header */}
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'space-between', 
-        mb: 3,
-        pb: 2,
-        borderBottom: `1px solid ${alpha(COLORS.grey[300], 0.3)}`
-      }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <SecurityIcon sx={{ 
-            color: COLORS.primary.main, 
-            fontSize: 28,
-            background: `linear-gradient(135deg, ${alpha(COLORS.primary.main, 0.1)}, ${alpha(COLORS.primary.main, 0.05)})`,
-            p: 0.8,
-            borderRadius: '8px'
-          }} />
-          <Box>
-            <Typography variant="h5" sx={{ 
-              fontWeight: 600, 
-              color: COLORS.text.primary,
-              mb: 0.5
-            }}>
-              Vault Secrets
-            </Typography>
-            <Typography variant="body2" sx={{ color: COLORS.text.secondary }}>
-              {namespace} • {secretKeys.length} secrets
-            </Typography>
-          </Box>
-        </Box>
-        
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <TextField
-            ref={searchInputRef}
-            placeholder="Search"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            size="small"
-            sx={{ 
-              width: 280,
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '12px',
-                backgroundColor: alpha(COLORS.background.paper, 0.8),
-              }
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon sx={{ color: COLORS.text.secondary }} />
-                </InputAdornment>
-              ),
-              endAdornment: searchQuery && (
-                <InputAdornment position="end">
-                  <IconButton
-                    size="small"
-                    onClick={() => setSearchQuery('')}
-                    sx={{ color: COLORS.text.secondary }}
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-          
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => setAddDialogOpen(true)}
-            sx={BUTTON_STYLES.primary}
-          >
-            Add Secret
-          </Button>
-        </Box>
+    <Box sx={{ 
+      flex: 1, 
+      display: 'flex', 
+      flexDirection: 'column',
+      p: SIZES.spacing.xs,
+      bgcolor: 'background.default',
+      height: '100vh',
+      overflow: 'hidden',
+      animation: 'fadeInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both',
+      '@keyframes fadeInUp': {
+        '0%': {
+          opacity: 0,
+          transform: 'translateY(20px)'
+        },
+        '100%': {
+          opacity: 1,
+          transform: 'translateY(0)'
+        }
+      }
+    }}>
+      <PageHeader
+        title={`${namespace} • Vault`}
+        subtitle={`${secretKeys.length} secrets`}
+        icon={SecurityIcon}
+        searchValue={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search secrets"
+        actions={[
+          {
+            label: 'History',
+            icon: <HistoryIcon />,
+            onClick: handleHistoryClick,
+            variant: 'outlined',
+            sx: {
+              ...BUTTON_STYLES.secondary,
+              mr: 1
+            }
+          },
+          {
+            label: 'Add Secret',
+            icon: <AddIcon />,
+            onClick: () => setAddDialogOpen(true),
+            sx: BUTTON_STYLES.primary
+          }
+        ]}
+      />
+
+      <SearchResultInfo 
+        searchQuery={searchQuery}
+        filteredCount={filteredSecrets.length}
+        totalCount={secretKeys.length}
+        itemType="secret"
+      />
+
+      <Box sx={{ flex: 1, overflow: 'hidden' }}>
+        <ModernList
+          items={filteredSecrets}
+          emptyState={emptyState}
+          onItemClick={handleSecretClick}
+          renderIcon={renderIcon}
+          renderActions={renderActions}
+          searchQuery={searchQuery}
+          itemType="secret"
+        />
       </Box>
-
-      {/* Secrets List */}
-      {filteredSecrets.length === 0 ? (
-        <Box sx={{ 
-          textAlign: 'center', 
-          py: 8,
-          color: COLORS.text.secondary 
-        }}>
-          <SecurityIcon sx={{ fontSize: 64, mb: 2, opacity: 0.3 }} />
-          <Typography variant="h6" sx={{ mb: 1 }}>
-            {secretKeys.length === 0 ? 'No secrets found' : 'No matching secrets'}
-          </Typography>
-          <Typography variant="body2">
-            {secretKeys.length === 0 ? 'Add your first secret to get started' : 'Try adjusting your search query'}
-          </Typography>
-        </Box>
-      ) : (
-        <List sx={{ 
-          bgcolor: COLORS.background.paper,
-          borderRadius: '12px',
-          border: `1px solid ${alpha(COLORS.grey[300], 0.2)}`,
-          overflow: 'hidden'
-        }}>
-          {filteredSecrets.map((secretKey, index) => (
-            <ListItem
-              key={secretKey}
-              sx={{
-                borderBottom: index < filteredSecrets.length - 1 ? `1px solid ${alpha(COLORS.grey[300], 0.1)}` : 'none',
-                '&:hover': {
-                  backgroundColor: alpha(COLORS.primary.main, 0.04),
-                },
-                py: 1.5,
-                px: 3
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 36 }}>
-                <VpnKeyIcon sx={{ 
-                  color: COLORS.primary.main,
-                  fontSize: 20
-                }} />
-              </ListItemIcon>
-              
-              <ListItemText
-                primary={
-                  <Typography variant="body1" sx={{ 
-                    fontWeight: 500,
-                    color: COLORS.text.primary
-                  }}>
-                    {secretKey}
-                  </Typography>
-                }
-                secondary={
-                  <Typography variant="body2" sx={{ 
-                    color: COLORS.text.secondary,
-                    fontFamily: 'monospace',
-                    fontSize: '0.75rem'
-                  }}>
-                    •••••••••••••••••••••••••••••
-                  </Typography>
-                }
-              />
-
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Tooltip title="Edit Secret">
-                  <IconButton
-                    size="small"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSecretClick(secretKey);
-                    }}
-                    sx={{
-                      color: COLORS.text.secondary,
-                      '&:hover': {
-                        color: COLORS.accent.blue,
-                        backgroundColor: alpha(COLORS.accent.blue, 0.1)
-                      }
-                    }}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                
-                <Tooltip title="View History">
-                  <IconButton
-                    size="small"
-                    onClick={(e) => handleHistoryClick(secretKey, e)}
-                    sx={{
-                      color: COLORS.text.secondary,
-                      '&:hover': {
-                        color: COLORS.primary.main,
-                        backgroundColor: alpha(COLORS.primary.main, 0.1)
-                      }
-                    }}
-                  >
-                    <HistoryIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                
-                <Tooltip title="Delete Secret">
-                  <IconButton
-                    size="small"
-                    onClick={(e) => handleDeleteClick(secretKey, e)}
-                    sx={{
-                      color: COLORS.text.secondary,
-                      '&:hover': {
-                        color: COLORS.error.main,
-                        backgroundColor: alpha(COLORS.error.main, 0.1)
-                      }
-                    }}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            </ListItem>
-          ))}
-        </List>
-      )}
 
       {/* Secret Detail Modal */}
       <Dialog
@@ -500,15 +404,82 @@ const VaultPage = () => {
         maxWidth="sm"
         fullWidth
         {...getStandardDialogProps()}
+        PaperProps={{
+          sx: {
+            borderRadius: `${SIZES.borderRadius.large}px`,
+            boxShadow: SIZES.shadow.elevated,
+            bgcolor: COLORS.background.paper,
+            border: `1px solid ${COLORS.grey[200]}`,
+            backdropFilter: 'blur(10px)',
+            animation: 'dialogSlideIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            '@keyframes dialogSlideIn': {
+              '0%': {
+                opacity: 0,
+                transform: 'scale(0.95) translateY(-20px)'
+              },
+              '100%': {
+                opacity: 1,
+                transform: 'scale(1) translateY(0)'
+              }
+            }
+          }
+        }}
       >
-        <DialogTitle sx={getDialogTitleAnimationStyles()}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <VpnKeyIcon sx={{ color: COLORS.primary.main }} />
-            {selectedSecret}
+        <DialogTitle sx={{
+          ...getDialogTitleAnimationStyles(),
+          bgcolor: COLORS.grey[50],
+          borderBottom: `1px solid ${COLORS.grey[200]}`,
+          p: 3,
+          borderTopLeftRadius: `${SIZES.borderRadius.large}px`,
+          borderTopRightRadius: `${SIZES.borderRadius.large}px`
+        }}>
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 2,
+            animation: 'fadeInRight 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
+            '@keyframes fadeInRight': {
+              '0%': {
+                opacity: 0,
+                transform: 'translateX(-10px)'
+              },
+              '100%': {
+                opacity: 1,
+                transform: 'translateX(0)'
+              }
+            }
+          }}>
+            <Box sx={{
+              p: 1.5,
+              borderRadius: `${SIZES.borderRadius.medium}px`,
+              bgcolor: `${COLORS.primary.main}15`,
+              border: `1px solid ${COLORS.primary.main}30`,
+              display: 'flex',
+              alignItems: 'center'
+            }}>
+              <VpnKeyIcon sx={{ 
+                color: COLORS.primary.main,
+                fontSize: 24
+              }} />
+            </Box>
+            <Box>
+              <Typography variant="h6" sx={{ 
+                color: COLORS.text.primary,
+                fontWeight: 600,
+                fontSize: '1.25rem'
+              }}>
+                {selectedSecret}
+              </Typography>
+            </Box>
           </Box>
         </DialogTitle>
         
-        <DialogContent sx={getDialogContentAnimationStyles()}>
+        <DialogContent sx={{
+          ...getDialogContentAnimationStyles(),
+          px: 3,
+          pt: editMode ? 2 : 3,
+          pb: 2
+        }}>
           {editMode && (
             <TextField
               fullWidth
@@ -517,7 +488,28 @@ const VaultPage = () => {
               onChange={(e) => setCommitMessage(e.target.value)}
               placeholder="Describe your changes..."
               required
-              sx={{ mb: 3 }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                }
+              }}
+              sx={{ 
+                mt: 1,
+                mb: 2,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: `${SIZES.borderRadius.medium}px`,
+                  bgcolor: COLORS.background.paper,
+                  transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  '&:hover fieldset': {
+                    borderColor: COLORS.grey[400],
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: COLORS.primary.main,
+                    borderWidth: 2,
+                    boxShadow: `0 0 0 3px ${COLORS.primary.main}20`,
+                  }
+                }
+              }}
             />
           )}
           
@@ -525,33 +517,83 @@ const VaultPage = () => {
             fullWidth
             label="Secret Value"
             type={showValue ? 'text' : 'password'}
-            value={editMode ? editedValue : secrets[selectedSecret]}
-            onChange={editMode ? (e) => setEditedValue(e.target.value) : undefined}
+            value={editMode ? editedValue : (secrets[selectedSecret] || '')}
+            onChange={(e) => editMode && setEditedValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                if (editMode && commitMessage.trim()) {
+                  handleSaveSecret();
+                }
+              }
+            }}
             disabled={!editMode}
-            multiline={editMode}
-            rows={editMode ? 3 : 1}
+            sx={{
+              mt: editMode ? 0 : 2,
+              '& .MuiOutlinedInput-root': {
+                fontFamily: 'monospace',
+                borderRadius: `${SIZES.borderRadius.medium}px`,
+                bgcolor: editMode ? COLORS.background.paper : COLORS.grey[50],
+                transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                '&:hover fieldset': {
+                  borderColor: editMode ? COLORS.grey[400] : COLORS.grey[300],
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: COLORS.primary.main,
+                  borderWidth: 2,
+                  boxShadow: `0 0 0 3px ${COLORS.primary.main}20`,
+                },
+                '&.Mui-disabled': {
+                  bgcolor: COLORS.grey[100],
+                  '& fieldset': {
+                    borderColor: COLORS.grey[200]
+                  }
+                }
+              }
+            }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
                     onClick={() => setShowValue(!showValue)}
                     edge="end"
+                    sx={{
+                      color: COLORS.text.secondary,
+                      transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                      '&:hover': {
+                        color: COLORS.primary.main,
+                        bgcolor: `${COLORS.primary.main}10`,
+                        transform: 'scale(1.1)'
+                      }
+                    }}
                   >
                     {showValue ? <VisibilityOffIcon /> : <VisibilityIcon />}
                   </IconButton>
                 </InputAdornment>
               ),
             }}
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                fontFamily: 'monospace',
-              }
-            }}
           />
         </DialogContent>
         
-        <DialogActions sx={getDialogActionsAnimationStyles()}>
-          <Button onClick={() => setSecretModalOpen(false)}>
+        <DialogActions sx={{
+          ...getDialogActionsAnimationStyles(),
+          p: 3,
+          pt: 2,
+          bgcolor: COLORS.grey[50],
+          borderTop: `1px solid ${COLORS.grey[200]}`,
+          borderBottomLeftRadius: `${SIZES.borderRadius.large}px`,
+          borderBottomRightRadius: `${SIZES.borderRadius.large}px`,
+          gap: 1
+        }}>
+          <Button 
+            onClick={() => setSecretModalOpen(false)}
+            sx={{
+              color: COLORS.text.secondary,
+              '&:hover': {
+                bgcolor: COLORS.grey[100]
+              }
+            }}
+          >
             Close
           </Button>
           
@@ -560,12 +602,51 @@ const VaultPage = () => {
               onClick={handleEditSecret}
               variant="contained"
               startIcon={<EditIcon />}
+              sx={{
+                ...BUTTON_STYLES.primary,
+                animation: 'bounceIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+                '@keyframes bounceIn': {
+                  '0%': {
+                    opacity: 0,
+                    transform: 'scale(0.8)'
+                  },
+                  '50%': {
+                    transform: 'scale(1.05)'
+                  },
+                  '100%': {
+                    opacity: 1,
+                    transform: 'scale(1)'
+                  }
+                }
+              }}
             >
-              Edit
+              Edit Secret
             </Button>
           ) : (
-            <>
-              <Button onClick={handleCancelEdit}>
+            <Box sx={{ 
+              display: 'flex', 
+              gap: 1,
+              animation: 'slideInFromRight 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              '@keyframes slideInFromRight': {
+                '0%': {
+                  opacity: 0,
+                  transform: 'translateX(20px)'
+                },
+                '100%': {
+                  opacity: 1,
+                  transform: 'translateX(0)'
+                }
+              }
+            }}>
+              <Button 
+                onClick={handleCancelEdit}
+                sx={{
+                  color: COLORS.text.secondary,
+                  '&:hover': {
+                    bgcolor: COLORS.grey[100]
+                  }
+                }}
+              >
                 Cancel
               </Button>
               <Button 
@@ -573,10 +654,17 @@ const VaultPage = () => {
                 variant="contained"
                 startIcon={<SaveIcon />}
                 disabled={saving || !commitMessage.trim()}
+                sx={{
+                  ...BUTTON_STYLES.primary,
+                  '&:disabled': {
+                    bgcolor: COLORS.grey[300],
+                    color: COLORS.grey[500]
+                  }
+                }}
               >
-                {saving ? 'Saving...' : 'Save'}
+                {saving ? 'Saving...' : 'Save Changes'}
               </Button>
-            </>
+            </Box>
           )}
         </DialogActions>
       </Dialog>
@@ -601,20 +689,60 @@ const VaultPage = () => {
             variant="outlined"
             value={newSecretKey}
             onChange={(e) => setNewSecretKey(e.target.value)}
-            sx={{ mb: 2 }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                if (newSecretKey.trim() && newSecretValue.trim()) {
+                  handleAddSecret();
+                }
+              }
+            }}
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': {
+                borderRadius: `${SIZES.borderRadius.medium}px`,
+                bgcolor: COLORS.background.paper,
+                transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                '&:hover fieldset': {
+                  borderColor: COLORS.grey[400],
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: COLORS.primary.main,
+                  borderWidth: 2,
+                  boxShadow: `0 0 0 3px ${COLORS.primary.main}20`,
+                }
+              }
+            }}
           />
           <TextField
             margin="dense"
             label="Secret Value"
             fullWidth
             variant="outlined"
-            multiline
-            rows={3}
             value={newSecretValue}
             onChange={(e) => setNewSecretValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                if (newSecretKey.trim() && newSecretValue.trim()) {
+                  handleAddSecret();
+                }
+              }
+            }}
             sx={{
               '& .MuiOutlinedInput-root': {
                 fontFamily: 'monospace',
+                borderRadius: `${SIZES.borderRadius.medium}px`,
+                bgcolor: COLORS.background.paper,
+                transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                '&:hover fieldset': {
+                  borderColor: COLORS.grey[400],
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: COLORS.primary.main,
+                  borderWidth: 2,
+                  boxShadow: `0 0 0 3px ${COLORS.primary.main}20`,
+                }
               }
             }}
           />

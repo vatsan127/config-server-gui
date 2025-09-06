@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(/C:\\git\\config-server-gui\\src\\components\\common/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
