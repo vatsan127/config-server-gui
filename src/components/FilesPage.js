@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useMemo, useRef, forwardRef, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
-import { Slide, Zoom } from '@mui/material';
 import {
   Typography,
   Box,
@@ -37,12 +36,9 @@ import { normalizePath, getFileIconComponent } from '../utils';
 import CreateFileButton from './common/CreateFileButton';
 import { FileListSkeleton } from './common/SkeletonLoader';
 import { useSearchShortcut } from '../hooks/useKeyboardShortcut';
+import { getStandardDialogProps, getDialogTitleAnimationStyles, getDialogContentAnimationStyles, getDialogActionsAnimationStyles } from '../utils/dialogAnimations';
 import HistoryPanel from './common/HistoryPanel';
 
-// Custom transition component for smooth dialog animations
-const SlideUpTransition = forwardRef(function SlideUpTransition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
 
 
@@ -71,6 +67,7 @@ const FilesPage = () => {
   const [fileToDelete, setFileToDelete] = useState(null);
   const [deleteMessage, setDeleteMessage] = useState('');
   const [deleting, setDeleting] = useState(false);
+  const deletingRef = useRef(false);
 
   // Set up notification handler with ref to avoid dependency issues
   const notificationRef = useRef();
@@ -191,6 +188,12 @@ const FilesPage = () => {
       return;
     }
 
+    // Prevent multiple simultaneous calls
+    if (deletingRef.current) {
+      return;
+    }
+
+    deletingRef.current = true;
     setDeleting(true);
     try {
       await apiService.deleteFile(namespace, currentPath, fileToDelete, deleteMessage);
@@ -209,6 +212,7 @@ const FilesPage = () => {
       // Error notification is already handled by the API service
     } finally {
       setDeleting(false);
+      deletingRef.current = false;
     }
   }, [deleteMessage, enqueueSnackbar, namespace, currentPath, fileToDelete, fetchFiles]);
 
@@ -860,51 +864,7 @@ const FilesPage = () => {
           onClose={handleDeleteCancel} 
           maxWidth="sm" 
           fullWidth
-          TransitionComponent={SlideUpTransition}
-          TransitionProps={{
-            timeout: {
-              enter: 400,
-              exit: 300
-            }
-          }}
-          PaperProps={{
-            sx: {
-              bgcolor: COLORS.background.paper,
-              border: `1px solid ${COLORS.grey[200]}`,
-              borderRadius: `${SIZES.borderRadius.large}px`,
-              boxShadow: SIZES.shadow.floating,
-              m: 1,
-              position: 'relative',
-              overflow: 'hidden',
-              animation: 'dialogSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-              '@keyframes dialogSlideIn': {
-                '0%': {
-                  opacity: 0,
-                  transform: 'translateY(-30px) scale(0.95)'
-                },
-                '100%': {
-                  opacity: 1,
-                  transform: 'translateY(0) scale(1)'
-                }
-              },
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                height: '3px',
-                background: `linear-gradient(90deg, ${COLORS.error.main}, ${COLORS.warning.main})`,
-              }
-            }
-          }}
-          sx={{
-            '& .MuiBackdrop-root': {
-              backgroundColor: 'rgba(0, 0, 0, 0.6)',
-              backdropFilter: 'blur(8px)',
-              transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-            }
-          }}
+          {...getStandardDialogProps('delete')}
         >
           <DialogTitle sx={{ 
             color: COLORS.text.primary, 
@@ -917,17 +877,7 @@ const FilesPage = () => {
             display: 'flex',
             alignItems: 'center',
             gap: 1.5,
-            animation: 'titleSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
-            '@keyframes titleSlideIn': {
-              '0%': {
-                opacity: 0,
-                transform: 'translateX(-20px)'
-              },
-              '100%': {
-                opacity: 1,
-                transform: 'translateX(0)'
-              }
-            }
+            ...getDialogTitleAnimationStyles()
           }}>
             <Box
               sx={{
@@ -965,17 +915,7 @@ const FilesPage = () => {
             '&.MuiDialogContent-root': {
               paddingTop: 3
             },
-            animation: 'contentFadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
-            '@keyframes contentFadeIn': {
-              '0%': {
-                opacity: 0,
-                transform: 'translateY(10px)'
-              },
-              '100%': {
-                opacity: 1,
-                transform: 'translateY(0)'
-              }
-            }
+            ...getDialogContentAnimationStyles()
           }}>
             <Typography variant="body2" sx={{ mb: 2, color: COLORS.text.secondary }}>
               Are you sure you want to delete <strong>{fileToDelete}</strong>? This action cannot be undone.
@@ -1036,17 +976,7 @@ const FilesPage = () => {
             borderTop: `1px solid ${COLORS.grey[200]}`,
             bgcolor: alpha(COLORS.grey[25], 0.5),
             gap: 1.5,
-            animation: 'actionsSlideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both',
-            '@keyframes actionsSlideUp': {
-              '0%': {
-                opacity: 0,
-                transform: 'translateY(20px)'
-              },
-              '100%': {
-                opacity: 1,
-                transform: 'translateY(0)'
-              }
-            }
+            ...getDialogActionsAnimationStyles()
           }}>
             <Button 
               onClick={handleDeleteCancel} 

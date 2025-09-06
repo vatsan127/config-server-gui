@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect, forwardRef } from 'react';
-import { Fade, Slide } from '@mui/material';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Button,
   Dialog,
@@ -18,11 +17,8 @@ import {
 import { COLORS, SIZES, BUTTON_STYLES } from '../../theme/colors';
 import { InlineSpinner } from './ProgressIndicator';
 import { useTextInputKeyboard, useDialogKeyboard } from '../../hooks/useTextInputKeyboard';
+import { getStandardDialogProps, getDialogTitleAnimationStyles, getDialogContentAnimationStyles, getDialogActionsAnimationStyles } from '../../utils/dialogAnimations';
 
-// Custom transition for create config dialog
-const FadeSlideTransition = forwardRef(function FadeSlideTransition(props, ref) {
-  return <Slide direction="down" ref={ref} {...props} />;
-});
 
 const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -30,6 +26,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
   const [path, setPath] = useState('');
   const [creating, setCreating] = useState(false);
   const nameInputRef = useRef(null);
+  const creatingRef = useRef(false);
 
   useEffect(() => {
     // Set default path when dialog opens
@@ -52,6 +49,12 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
 
   const handleCreate = async () => {
     if (fileName.trim() && path.trim()) {
+      // Prevent multiple simultaneous calls
+      if (creatingRef.current) {
+        return;
+      }
+      
+      creatingRef.current = true;
       setCreating(true);
       try {
         await onCreateConfigFile(fileName.trim(), path.trim());
@@ -60,6 +63,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
         // Error handling is done in parent component
       } finally {
         setCreating(false);
+        creatingRef.current = false;
       }
     }
   };
@@ -204,61 +208,11 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
         onClose={handleDialogClose}
         maxWidth="xs"
         fullWidth
-        TransitionComponent={FadeSlideTransition}
         onKeyDown={createFileDialogKeyboard.handleKeyDown}
+        {...getStandardDialogProps('success')}
         TransitionProps={{
-          onEntered: handleDialogEntered,
-          timeout: {
-            enter: 500,
-            exit: 350
-          }
-        }}
-        PaperProps={{
-          sx: {
-            bgcolor: COLORS.background.paper,
-            border: `1px solid ${COLORS.grey[200]}`,
-            borderRadius: `${SIZES.borderRadius.large}px`,
-            boxShadow: SIZES.shadow.floating,
-            m: 1,
-            position: 'relative',
-            overflow: 'hidden',
-            animation: 'createConfigDialogSlideIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            '@keyframes createConfigDialogSlideIn': {
-              '0%': {
-                opacity: 0,
-                transform: 'translateY(-50px) scale(0.9) rotateX(15deg)'
-              },
-              '100%': {
-                opacity: 1,
-                transform: 'translateY(0) scale(1) rotateX(0deg)'
-              }
-            },
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '3px',
-              background: `linear-gradient(90deg, ${COLORS.success.main}, ${COLORS.accent.green})`,
-              animation: 'configProgressSlide 0.15s ease-out 0.2s both',
-              '@keyframes configProgressSlide': {
-                '0%': {
-                  transform: 'translateX(-100%) scaleX(0.5)'
-                },
-                '100%': {
-                  transform: 'translateX(0) scaleX(1)'
-                }
-              }
-            }
-          }
-        }}
-        sx={{
-          '& .MuiBackdrop-root': {
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            backdropFilter: 'blur(10px)',
-            transition: 'all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-          }
+          ...getStandardDialogProps('success').TransitionProps,
+          onEntered: handleDialogEntered
         }}
       >
         <DialogTitle sx={{ 
@@ -272,17 +226,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
           display: 'flex',
           alignItems: 'center',
           gap: 1.5,
-          animation: 'configTitleSlideIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
-          '@keyframes configTitleSlideIn': {
-            '0%': {
-              opacity: 0,
-              transform: 'translateX(-25px)'
-            },
-            '100%': {
-              opacity: 1,
-              transform: 'translateX(0)'
-            }
-          }
+          ...getDialogTitleAnimationStyles()
         }}>
           <Box
             sx={{
@@ -335,17 +279,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
           '&.MuiDialogContent-root': {
             paddingTop: 3
           },
-          animation: 'configContentFadeIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
-          '@keyframes configContentFadeIn': {
-            '0%': {
-              opacity: 0,
-              transform: 'translateY(15px)'
-            },
-            '100%': {
-              opacity: 1,
-              transform: 'translateY(0)'
-            }
-          }
+          ...getDialogContentAnimationStyles()
         }}>
           <Stack spacing={2}>
             <TextField
@@ -462,17 +396,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
           borderTop: `1px solid ${COLORS.grey[200]}`,
           bgcolor: alpha(COLORS.grey[25], 0.5),
           gap: 1.5,
-          animation: 'configActionsSlideIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both',
-          '@keyframes configActionsSlideIn': {
-            '0%': {
-              opacity: 0,
-              transform: 'translateY(25px) scale(0.95)'
-            },
-            '100%': {
-              opacity: 1,
-              transform: 'translateY(0) scale(1)'
-            }
-          }
+          ...getDialogActionsAnimationStyles()
         }}>
           <Button 
             onClick={handleDialogClose}

@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef, forwardRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { Zoom } from '@mui/material';
 import {
   Typography,
   Box,
@@ -36,11 +35,8 @@ import Editor from '@monaco-editor/react';
 import { apiService, setNotificationHandler } from '../services/api';
 import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
 import { normalizePath } from '../utils';
+import { getStandardDialogProps, getDialogTitleAnimationStyles, getDialogContentAnimationStyles, getDialogActionsAnimationStyles } from '../utils/dialogAnimations';
 
-// Custom transition for commit dialog
-const ZoomInTransition = forwardRef(function ZoomInTransition(props, ref) {
-  return <Zoom ref={ref} {...props} />;
-});
 
 const FileViewPage = () => {
   const { namespace } = useParams();
@@ -62,11 +58,13 @@ const FileViewPage = () => {
   const [showCommitDialog, setShowCommitDialog] = useState(false);
   const [commitMessage, setCommitMessage] = useState('');
   const commitIdRef = useRef(null);
+  const savingRef = useRef(false);
 
-  // Keep ref in sync with state
+  // Keep refs in sync with state
   useEffect(() => {
     commitIdRef.current = commitId;
   }, [commitId]);
+
 
   // Set up notification handler with ref to avoid dependency issues
   const notificationRef = useRef();
@@ -127,6 +125,12 @@ const FileViewPage = () => {
       return;
     }
 
+    // Prevent multiple simultaneous calls
+    if (savingRef.current) {
+      return;
+    }
+
+    savingRef.current = true;
     const currentCommitId = commitIdRef.current;
     setSaving(true);
     try {
@@ -156,6 +160,7 @@ const FileViewPage = () => {
       // Don't show duplicate error messages
     } finally {
       setSaving(false);
+      savingRef.current = false;
     }
   };
 
@@ -735,60 +740,16 @@ const FileViewPage = () => {
         onClose={handleCommitCancel} 
         maxWidth="sm" 
         fullWidth
-        TransitionComponent={ZoomInTransition}
-        TransitionProps={{
-          timeout: {
-            enter: 500,
-            exit: 400
-          }
-        }}
+        {...getStandardDialogProps('success')}
         PaperProps={{
+          ...getStandardDialogProps('success').PaperProps,
           sx: {
-            bgcolor: COLORS.background.paper,
+            ...getStandardDialogProps('success').PaperProps.sx,
             border: `1px solid ${alpha(COLORS.grey[200], 0.8)}`,
-            borderRadius: `${SIZES.borderRadius.large}px`,
-            boxShadow: SIZES.shadow.floating,
-            overflow: 'hidden',
-            position: 'relative',
-            animation: 'commitDialogSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
-            '@keyframes commitDialogSlideIn': {
-              '0%': {
-                opacity: 0,
-                transform: 'scale(0.8) translateY(-40px) rotateX(10deg)'
-              },
-              '60%': {
-                transform: 'scale(1.02) translateY(5px) rotateX(-2deg)'
-              },
-              '100%': {
-                opacity: 1,
-                transform: 'scale(1) translateY(0) rotateX(0deg)'
-              }
-            },
             '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '3px',
-              background: `linear-gradient(90deg, ${COLORS.primary.main}, ${COLORS.accent.purple})`,
-              animation: 'progressBarSlide 0.8s ease-out 0.2s both',
-              '@keyframes progressBarSlide': {
-                '0%': {
-                  transform: 'translateX(-100%)'
-                },
-                '100%': {
-                  transform: 'translateX(0)'
-                }
-              }
+              ...getStandardDialogProps('success').PaperProps.sx['&::before'],
+              background: `linear-gradient(90deg, ${COLORS.primary.main}, ${COLORS.accent.purple})`
             }
-          }
-        }}
-        sx={{
-          '& .MuiBackdrop-root': {
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            backdropFilter: 'blur(12px)',
-            transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
           }
         }}
       >
@@ -802,7 +763,8 @@ const FileViewPage = () => {
           bgcolor: alpha(COLORS.grey[50], 0.5),
           display: 'flex',
           alignItems: 'center',
-          gap: 1.5
+          gap: 1.5,
+          ...getDialogTitleAnimationStyles()
         }}>
           <Box
             sx={{
@@ -851,7 +813,8 @@ const FileViewPage = () => {
           py: 3,
           '&.MuiDialogContent-root': {
             paddingTop: 3
-          }
+          },
+          ...getDialogContentAnimationStyles()
         }}>
           <Typography variant="body2" sx={{ 
             mb: 3, 
@@ -874,6 +837,21 @@ const FileViewPage = () => {
             value={commitMessage}
             onChange={(e) => setCommitMessage(e.target.value)}
             disabled={saving}
+            onKeyDown={(e) => {
+              // Enter to submit (unless Shift is held for new line)
+              if (e.key === 'Enter' && !e.shiftKey && commitMessage.trim()) {
+                e.preventDefault();
+                e.stopPropagation();
+                handleCommitSave();
+                return;
+              }
+              // Escape to cancel
+              if (e.key === 'Escape') {
+                e.preventDefault();
+                e.stopPropagation();
+                handleCommitCancel();
+              }
+            }}
             inputProps={{
               maxLength: 200
             }}
@@ -932,7 +910,8 @@ const FileViewPage = () => {
           borderTop: `1px solid ${alpha(COLORS.grey[200], 0.6)}`,
           bgcolor: alpha(COLORS.grey[25], 0.5),
           gap: 1.5,
-          justifyContent: 'flex-end'
+          justifyContent: 'flex-end',
+          ...getDialogActionsAnimationStyles()
         }}>
           <Button 
             onClick={handleCommitCancel} 

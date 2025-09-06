@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useRef, forwardRef, useCallback, memo } from 'react';
+import React, { useEffect, useMemo, useRef, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Grow, Slide } from '@mui/material';
 import {
   Typography,
   Box,
@@ -31,15 +30,12 @@ import { UI_CONSTANTS } from '../constants';
 import { useNamespaces } from '../hooks/useNamespaces';
 import { useDialog } from '../hooks/useDialog';
 import { validateNamespace } from '../utils/validation';
-import { getNamespaceColor } from '../utils/colorUtils';
+import { getNamespaceColor } from "../utils/colorUtils";
+import { getStandardDialogProps, getDialogTitleAnimationStyles, getDialogContentAnimationStyles, getDialogActionsAnimationStyles } from "../utils/dialogAnimations";
 import EmptyState from './common/EmptyState';
 import { InlineSpinner } from './common/ProgressIndicator';
 import { useDialogKeyboard } from '../hooks/useTextInputKeyboard';
 
-// Custom transition for create namespace dialog
-const GrowTransition = forwardRef(function GrowTransition(props, ref) {
-  return <Grow ref={ref} {...props} />;
-});
 
 const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
   const navigate = useNavigate();
@@ -546,55 +542,11 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
         onClose={closeCreateDialog} 
         maxWidth="xs" 
         fullWidth
-        TransitionComponent={GrowTransition}
         onKeyDown={createDialogKeyboard.handleKeyDown}
+        {...getStandardDialogProps('primary')}
         TransitionProps={{
-          onEntered: handleDialogEntered,
-          timeout: {
-            enter: 500,
-            exit: 400
-          }
-        }}
-        PaperProps={{
-          sx: {
-            bgcolor: COLORS.background.paper,
-            border: `1px solid ${COLORS.grey[200]}`,
-            borderRadius: `${SIZES.borderRadius.large}px`,
-            boxShadow: SIZES.shadow.floating,
-            m: 1,
-            position: 'relative',
-            overflow: 'hidden',
-            animation: 'dialogBounceIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            '@keyframes dialogBounceIn': {
-              '0%': {
-                opacity: 0,
-                transform: 'scale(0.3) translateY(-50px)'
-              },
-              '50%': {
-                transform: 'scale(1.05) translateY(0)'
-              },
-              '100%': {
-                opacity: 1,
-                transform: 'scale(1) translateY(0)'
-              }
-            },
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '3px',
-              background: `linear-gradient(90deg, ${COLORS.primary.main}, ${COLORS.accent.blue})`,
-            }
-          }
-        }}
-        sx={{
-          '& .MuiBackdrop-root': {
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            backdropFilter: 'blur(10px)',
-            transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-          }
+          ...getStandardDialogProps('primary').TransitionProps,
+          onEntered: handleDialogEntered
         }}
       >
         <DialogTitle sx={{ 
@@ -653,17 +605,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
           '&.MuiDialogContent-root': {
             paddingTop: 3
           },
-          animation: 'contentSlideInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
-          '@keyframes contentSlideInUp': {
-            '0%': {
-              opacity: 0,
-              transform: 'translateY(20px)'
-            },
-            '100%': {
-              opacity: 1,
-              transform: 'translateY(0)'
-            }
-          }
+          ...getDialogContentAnimationStyles()
         }}>
           <TextField
             inputRef={nameInputRef}
@@ -733,17 +675,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
           borderTop: `1px solid ${COLORS.grey[200]}`,
           bgcolor: alpha(COLORS.grey[25], 0.5),
           gap: 1.5,
-          animation: 'actionsSlideInRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both',
-          '@keyframes actionsSlideInRight': {
-            '0%': {
-              opacity: 0,
-              transform: 'translateX(30px)'
-            },
-            '100%': {
-              opacity: 1,
-              transform: 'translateX(0)'
-            }
-          }
+          ...getDialogActionsAnimationStyles()
         }}>
           <Button 
             onClick={closeCreateDialog} 
@@ -822,32 +754,13 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
         onClose={handleDeleteDialogClose}
         maxWidth="xs"
         fullWidth
-        TransitionComponent={GrowTransition}
         onKeyDown={deleteDialogKeyboard.handleKeyDown}
+        {...getStandardDialogProps('delete')}
         PaperProps={{
+          ...getStandardDialogProps('delete').PaperProps,
           sx: {
-            bgcolor: COLORS.background.paper,
-            border: `1px solid ${COLORS.error.light}`,
-            borderRadius: `${SIZES.borderRadius.large}px`,
-            boxShadow: SIZES.shadow.floating,
-            m: 1,
-            position: 'relative',
-            overflow: 'hidden',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '3px',
-              background: `linear-gradient(90deg, ${COLORS.error.main}, ${COLORS.error.dark})`,
-            }
-          }
-        }}
-        sx={{
-          '& .MuiBackdrop-root': {
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            backdropFilter: 'blur(10px)',
+            ...getStandardDialogProps('delete').PaperProps.sx,
+            border: `1px solid ${COLORS.error.light}`
           }
         }}
       >
@@ -861,7 +774,8 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
           bgcolor: alpha(COLORS.error.light, 0.05),
           display: 'flex',
           alignItems: 'center',
-          gap: 1.5
+          gap: 1.5,
+          ...getDialogTitleAnimationStyles()
         }}>
           <Box
             sx={{
@@ -884,7 +798,8 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
           py: 3,
           '&.MuiDialogContent-root': {
             paddingTop: 3
-          }
+          },
+          ...getDialogContentAnimationStyles()
         }}>
           <Typography variant="body1" sx={{ color: COLORS.text.primary, mb: 2 }}>
             Are you sure you want to delete the namespace <strong>"{namespaceToDelete}"</strong>?
@@ -898,7 +813,8 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
           py: 2.5,
           borderTop: `1px solid ${COLORS.grey[200]}`,
           bgcolor: alpha(COLORS.grey[25], 0.5),
-          gap: 1.5
+          gap: 1.5,
+          ...getDialogActionsAnimationStyles()
         }}>
           <Button
             onClick={handleDeleteDialogClose}
