@@ -17,7 +17,6 @@ import {
   Security as SecurityIcon,
   Add as AddIcon,
   Edit as EditIcon,
-  Delete as DeleteIcon,
   Save as SaveIcon,
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
@@ -68,11 +67,6 @@ const VaultPage = () => {
   const [newSecretKey, setNewSecretKey] = useState('');
   const [newSecretValue, setNewSecretValue] = useState('');
   
-  // Delete dialog
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [secretToDelete, setSecretToDelete] = useState(null);
-  const [deleteMessage, setDeleteMessage] = useState('');
-  const [deleting, setDeleting] = useState(false);
 
   // Set up notification handler
   const notificationRef = useRef();
@@ -242,36 +236,7 @@ const VaultPage = () => {
     }
   };
 
-  const handleDeleteClick = useCallback((secretKey, event) => {
-    event.stopPropagation();
-    setSecretToDelete(secretKey);
-    setDeleteDialogOpen(true);
-  }, []);
 
-  const handleDeleteConfirm = async () => {
-    if (!deleteMessage.trim()) {
-      enqueueSnackbar('Delete message is required', { variant: 'error' });
-      return;
-    }
-
-    setDeleting(true);
-    try {
-      const updatedSecrets = { ...secrets };
-      delete updatedSecrets[secretToDelete];
-      
-      await apiService.updateVaultSecrets(namespace, 'user@example.com', deleteMessage, updatedSecrets);
-      
-      setSecrets(updatedSecrets);
-      setDeleteDialogOpen(false);
-      setDeleteMessage('');
-      setSecretToDelete(null);
-      await fetchSecrets();
-    } catch (err) {
-      console.error('Error deleting secret:', err);
-    } finally {
-      setDeleting(false);
-    }
-  };
 
   // Render functions for ModernList
   const renderIcon = useCallback(() => (
@@ -290,17 +255,8 @@ const VaultPage = () => {
         handleSecretClick(secretKey);
       }}
       tooltip="Edit Secret"
-    />,
-    <ModernActionButton
-      key="delete"
-      icon={<DeleteIcon fontSize="small" />}
-      onClick={(e) => handleDeleteClick(secretKey, e)}
-      hoverColor="#ef4444"
-      hoverBg="rgba(239, 68, 68, 0.1)"
-      hoverShadow="0 2px 8px rgba(239, 68, 68, 0.2)"
-      tooltip="Delete Secret"
     />
-  ], [handleSecretClick, handleDeleteClick]);
+  ], [handleSecretClick]);
 
   const emptyState = useMemo(() => (
     <Box sx={{ textAlign: 'center' }}>
@@ -585,47 +541,49 @@ const VaultPage = () => {
           borderBottomRightRadius: `${SIZES.borderRadius.large}px`,
           gap: 1
         }}>
-          <Button 
-            onClick={() => setSecretModalOpen(false)}
-            sx={{
-              color: COLORS.text.secondary,
-              '&:hover': {
-                bgcolor: COLORS.grey[100]
-              }
-            }}
-          >
-            Close
-          </Button>
-          
           {!editMode ? (
-            <Button 
-              onClick={handleEditSecret}
-              variant="contained"
-              startIcon={<EditIcon />}
-              sx={{
-                ...BUTTON_STYLES.primary,
-                animation: 'bounceIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
-                '@keyframes bounceIn': {
-                  '0%': {
-                    opacity: 0,
-                    transform: 'scale(0.8)'
-                  },
-                  '50%': {
-                    transform: 'scale(1.05)'
-                  },
-                  '100%': {
-                    opacity: 1,
-                    transform: 'scale(1)'
+            <>
+              <Button 
+                onClick={() => setSecretModalOpen(false)}
+                sx={{
+                  color: COLORS.text.secondary,
+                  '&:hover': {
+                    bgcolor: COLORS.grey[100]
                   }
-                }
-              }}
-            >
-              Edit Secret
-            </Button>
+                }}
+              >
+                Close
+              </Button>
+              <Button 
+                onClick={handleEditSecret}
+                variant="contained"
+                startIcon={<EditIcon />}
+                sx={{
+                  ...BUTTON_STYLES.primary,
+                  animation: 'bounceIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+                  '@keyframes bounceIn': {
+                    '0%': {
+                      opacity: 0,
+                      transform: 'scale(0.8)'
+                    },
+                    '50%': {
+                      transform: 'scale(1.05)'
+                    },
+                    '100%': {
+                      opacity: 1,
+                      transform: 'scale(1)'
+                    }
+                  }
+                }}
+              >
+                Edit Secret
+              </Button>
+            </>
           ) : (
             <Box sx={{ 
               display: 'flex', 
               gap: 1,
+              width: '100%',
               animation: 'slideInFromRight 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               '@keyframes slideInFromRight': {
                 '0%': {
@@ -761,43 +719,6 @@ const VaultPage = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Delete Dialog */}
-      <Dialog
-        open={deleteDialogOpen}
-        onClose={() => setDeleteDialogOpen(false)}
-        {...getStandardDialogProps()}
-      >
-        <DialogTitle sx={getDialogTitleAnimationStyles()}>
-          Delete Secret
-        </DialogTitle>
-        <DialogContent sx={getDialogContentAnimationStyles()}>
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            Are you sure you want to delete the secret "{secretToDelete}"?
-          </Typography>
-          <TextField
-            autoFocus
-            fullWidth
-            label="Delete Message"
-            value={deleteMessage}
-            onChange={(e) => setDeleteMessage(e.target.value)}
-            placeholder="Reason for deletion..."
-            required
-          />
-        </DialogContent>
-        <DialogActions sx={getDialogActionsAnimationStyles()}>
-          <Button onClick={() => setDeleteDialogOpen(false)}>
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleDeleteConfirm}
-            color="error"
-            variant="contained"
-            disabled={deleting || !deleteMessage.trim()}
-          >
-            {deleting ? 'Deleting...' : 'Delete'}
-          </Button>
-        </DialogActions>
-      </Dialog>
 
       {/* History Panel */}
       <HistoryPanel
