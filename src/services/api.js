@@ -1,5 +1,6 @@
 import { API_CONFIG, UI_CONSTANTS, PERFORMANCE_CONFIG } from '../constants';
 import { makeApiRequest, extractResponseMessage, createConnectionErrorMessage } from '../utils/apiUtils';
+import { tokenManager, createAuthHeaders, handleAuthError, userManager } from '../utils/authUtils';
 
 // Global notification function (will be set by components)
 let showNotification = null;
@@ -44,16 +45,167 @@ const handleApiResponse = async (response, successMessage = null) => {
   return response;
 };
 
+// Enhanced authentication service with better error handling and performance
+const authService = {
+  async login(credentials) {
+    if (!credentials?.username || !credentials?.password) {
+      throw new Error('Username and password are required');
+    }
+
+    try {
+      const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.LOGIN}`;
+      console.log('🔐 Login Request:', { url, credentials: { username: credentials.username, password: '[HIDDEN]' } });
+      
+      // Create form data for Spring Security
+      const formData = new URLSearchParams();
+      formData.append('username', credentials.username.trim());
+      formData.append('password', credentials.password);
+      
+      console.log('📤 Request payload (form):', `username=${credentials.username.trim()}&password=[HIDDEN]`);
+      
+      const response = await makeApiRequest(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData.toString(),
+        timeout: API_CONFIG.TIMEOUT
+      });
+      
+      console.log('📥 Response status:', response.status, response.statusText);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('❌ Login failed:', errorData);
+        throw new Error(errorData.message || handleAuthError({ status: response.status }));
+      }
+      
+      const data = await response.json();
+      console.log('✅ Login success:', { ...data, token: data.token ? '[PRESENT]' : '[MISSING]' });
+      
+      // Validate response structure
+      if (!data.token) {
+        throw new Error('Invalid server response: missing token');
+      }
+      
+      // Store token and user data
+      tokenManager.set(data.token);
+      if (data.user) {
+        userManager.set(data.user);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('🚨 Login error:', error.message);
+      
+      // Clean up any partial state
+      tokenManager.remove();
+      
+      // Check for network/CORS issues
+      if (error.name === 'AbortError') {
+        throw new Error('Request timeout. Please check if the server is running.');
+      }
+      
+      if (error.message?.includes('Failed to fetch') || error.message?.includes('NetworkError')) {
+        throw new Error('Cannot connect to server. Please check if the server is running on http://localhost:8080');
+      }
+      
+      throw new Error(handleAuthError(error));
+    }
+  },
+
+  async logout() {
+    const token = tokenManager.get();
+    
+    try {
+      if (token && tokenManager.isValid(token)) {
+        const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.LOGOUT}`;
+        
+        // Don't await this - logout should be fast even if server fails
+        makeApiRequest(url, {
+          method: 'POST',
+          headers: createAuthHeaders(),
+          timeout: 3000 // Shorter timeout for logout
+        }).catch(error => {
+          console.warn('Logout request failed:', error);
+        });
+      }
+    } finally {
+      // Always clear local state regardless of server response
+      tokenManager.remove();
+      userManager.remove();
+    }
+  },
+
+  async verifyToken() {
+    try {
+      const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.AUTH.VERIFY}`;
+      console.log('🔍 Verifying authentication with:', url);
+      
+      const response = await makeApiRequest(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include cookies for session-based auth
+        timeout: 5000
+      });
+      
+      console.log('📥 Verify response status:', response.status, response.statusText);
+      
+      if (response.ok) {
+        // Try to extract user info from response if available
+        try {
+          const data = await response.json();
+          console.log('✅ Verification successful:', data);
+          
+          // Store user data if provided by server
+          if (data.user) {
+            userManager.set(data.user);
+          }
+          
+          return true;
+        } catch (jsonError) {
+          // If no JSON response, just return true for successful status
+          console.log('✅ Verification successful (no JSON response)');
+          return true;
+        }
+      } else {
+        console.log('❌ Verification failed:', response.status);
+        return false;
+      }
+    } catch (error) {
+      console.error('🚨 Verification error:', error);
+      
+      // Network error or server down
+      if (error.name === 'AbortError' || error.message?.includes('fetch')) {
+        console.warn('Token verification failed due to network error:', error);
+        return false;
+      }
+      
+      // Other errors indicate invalid authentication
+      return false;
+    }
+  },
+
+  // Check if user is authenticated without server round-trip
+  isAuthenticated() {
+    const token = tokenManager.get();
+    const user = userManager.get();
+    return !!(token && user && tokenManager.isValid(token));
+  }
+};
+
 export const apiService = {
+  // Expose auth methods
+  ...authService,
   async getNamespaces() {
     try {
       const url = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.NAMESPACES.LIST}`;
       
       const response = await makeApiRequest(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        headers: createAuthHeaders()
       });
       
       // Handle response status and extract message

@@ -3,6 +3,11 @@ export const API_CONFIG = {
   BASE_URL: 'http://localhost:8080/config-server',
   TIMEOUT: 5000,
   ENDPOINTS: {
+    AUTH: {
+      LOGIN: '/login',
+      LOGOUT: '/logout',
+      VERIFY: '/verify'
+    },
     NAMESPACES: {
       LIST: '/namespace/list',
       CREATE: '/namespace/create',

@@ -22,10 +22,12 @@ import {
 import { theme } from '../theme/theme';
 import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
 import { UI_CONSTANTS, DOM_IDS } from '../constants';
+import { useAuth } from '../contexts/AuthContext';
 import ErrorBoundary from './common/ErrorBoundary';
 
 const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCreateNamespace, showCreateButton = false }) => {
   const searchInputRef = useRef(null);
+  const { logout } = useAuth();
 
   // Global keyboard shortcuts
   useEffect(() => {
@@ -352,9 +354,7 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCr
               {/* Logout Button */}
               <Button 
                 startIcon={<LogoutIcon sx={{ fontSize: 18 }} />}
-                onClick={() => {
-                  // TODO: Implement logout functionality when backend supports it
-                }}
+                onClick={logout}
                 sx={{ 
                   color: COLORS.text.white,
                   bgcolor: alpha(COLORS.text.white, 0.1),

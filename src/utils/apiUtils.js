@@ -37,6 +37,7 @@ export const makeApiRequest = async (url, options = {}, timeout) => {
   
   try {
     const response = await fetch(url, {
+      credentials: 'include', // Always include cookies for session-based auth
       ...options,
       signal: controller.signal
     });
