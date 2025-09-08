@@ -908,5 +908,60 @@ export const apiService = {
       
       throw error;
     }
+  },
+
+  async getNamespaceEvents(namespace) {
+    try {
+      const url = `${API_CONFIG.BASE_URL}/namespace/events`;
+      
+      const response = await makeApiRequest(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          namespace: namespace
+        })
+      });
+      
+      await handleApiResponse(response);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      return {
+        namespace: data.namespace,
+        totalCommits: data.totalCommits || 0,
+        commits: data.commits || []
+      };
+      
+    } catch (error) {
+      console.error('Error fetching namespace events:', error);
+      
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'fetch namespace events');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+            key: `connection-error-${Date.now()}`
+          });
+        }
+        
+        throw new Error(friendlyMessage);
+      }
+      
+      throw error;
+    }
   }
 };

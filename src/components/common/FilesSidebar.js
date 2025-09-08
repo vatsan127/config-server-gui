@@ -13,7 +13,8 @@ import {
 import {
   Home as HomeIcon,
   Dashboard as DashboardIcon,
-  Security as SecurityIcon
+  Security as SecurityIcon,
+  Timeline as TimelineIcon
 } from '@mui/icons-material';
 import { COLORS, SIZES } from '../../theme/colors';
 
@@ -33,9 +34,14 @@ const FilesSidebar = ({ namespace }) => {
     navigate(`/namespace/${namespace}/vault`);
   };
 
+  const handleEventsClick = () => {
+    navigate(`/namespace/${namespace}/events`);
+  };
+
   const isFilesActive = location.pathname.includes('/files');
   const isFileViewActive = location.pathname.includes('/file');
   const isVaultActive = location.pathname.includes('/vault');
+  const isEventsActive = location.pathname.includes('/events');
 
   return (
     <Box
@@ -376,6 +382,89 @@ const FilesSidebar = ({ namespace }) => {
               sx: {
                 color: isVaultActive ? '#e2e8f0' : alpha(COLORS.text.white, 0.9),
                 fontWeight: isVaultActive ? 600 : 500,
+                fontSize: '0.875rem',
+                letterSpacing: '-0.005em',
+                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+              }
+            }}
+          />
+        </ListItem>
+
+        <ListItem
+          button
+          onClick={handleEventsClick}
+          sx={{
+            py: 1.25,
+            px: 1.5,
+            mb: 0.5,
+            borderRadius: `${SIZES.borderRadius.medium}px`,
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+            position: 'relative',
+            overflow: 'hidden',
+            bgcolor: isEventsActive ? alpha('#8b5cf6', 0.15) : 'transparent',
+            '&:hover': { 
+              bgcolor: isEventsActive ? alpha('#8b5cf6', 0.25) : alpha('#8b5cf6', 0.12),
+              transform: 'translateX(4px) scale(1.02)',
+              boxShadow: '0 4px 16px rgba(139, 92, 246, 0.25)',
+              '& .MuiListItemIcon-root': {
+                color: '#8b5cf6',
+                transform: 'scale(1.15) rotate(5deg)'
+              },
+              '& .MuiListItemText-primary': {
+                color: '#ffffff',
+                fontWeight: 700
+              },
+              '&::before': {
+                transform: 'scaleY(1)'
+              },
+              '&::after': {
+                opacity: 1,
+                transform: 'translateX(0)'
+              }
+            },
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: 3,
+              height: '100%',
+              bgcolor: '#8b5cf6',
+              transform: isEventsActive ? 'scaleY(1)' : 'scaleY(0)',
+              transformOrigin: 'bottom',
+              transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
+            },
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: '100%',
+              height: '100%',
+              background: `linear-gradient(90deg, transparent 0%, ${alpha('#8b5cf6', 0.1)} 100%)`,
+              opacity: 0,
+              transform: 'translateX(100%)',
+              transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
+            }
+          }}
+        >
+          <ListItemIcon sx={{ 
+            minWidth: 32,
+            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'
+          }}>
+            <TimelineIcon 
+              sx={{ 
+                color: isEventsActive ? '#8b5cf6' : alpha(COLORS.text.white, 0.8),
+                fontSize: '1.1rem'
+              }} 
+            />
+          </ListItemIcon>
+          <ListItemText 
+            primary="Events"
+            primaryTypographyProps={{
+              sx: {
+                color: isEventsActive ? '#e2e8f0' : alpha(COLORS.text.white, 0.9),
+                fontWeight: isEventsActive ? 600 : 500,
                 fontSize: '0.875rem',
                 letterSpacing: '-0.005em',
                 transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)'

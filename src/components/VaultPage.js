@@ -21,7 +21,8 @@ import {
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
   VpnKey as VpnKeyIcon,
-  History as HistoryIcon
+  History as HistoryIcon,
+  Delete as DeleteIcon
 } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { apiService, setNotificationHandler } from '../services/api';
@@ -66,6 +67,12 @@ const VaultPage = () => {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [newSecretKey, setNewSecretKey] = useState('');
   const [newSecretValue, setNewSecretValue] = useState('');
+  
+  // Delete secret dialog
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [secretToDelete, setSecretToDelete] = useState('');
+  const [deleteCommitMessage, setDeleteCommitMessage] = useState('');
+  const [deleting, setDeleting] = useState(false);
   
 
   // Set up notification handler
@@ -236,6 +243,51 @@ const VaultPage = () => {
     }
   };
 
+  const handleDeleteClick = (secretKey) => {
+    setSecretToDelete(secretKey);
+    setDeleteCommitMessage(`Remove secret: ${secretKey}`);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteSecret = async () => {
+    if (!deleteCommitMessage.trim()) {
+      enqueueSnackbar('Commit message is required', { variant: 'error' });
+      return;
+    }
+
+    setDeleting(true);
+    try {
+      // Remove the key from secrets object
+      const updatedSecrets = { ...secrets };
+      delete updatedSecrets[secretToDelete];
+      
+      await apiService.updateVaultSecrets(namespace, 'user@example.com', deleteCommitMessage, updatedSecrets);
+      
+      setSecrets(updatedSecrets);
+      setDeleteDialogOpen(false);
+      setSecretToDelete('');
+      setDeleteCommitMessage('');
+      
+      // Show warning about encrypted value placeholder
+      enqueueSnackbar(
+        `Secret "${secretToDelete}" removed. Remember to update any encrypted value placeholders in your config files.`, 
+        { variant: 'warning', autoHideDuration: 8000 }
+      );
+      
+      await fetchSecrets();
+    } catch (err) {
+      console.error('Error deleting secret:', err);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteDialogOpen(false);
+    setSecretToDelete('');
+    setDeleteCommitMessage('');
+  };
+
 
 
   // Render functions for ModernList
@@ -255,6 +307,19 @@ const VaultPage = () => {
         handleSecretClick(secretKey);
       }}
       tooltip="Edit Secret"
+    />,
+    <ModernActionButton
+      key="delete"
+      icon={<DeleteIcon fontSize="small" />}
+      onClick={(e) => {
+        e.stopPropagation();
+        handleDeleteClick(secretKey);
+      }}
+      tooltip="Delete Secret"
+      color="#ef4444"
+      hoverColor="#dc2626"
+      hoverBg="rgba(239, 68, 68, 0.1)"
+      hoverShadow="0 2px 8px rgba(239, 68, 68, 0.2)"
     />
   ], [handleSecretClick]);
 
@@ -315,16 +380,6 @@ const VaultPage = () => {
         onSearchChange={setSearchQuery}
         searchPlaceholder="Search secrets"
         actions={[
-          {
-            label: 'History',
-            icon: <HistoryIcon />,
-            onClick: handleHistoryClick,
-            variant: 'outlined',
-            sx: {
-              ...BUTTON_STYLES.secondary,
-              mr: 1
-            }
-          },
           {
             label: 'Add Secret',
             icon: <AddIcon />,
@@ -719,6 +774,78 @@ const VaultPage = () => {
         </DialogActions>
       </Dialog>
 
+      {/* Delete Secret Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleCancelDelete}
+        maxWidth="sm"
+        fullWidth
+        {...getStandardDialogProps()}
+      >
+        <DialogTitle sx={getDialogTitleAnimationStyles()}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <DeleteIcon sx={{ color: '#ef4444', fontSize: 24 }} />
+            <Typography variant="h6" sx={{ color: COLORS.text.primary }}>
+              Delete Secret
+            </Typography>
+          </Box>
+        </DialogTitle>
+        <DialogContent sx={getDialogContentAnimationStyles()}>
+          <Typography variant="body1" sx={{ mb: 2, color: COLORS.text.primary }}>
+            Are you sure you want to delete the secret <strong>"{secretToDelete}"</strong>?
+          </Typography>
+          <Typography variant="body2" sx={{ mb: 3, color: COLORS.text.secondary, bgcolor: '#fff3cd', p: 2, borderRadius: 1, border: '1px solid #ffeaa7' }}>
+            <strong>Warning:</strong> If you've used this secret as an encrypted value placeholder in your config files, 
+            you'll need to manually update those references after deletion.
+          </Typography>
+          <TextField
+            autoFocus
+            fullWidth
+            label="Commit Message"
+            value={deleteCommitMessage}
+            onChange={(e) => setDeleteCommitMessage(e.target.value)}
+            placeholder="Describe why you're removing this secret..."
+            required
+            sx={{ 
+              '& .MuiOutlinedInput-root': {
+                borderRadius: `${SIZES.borderRadius.medium}px`,
+                bgcolor: COLORS.background.paper,
+                transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                '&:hover fieldset': {
+                  borderColor: COLORS.grey[400],
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: COLORS.primary.main,
+                  borderWidth: 2,
+                  boxShadow: `0 0 0 3px ${COLORS.primary.main}20`,
+                }
+              }
+            }}
+          />
+        </DialogContent>
+        <DialogActions sx={getDialogActionsAnimationStyles()}>
+          <Button onClick={handleCancelDelete}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleDeleteSecret}
+            variant="contained"
+            disabled={deleting || !deleteCommitMessage.trim()}
+            sx={{
+              bgcolor: '#ef4444',
+              '&:hover': {
+                bgcolor: '#dc2626'
+              },
+              '&:disabled': {
+                bgcolor: COLORS.grey[300],
+                color: COLORS.grey[500]
+              }
+            }}
+          >
+            {deleting ? 'Deleting...' : 'Delete Secret'}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* History Panel */}
       <HistoryPanel

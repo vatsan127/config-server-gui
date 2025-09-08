@@ -6,6 +6,7 @@ import FilesSidebar from './common/FilesSidebar';
 import FilesPage from './FilesPage';
 import FileViewPage from './FileViewPage';
 import VaultPage from './VaultPage';
+import EventsPage from './EventsPage';
 
 const FilesLayout = () => {
   const { namespace } = useParams();
@@ -57,6 +58,7 @@ const FilesLayout = () => {
           <Route path="files" element={<FilesPage />} />
           <Route path="file" element={<FileViewPage />} />
           <Route path="vault" element={<VaultPage />} />
+          <Route path="events" element={<EventsPage />} />
         </Routes>
       </Box>
     </Box>
