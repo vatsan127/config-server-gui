@@ -154,7 +154,9 @@ const VaultPage = () => {
     setSaving(true);
     try {
       const updatedSecrets = { ...secrets, [selectedSecret]: editedValue };
-      await apiService.updateVaultSecrets(namespace, 'user@example.com', commitMessage, updatedSecrets);
+      // Ensure we send an empty object if no secrets exist
+      const secretsToSend = Object.keys(updatedSecrets).length === 0 ? {} : updatedSecrets;
+      await apiService.updateVaultSecrets(namespace, 'user@example.com', commitMessage, secretsToSend);
       
       setSecrets(updatedSecrets);
       setSecretModalOpen(false);
@@ -231,7 +233,9 @@ const VaultPage = () => {
 
     try {
       const updatedSecrets = { ...secrets, [newSecretKey]: newSecretValue };
-      await apiService.updateVaultSecrets(namespace, 'user@example.com', `Add secret: ${newSecretKey}`, updatedSecrets);
+      // Ensure we send an empty object if no secrets exist
+      const secretsToSend = Object.keys(updatedSecrets).length === 0 ? {} : updatedSecrets;
+      await apiService.updateVaultSecrets(namespace, 'user@example.com', `Add secret: ${newSecretKey}`, secretsToSend);
       
       setSecrets(updatedSecrets);
       setNewSecretKey('');
@@ -261,7 +265,9 @@ const VaultPage = () => {
       const updatedSecrets = { ...secrets };
       delete updatedSecrets[secretToDelete];
       
-      await apiService.updateVaultSecrets(namespace, 'user@example.com', deleteCommitMessage, updatedSecrets);
+      // Ensure we send an empty object if no secrets exist after deletion
+      const secretsToSend = Object.keys(updatedSecrets).length === 0 ? {} : updatedSecrets;
+      await apiService.updateVaultSecrets(namespace, 'user@example.com', deleteCommitMessage, secretsToSend);
       
       setSecrets(updatedSecrets);
       setDeleteDialogOpen(false);
@@ -792,7 +798,8 @@ const VaultPage = () => {
         </DialogTitle>
         <DialogContent sx={getDialogContentAnimationStyles()}>
           <Typography variant="body1" sx={{ mb: 2, color: COLORS.text.primary }}>
-            Are you sure you want to delete the secret <strong>"{secretToDelete}"</strong>?
+            Are you sure you want to delete the secret{' '}
+            <strong style={{ wordBreak: 'keep-all' }}>"{secretToDelete}"</strong>?
           </Typography>
           <Typography variant="body2" sx={{ mb: 3, color: COLORS.text.secondary, bgcolor: '#fff3cd', p: 2, borderRadius: 1, border: '1px solid #ffeaa7' }}>
             <strong>Warning:</strong> If you've used this secret as an encrypted value placeholder in your config files, 
