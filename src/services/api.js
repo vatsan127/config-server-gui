@@ -1019,5 +1019,54 @@ export const apiService = {
       
       throw error;
     }
+  },
+
+  async retryNotification(namespace, commitId) {
+    try {
+      const url = `${API_CONFIG.BASE_URL}/namespace/trigger-notify`;
+      
+      const response = await makeApiRequest(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          namespace: namespace,
+          commitid: commitId
+        })
+      });
+      
+      await handleApiResponse(response, 'Notification retry triggered successfully');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return await response.json();
+      
+    } catch (error) {
+      console.error('Error retrying notification:', error);
+      
+      if (error.name === 'AbortError' || 
+          error.message?.includes('Failed to fetch') || 
+          error.message?.includes('Network request failed') ||
+          error.code === 'ECONNREFUSED' || 
+          error.code === 'ENOTFOUND' || 
+          error.code === 'ETIMEDOUT') {
+        const friendlyMessage = createConnectionErrorMessage(error, 'retry notification');
+        
+        if (showNotification) {
+          showNotification(friendlyMessage, { 
+            variant: 'error',
+            preventDuplicate: true,
+            autoHideDuration: PERFORMANCE_CONFIG.NOTIFICATION_DURATION.ERROR,
+          });
+        }
+        
+        throw new Error(friendlyMessage);
+      }
+      
+      throw error;
+    }
   }
 };

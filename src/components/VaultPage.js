@@ -365,18 +365,7 @@ const VaultPage = () => {
       p: SIZES.spacing.xs,
       bgcolor: 'background.default',
       height: '100vh',
-      overflow: 'hidden',
-      animation: 'fadeInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both',
-      '@keyframes fadeInUp': {
-        '0%': {
-          opacity: 0,
-          transform: 'translateY(20px)'
-        },
-        '100%': {
-          opacity: 1,
-          transform: 'translateY(0)'
-        }
-      }
+      overflow: 'hidden'
     }}>
       <PageHeader
         title="Vault"

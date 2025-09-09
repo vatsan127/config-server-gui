@@ -127,18 +127,7 @@ const EventsPage = () => {
       p: SIZES.spacing.xs,
       bgcolor: 'background.default',
       height: '100vh',
-      overflow: 'hidden',
-      animation: 'fadeInUp 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.08s both',
-      '@keyframes fadeInUp': {
-        '0%': {
-          opacity: 0,
-          transform: 'translateY(20px)'
-        },
-        '100%': {
-          opacity: 1,
-          transform: 'translateY(0)'
-        }
-      }
+      overflow: 'hidden'
     }}>
       <PageHeader
         title="Events"

@@ -8,7 +8,7 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  ListItemText
+  IconButton,
 } from '@mui/material';
 import {
   Notifications as NotificationsIcon,
@@ -16,7 +16,8 @@ import {
   Error as ErrorIcon,
   HourglassEmpty as HourglassEmptyIcon,
   Apps as AppsIcon,
-  Refresh as RefreshIcon
+  Refresh as RefreshIcon,
+  Replay as RetryIcon
 } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { apiService, setNotificationHandler } from '../services/api';
@@ -115,6 +116,16 @@ const NotifyPage = () => {
     fetchNotifications();
   };
 
+  const handleRetry = async (notification) => {
+    try {
+      await apiService.retryNotification(namespace, notification.id);
+      // Refresh the notifications list to get updated status
+      fetchNotifications();
+    } catch (error) {
+      console.error('Error retrying notification:', error);
+    }
+  };
+
   const EmptyState = () => (
     <Box sx={{ textAlign: 'center' }}>
       <NotificationsIcon sx={{ fontSize: 64, mb: 2, opacity: 0.3, color: COLORS.text.secondary }} />
@@ -151,18 +162,7 @@ const NotifyPage = () => {
       p: SIZES.spacing.xs,
       bgcolor: 'background.default',
       height: '100vh',
-      overflow: 'hidden',
-      animation: 'fadeInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both',
-      '@keyframes fadeInUp': {
-        '0%': {
-          opacity: 0,
-          transform: 'translateY(20px)'
-        },
-        '100%': {
-          opacity: 1,
-          transform: 'translateY(0)'
-        }
-      }
+      overflow: 'hidden'
     }}>
       <PageHeader
         title="Notifications"
@@ -178,40 +178,43 @@ const NotifyPage = () => {
         ]}
       />
 
-      {notifications.length === 0 ? (
-        <Box sx={{ 
-          py: 4, 
-          px: 3, 
-          textAlign: 'center',
-          color: COLORS.text.secondary
-        }}>
-          <EmptyState />
-        </Box>
-      ) : (
-        <Box 
-          sx={{ 
-            bgcolor: COLORS.background.paper,
-            border: `1px solid ${COLORS.grey[200]}`,
-            borderRadius: `${SIZES.borderRadius.large}px`,
-            boxShadow: SIZES.shadow.card,
-            overflow: 'hidden',
-            flex: 1,
-            transform: 'translateY(0) scale(1)',
-            opacity: 1,
-            transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            animation: 'slideUpFade 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both',
-            '@keyframes slideUpFade': {
-              '0%': {
-                opacity: 0,
-                transform: 'translateY(30px) scale(0.98)'
-              },
-              '100%': {
-                opacity: 1,
-                transform: 'translateY(0) scale(1)'
-              }
+      <Box 
+        key={`content-${notifications.length}-${loading}`}
+        sx={{ 
+          flex: 1,
+          animation: loading ? 'none' : 'slideUpFade 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          '@keyframes slideUpFade': {
+            '0%': {
+              opacity: 0,
+              transform: 'translateY(15px)'
+            },
+            '100%': {
+              opacity: 1,
+              transform: 'translateY(0)'
             }
-          }}
-        >
+          }
+        }}
+      >
+        {notifications.length === 0 ? (
+          <Box sx={{ 
+            py: 4, 
+            px: 3, 
+            textAlign: 'center',
+            color: COLORS.text.secondary
+          }}>
+            <EmptyState />
+          </Box>
+        ) : (
+          <Box 
+            sx={{ 
+              bgcolor: COLORS.background.paper,
+              border: `1px solid ${COLORS.grey[200]}`,
+              borderRadius: `${SIZES.borderRadius.large}px`,
+              boxShadow: SIZES.shadow.card,
+              overflow: 'hidden',
+              flex: 1
+            }}
+          >
           <List sx={{ 
             py: 0,
             overflow: 'auto',
@@ -252,124 +255,101 @@ const NotifyPage = () => {
                       '& .MuiListItemIcon-root': {
                         transform: 'scale(1.15)',
                       },
-                      '& .MuiListItemText-primary': {
-                        color: COLORS.text.primary,
-                        fontWeight: 500,
-                        transform: 'translateX(4px)',
-                      }
                     },
                     '&:active': {
                       transform: 'translateX(4px) scale(1.005)',
                       transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                     },
-                    py: 2.5,
-                    px: 3,
+                    py: 1.5,
+                    px: 2,
                     cursor: 'pointer',
                     display: 'flex',
-                    alignItems: 'flex-start',
+                    alignItems: 'center',
                     gap: 2
                   }}
                 >
                   <ListItemIcon sx={{ 
-                    minWidth: 48,
+                    minWidth: 24,
                     transition: 'transform 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
-                    alignSelf: 'flex-start',
-                    mt: 0.5
+                    alignSelf: 'center'
                   }}>
                     <Box sx={{
-                      p: 1.2,
+                      p: 0.5,
                       borderRadius: '50%',
                       bgcolor: statusDisplay.bgcolor,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      minWidth: 40,
-                      minHeight: 40
+                      minWidth: 20,
+                      minHeight: 20
                     }}>
                       {statusDisplay.icon}
                     </Box>
                   </ListItemIcon>
                   
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <ListItemText 
-                      primary={
-                        <Typography 
-                          variant="body1" 
-                          sx={{ 
-                            fontFamily: 'Monaco, "Cascadia Code", "Roboto Mono", monospace',
-                            fontSize: '0.9rem',
-                            fontWeight: 600,
-                            color: COLORS.text.primary,
-                            mb: 0.5
-                          }}
-                        >
-                          {notification.id.slice(0, 8)}
-                        </Typography>
-                      }
-                      secondary={
-                        <Box sx={{ mt: 0.5 }}>
-                          <Box sx={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            gap: 2, 
-                            flexWrap: 'wrap',
-                            mb: 0.5
-                          }}>
-                            <Typography variant="caption" sx={{ 
-                              color: COLORS.text.secondary, 
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 0.5
-                            }}>
-                              <AppsIcon sx={{ fontSize: 12 }} />
-                              Initiated: {formatDate(notification.initiatedTime)}
-                            </Typography>
-                            {notification.completedTime && (
-                              <Typography variant="caption" sx={{ 
-                                color: COLORS.text.secondary, 
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 0.5
-                              }}>
-                                <CheckCircleIcon sx={{ fontSize: 12 }} />
-                                Completed: {formatDate(notification.completedTime)}
-                              </Typography>
-                            )}
-                          </Box>
-                          {notification.status === 'FAILED' && (
-                            <Typography variant="caption" sx={{ 
-                              color: '#ef4444', 
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 0.5,
-                              fontWeight: 500
-                            }}>
-                              <ErrorIcon sx={{ fontSize: 12 }} />
-                              {(notification.totalCount || 0) - (notification.retryCount || 0)}/{notification.totalCount || 0} successful API calls
-                            </Typography>
-                          )}
-                        </Box>
-                      }
-                      primaryTypographyProps={{
-                        sx: {
-                          color: COLORS.text.primary,
-                          fontWeight: 500,
-                          fontSize: '0.9rem',
-                          transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
-                          lineHeight: 1.4,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1
-                        }
+                  <Box sx={{ 
+                    flex: 1, 
+                    minWidth: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 2
+                  }}>
+                    <Typography 
+                      variant="body1" 
+                      sx={{ 
+                        fontFamily: 'Monaco, "Cascadia Code", "Roboto Mono", monospace',
+                        fontSize: '0.9rem',
+                        fontWeight: 600,
+                        color: COLORS.text.primary,
+                        flexShrink: 0
                       }}
-                    />
+                    >
+                      {notification.id.slice(0, 8)}
+                    </Typography>
+                    
+                    <Typography variant="caption" sx={{ 
+                      color: COLORS.text.secondary, 
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      flexShrink: 0
+                    }}>
+                      <AppsIcon sx={{ fontSize: 12 }} />
+                      {formatDate(notification.initiatedTime)}
+                    </Typography>
+                    
+                    {notification.completedTime && (
+                      <Typography variant="caption" sx={{ 
+                        color: COLORS.text.secondary, 
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        flexShrink: 0
+                      }}>
+                        <CheckCircleIcon sx={{ fontSize: 12 }} />
+                        {formatDate(notification.completedTime)}
+                      </Typography>
+                    )}
+                    
+                    {notification.status === 'FAILED' && (
+                      <Typography variant="caption" sx={{ 
+                        color: '#ef4444', 
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        fontWeight: 500,
+                        flexShrink: 0
+                      }}>
+                        <ErrorIcon sx={{ fontSize: 12 }} />
+                        {(notification.totalCount || 0) - (notification.retryCount || 0)}/{notification.totalCount || 0}
+                      </Typography>
+                    )}
                   </Box>
                   
                   <Box sx={{ 
                     display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'flex-end', 
-                    gap: 1,
+                    alignItems: 'center', 
+                    gap: 0.5,
                     minWidth: 'fit-content',
                     ml: 2
                   }}>
@@ -385,23 +365,31 @@ const NotifyPage = () => {
                         minWidth: 'fit-content'
                       }}
                     />
-                    {notification.status === 'IN_PROGRESS' && (
-                      <Typography variant="caption" sx={{ 
-                        color: COLORS.text.secondary, 
-                        fontSize: '0.65rem',
-                        fontStyle: 'italic',
-                        textAlign: 'right'
-                      }}>
-                        Processing...
-                      </Typography>
+                    {notification.status === 'FAILED' && (
+                      <IconButton
+                        size="small"
+                        onClick={() => handleRetry(notification)}
+                        sx={{
+                          p: 0.5,
+                          color: COLORS.primary.main,
+                          '&:hover': {
+                            bgcolor: COLORS.primary.light + '20',
+                            color: COLORS.primary.dark
+                          }
+                        }}
+                        title="Retry notification"
+                      >
+                        <RetryIcon sx={{ fontSize: 14 }} />
+                      </IconButton>
                     )}
                   </Box>
                 </ListItem>
               );
             })}
           </List>
-        </Box>
-      )}
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 };
