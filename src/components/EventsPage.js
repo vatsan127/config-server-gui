@@ -141,8 +141,8 @@ const EventsPage = () => {
       }
     }}>
       <PageHeader
-        title={`${namespace} • Events`}
-        subtitle={`${totalCommits} total commits`}
+        title="Events"
+        subtitle=""
         icon={TimelineIcon}
         actions={[]}
       />
@@ -229,8 +229,8 @@ const EventsPage = () => {
                       transform: 'translateX(4px) scale(1.005)',
                       transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                     },
-                    py: 2.5,
-                    px: 3,
+                    py: 1.5,
+                    px: 2,
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'flex-start',
@@ -238,17 +238,17 @@ const EventsPage = () => {
                   }}
                 >
                   <ListItemIcon sx={{ 
-                    minWidth: 48,
+                    minWidth: 40,
                     transition: 'transform 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                     alignSelf: 'flex-start',
-                    mt: 0.5
+                    mt: 0.25
                   }}>
                     <Avatar 
                       sx={{ 
-                        width: 40,
-                        height: 40,
+                        width: 32,
+                        height: 32,
                         bgcolor: getAuthorColor(event.author),
-                        fontSize: '0.875rem',
+                        fontSize: '0.75rem',
                         fontWeight: 600
                       }}
                     >
@@ -262,10 +262,8 @@ const EventsPage = () => {
                         <Typography 
                           variant="body1" 
                           sx={{ 
-                            fontSize: '0.9rem',
-                            fontWeight: 600,
                             color: COLORS.text.primary,
-                            mb: 0.5,
+                            mb: 0.25,
                             lineHeight: 1.4,
                             display: '-webkit-box',
                             WebkitLineClamp: 2,
@@ -278,36 +276,33 @@ const EventsPage = () => {
                         </Typography>
                       }
                       secondary={
-                        <Box sx={{ mt: 0.5 }}>
-                          <Box sx={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            gap: 2, 
-                            flexWrap: 'wrap',
-                            mb: 0.5
-                          }}>
-                            <Typography variant="caption" sx={{ 
-                              color: COLORS.text.secondary, 
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 0.5
-                            }}>
-                              <PersonIcon sx={{ fontSize: 12 }} />
-                              {event.author}
-                            </Typography>
-                            <Typography variant="caption" sx={{ 
-                              color: COLORS.text.secondary, 
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: 0.5
-                            }}>
-                              <ScheduleIcon sx={{ fontSize: 12 }} />
-                              {formatDate(event.date)}
-                            </Typography>
-                          </Box>
+                        <Box sx={{ 
+                          mt: 0.25,
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 2, 
+                          flexWrap: 'wrap'
+                        }}>
                           <Typography variant="caption" sx={{ 
                             color: COLORS.text.secondary, 
-                            fontFamily: 'Monaco, "Cascadia Code", "Roboto Mono", monospace',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 0.5
+                          }}>
+                            <PersonIcon sx={{ fontSize: 12 }} />
+                            {event.author}
+                          </Typography>
+                          <Typography variant="caption" sx={{ 
+                            color: COLORS.text.secondary, 
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 0.5
+                          }}>
+                            <ScheduleIcon sx={{ fontSize: 12 }} />
+                            {formatDate(event.date)}
+                          </Typography>
+                          <Typography variant="caption" sx={{ 
+                            color: COLORS.text.secondary, 
                             fontSize: '0.7rem',
                             fontWeight: 500
                           }}>

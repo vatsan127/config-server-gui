@@ -165,8 +165,8 @@ const NotifyPage = () => {
       }
     }}>
       <PageHeader
-        title={`${namespace} • Notifications`}
-        subtitle={`${totalNotifications} notifications (max: ${maxNotifications})`}
+        title="Notifications"
+        subtitle=""
         icon={NotificationsIcon}
         actions={[
           {

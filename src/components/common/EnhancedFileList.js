@@ -341,7 +341,7 @@ const EnhancedFileList = ({
   onDelete,
   onCopy,
   loading = false,
-  emptyMessage = "No files found",
+  emptyMessage = "No items found",
   showInlineActions = true,
   viewMode = 'list' // 'list' | 'grid'
 }) => {

@@ -379,7 +379,7 @@ const VaultPage = () => {
       }
     }}>
       <PageHeader
-        title={`${namespace} • Vault`}
+        title="Vault"
         subtitle={`${secretKeys.length} secrets`}
         icon={SecurityIcon}
         searchValue={searchQuery}

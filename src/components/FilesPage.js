@@ -655,8 +655,8 @@ const FilesPage = () => {
           }}>
             <Typography variant="body2" sx={{ color: COLORS.text.secondary }}>
               {filteredFiles.length === 0 
-                ? `No files found matching "${searchQuery}"`
-                : `Showing ${filteredFiles.length} of ${files.length} files matching "${searchQuery}"`
+                ? `No items found matching "${searchQuery}"`
+                : `Showing ${filteredFiles.length} of ${files.length} items matching "${searchQuery}"`
               }
             </Typography>
           </Box>
@@ -698,10 +698,10 @@ const FilesPage = () => {
               color: COLORS.text.secondary
             }}>
               <Typography variant="body1" sx={{ mb: 1, fontWeight: 500 }}>
-                {searchQuery ? "No matching files found" : "No files found"}
+                {searchQuery ? "No matching items found" : "No items found"}
               </Typography>
               <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
-                {searchQuery ? `No files match your search for "${searchQuery}"` : "This directory is empty"}
+                {searchQuery ? `No items match your search for "${searchQuery}"` : "This directory is empty"}
               </Typography>
             </Box>
           ) : (
