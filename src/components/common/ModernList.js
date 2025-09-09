@@ -60,7 +60,9 @@ const ModernList = ({
     }}>
       <List sx={{ 
         py: 0,
+        overflow: 'auto',
         overflowX: 'hidden',
+        height: '100%',
         '&::-webkit-scrollbar': {
           width: '8px',
         },

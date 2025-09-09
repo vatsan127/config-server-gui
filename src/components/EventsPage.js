@@ -163,7 +163,7 @@ const EventsPage = () => {
               border: `1px solid ${COLORS.grey[200]}`,
               borderRadius: `${SIZES.borderRadius.large}px`,
               boxShadow: SIZES.shadow.card,
-              overflow: 'auto',
+              overflow: 'hidden',
               flex: 1,
               transform: 'translateY(0) scale(1)',
               opacity: 1,
@@ -181,7 +181,12 @@ const EventsPage = () => {
               }
             }}
           >
-            <List sx={{ py: 0 }}>
+            <List sx={{ 
+              py: 0,
+              overflow: 'auto',
+              overflowX: 'hidden',
+              height: '100%'
+            }}>
               {events.map((event, index) => (
                 <ListItem
                   key={event.commitId}
