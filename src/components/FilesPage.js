@@ -434,7 +434,7 @@ const FilesPage = () => {
       bgcolor: 'background.default',
       height: '100vh',
       overflow: 'hidden',
-      animation: 'fadeInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both',
+      animation: 'fadeInUp 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.05s both',
       '@keyframes fadeInUp': {
         '0%': {
           opacity: 0,
@@ -452,7 +452,7 @@ const FilesPage = () => {
             width: '100%',
             maxWidth: '100%',
             overflowX: 'hidden',
-            animation: 'slideInFromTop 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+            animation: 'slideInFromTop 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.08s both',
             '@keyframes slideInFromTop': {
               '0%': {
                 opacity: 0,
@@ -549,7 +549,7 @@ const FilesPage = () => {
                 alignItems: 'center',
                 flexShrink: 0,
                 minWidth: 'min-content',
-                animation: 'fadeInScale 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.25s both',
+                animation: 'fadeInScale 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
                 '@keyframes fadeInScale': {
                   '0%': {
                     opacity: 0,
@@ -673,7 +673,7 @@ const FilesPage = () => {
             transform: 'translateY(0) scale(1)',
             opacity: 1,
             transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            animation: 'slideUpFade 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both',
+            animation: 'slideUpFade 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.12s both',
             '@keyframes slideUpFade': {
               '0%': {
                 opacity: 0,
@@ -716,7 +716,7 @@ const FilesPage = () => {
                     transform: 'translateX(0) scale(1)',
                     opacity: 1,
                     transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                    animation: `fadeScaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.4 + index * 0.03}s both`,
+                    animation: `fadeScaleIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.15 + index * 0.02}s both`,
                     '@keyframes fadeScaleIn': {
                       '0%': {
                         opacity: 0,

@@ -324,15 +324,19 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                   transform: 'translateY(0) scale(1)',
                   opacity: 1,
                   transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  transitionDelay: `${index * 0.1}s`,
-                  animation: `slideInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${index * 0.1}s both`,
+                  transitionDelay: `${index * 0.08}s`,
+                  animation: `slideInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${index * 0.08}s both`,
                   '@keyframes slideInUp': {
                     '0%': {
-                      transform: 'translateY(30px) scale(0.95)',
+                      transform: 'translateY(40px) scale(0.9) rotateX(15deg)',
                       opacity: 0
                     },
+                    '50%': {
+                      transform: 'translateY(-5px) scale(1.02) rotateX(-2deg)',
+                      opacity: 0.7
+                    },
                     '100%': {
-                      transform: 'translateY(0) scale(1)',
+                      transform: 'translateY(0) scale(1) rotateX(0deg)',
                       opacity: 1
                     }
                   },
@@ -435,7 +439,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
                           transform: 'rotate(0deg) scale(1)',
                           transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                           filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))',
-                          animation: `iconFloat 3s ease-in-out infinite ${index * 0.2}s`,
+                          animation: `iconFloat 3s ease-in-out infinite ${index * 0.15}s`,
                           '@keyframes iconFloat': {
                             '0%, 100%': {
                               transform: 'rotate(0deg) scale(1) translateY(0px)',

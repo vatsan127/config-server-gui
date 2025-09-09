@@ -255,7 +255,7 @@ const FileViewPage = () => {
       width: 'calc(100vw - 220px)',
       maxWidth: 'calc(100vw - 220px)',
       overflow: 'hidden',
-      animation: 'slideInRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both',
+      animation: 'slideInRight 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both',
       '@keyframes slideInRight': {
         '0%': {
           opacity: 0,
@@ -298,7 +298,7 @@ const FileViewPage = () => {
             minHeight: '48px', // Reduce height
             position: 'relative',
             overflow: 'hidden',
-            animation: 'fadeInDown 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
+            animation: 'fadeInDown 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.05s both',
             '@keyframes fadeInDown': {
               '0%': {
                 opacity: 0,
@@ -573,7 +573,7 @@ const FileViewPage = () => {
             width: '100%',
             maxWidth: '100%',
             minWidth: 0,
-            animation: 'slideUpFade 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+            animation: 'slideUpFade 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.08s both',
             '@keyframes slideUpFade': {
               '0%': {
                 opacity: 0,
