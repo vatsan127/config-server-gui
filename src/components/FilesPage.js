@@ -716,15 +716,19 @@ const FilesPage = () => {
                     transform: 'translateX(0) scale(1)',
                     opacity: 1,
                     transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                    animation: `fadeScaleIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.15 + index * 0.02}s both`,
-                    '@keyframes fadeScaleIn': {
+                    animation: `slideInScale 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.1 + index * 0.06}s both`,
+                    '@keyframes slideInScale': {
                       '0%': {
                         opacity: 0,
-                        transform: 'scale(0.95)'
+                        transform: 'translateX(-30px) scale(0.9) rotateY(-15deg)'
+                      },
+                      '50%': {
+                        opacity: 0.7,
+                        transform: 'translateX(3px) scale(1.02) rotateY(2deg)'
                       },
                       '100%': {
                         opacity: 1,
-                        transform: 'scale(1)'
+                        transform: 'translateX(0) scale(1) rotateY(0deg)'
                       }
                     },
                     '&:hover': {

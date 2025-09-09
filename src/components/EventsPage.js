@@ -191,15 +191,19 @@ const EventsPage = () => {
                     transform: 'translateX(0) scale(1)',
                     opacity: 1,
                     transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                    animation: `fadeScaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.4 + index * 0.03}s both`,
-                    '@keyframes fadeScaleIn': {
+                    animation: `slideInEvent 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.2 + index * 0.08}s both`,
+                    '@keyframes slideInEvent': {
                       '0%': {
                         opacity: 0,
-                        transform: 'scale(0.95)'
+                        transform: 'translateX(-40px) scale(0.85) rotateZ(-3deg)'
+                      },
+                      '60%': {
+                        opacity: 0.8,
+                        transform: 'translateX(5px) scale(1.03) rotateZ(1deg)'
                       },
                       '100%': {
                         opacity: 1,
-                        transform: 'scale(1)'
+                        transform: 'translateX(0) scale(1) rotateZ(0deg)'
                       }
                     },
                     '&:hover': {

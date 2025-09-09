@@ -224,15 +224,19 @@ const NotifyPage = () => {
                     transform: 'translateX(0) scale(1)',
                     opacity: 1,
                     transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                    animation: `fadeScaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.4 + index * 0.03}s both`,
-                    '@keyframes fadeScaleIn': {
+                    animation: `slideInNotification 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.18 + index * 0.06}s both`,
+                    '@keyframes slideInNotification': {
                       '0%': {
                         opacity: 0,
-                        transform: 'scale(0.95)'
+                        transform: 'translateX(-35px) scale(0.88) rotateY(-10deg)'
+                      },
+                      '50%': {
+                        opacity: 0.7,
+                        transform: 'translateX(4px) scale(1.03) rotateY(1deg)'
                       },
                       '100%': {
                         opacity: 1,
-                        transform: 'scale(1)'
+                        transform: 'translateX(0) scale(1) rotateY(0deg)'
                       }
                     },
                     '&:hover': {

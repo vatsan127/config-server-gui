@@ -113,15 +113,19 @@ const ModernListItem = ({
         transform: 'translateX(0) scale(1)',
         opacity: 1,
         transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-        animation: `fadeScaleIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.4 + index * 0.03}s both`,
-        '@keyframes fadeScaleIn': {
+        animation: `slideInModern 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.15 + index * 0.07}s both`,
+        '@keyframes slideInModern': {
           '0%': {
             opacity: 0,
-            transform: 'scale(0.95)'
+            transform: 'translateX(-25px) scale(0.92) rotateZ(-2deg)'
+          },
+          '40%': {
+            opacity: 0.6,
+            transform: 'translateX(3px) scale(1.02) rotateZ(0.5deg)'
           },
           '100%': {
             opacity: 1,
-            transform: 'scale(1)'
+            transform: 'translateX(0) scale(1) rotateZ(0deg)'
           }
         },
         '&:hover': {
