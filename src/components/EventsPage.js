@@ -128,7 +128,7 @@ const EventsPage = () => {
       bgcolor: 'background.default',
       height: '100vh',
       overflow: 'hidden',
-      animation: 'fadeInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both',
+      animation: 'fadeInUp 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.08s both',
       '@keyframes fadeInUp': {
         '0%': {
           opacity: 0,

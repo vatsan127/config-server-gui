@@ -150,7 +150,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
       <Button
         variant="contained"
         startIcon={<AddIcon sx={{ 
-          transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'all 0.08s cubic-bezier(0.4, 0, 0.2, 1)',
           fontSize: 18 
         }} />}
         onClick={handleClick}
@@ -168,7 +168,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
           whiteSpace: 'nowrap',
           position: 'relative',
           overflow: 'hidden',
-          transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transition: 'all 0.08s cubic-bezier(0.4, 0, 0.2, 1)',
           boxShadow: SIZES.shadow.sm,
           '&::before': {
             content: '""',
@@ -179,7 +179,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
             height: '100%',
             background: 'linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%)',
             transform: 'translateX(-100%) skewX(-15deg)',
-            transition: 'transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            transition: 'transform 0.08s cubic-bezier(0.4, 0, 0.2, 1)'
           },
           '&:hover': {
             bgcolor: COLORS.primary.dark,
@@ -196,7 +196,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
           '&:active': {
             transform: 'translateY(-1px) scale(1.01)',
             boxShadow: SIZES.shadow.md,
-            transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)'
+            transition: 'all 0.06s cubic-bezier(0.4, 0, 0.2, 1)'
           }
         }}
       >
@@ -238,7 +238,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
               alignItems: 'center',
               justifyContent: 'center',
               border: `1px solid ${alpha(COLORS.success.main, 0.25)}`,
-              animation: 'configIconFloat 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+              animation: 'configIconFloat 0.08s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both',
               '@keyframes configIconFloat': {
                 '0%': {
                   transform: 'translateY(-20px) rotate(-45deg) scale(0.5)',
@@ -410,7 +410,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
               borderRadius: `${SIZES.borderRadius.medium}px`,
               fontSize: '0.9rem',
               fontWeight: 500,
-              transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              transition: 'all 0.08s cubic-bezier(0.4, 0, 0.2, 1)',
               '&:hover:not(:disabled)': {
                 bgcolor: COLORS.grey[50],
                 borderColor: COLORS.grey[400],
@@ -421,7 +421,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
               '&:active:not(:disabled)': {
                 transform: 'translateY(0)',
                 boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
-                transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)'
+                transition: 'all 0.06s cubic-bezier(0.4, 0, 0.2, 1)'
               },
               '&:disabled': {
                 color: COLORS.grey[400],
@@ -450,7 +450,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
               boxShadow: SIZES.shadow.card,
               position: 'relative',
               overflow: 'hidden',
-              transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              transition: 'all 0.08s cubic-bezier(0.4, 0, 0.2, 1)',
               '&::before': {
                 content: '""',
                 position: 'absolute',
@@ -460,7 +460,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
                 height: '100%',
                 background: 'linear-gradient(45deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 50%)',
                 transform: 'translateX(-100%) skewX(-15deg)',
-                transition: 'transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                transition: 'transform 0.08s cubic-bezier(0.4, 0, 0.2, 1)'
               },
               '&:hover:not(:disabled)': {
                 bgcolor: COLORS.primary.dark,
@@ -473,7 +473,7 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
               '&:active:not(:disabled)': {
                 transform: 'translateY(-1px) scale(1.02)',
                 boxShadow: SIZES.shadow.elevated,
-                transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)'
+                transition: 'all 0.06s cubic-bezier(0.4, 0, 0.2, 1)'
               },
               '&:disabled': {
                 bgcolor: COLORS.grey[300],

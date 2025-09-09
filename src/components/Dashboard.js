@@ -226,7 +226,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
             bgcolor: alpha(COLORS.error.light, 0.8),
             backdropFilter: 'blur(10px)',
             boxShadow: '0 4px 20px rgba(239, 68, 68, 0.15)',
-            animation: 'errorAlertBounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+            animation: 'errorAlertBounceIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
             '@keyframes errorAlertBounceIn': {
               '0%': {
                 opacity: 0,
@@ -241,7 +241,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
               }
             },
             '& .MuiAlert-icon': {
-              animation: 'errorIconPulse 2s ease-in-out infinite 0.5s',
+              animation: 'errorIconPulse 1.5s ease-in-out infinite 0.25s',
               '@keyframes errorIconPulse': {
                 '0%, 100%': {
                   transform: 'scale(1)',
@@ -270,7 +270,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
       <Box 
         sx={{ 
           mb: 3,
-          animation: 'slideInFromTop 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          animation: 'slideInFromTop 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           '@keyframes slideInFromTop': {
             '0%': {
               opacity: 0,

@@ -18,7 +18,7 @@ export const getDialogAnimationStyles = (variant = 'standard') => {
   const baseStyles = {
     position: 'relative',
     overflow: 'hidden',
-    animation: 'standardDialogSlideIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    animation: 'standardDialogSlideIn 0.08s cubic-bezier(0.4, 0, 0.2, 1)',
     '@keyframes standardDialogSlideIn': {
       '0%': {
         opacity: 0,
@@ -43,7 +43,7 @@ export const getDialogAnimationStyles = (variant = 'standard') => {
           right: 0,
           height: '3px',
           background: `linear-gradient(90deg, ${COLORS.success.main}, ${COLORS.accent.green})`,
-          animation: 'progressSlide 0.15s ease-out 0.2s both',
+          animation: 'progressSlide 0.08s ease-out 0.1s both',
           '@keyframes progressSlide': {
             '0%': {
               transform: 'translateX(-100%) scaleX(0.5)'
@@ -66,7 +66,7 @@ export const getDialogAnimationStyles = (variant = 'standard') => {
           right: 0,
           height: '3px',
           background: `linear-gradient(90deg, ${COLORS.error.main}, ${COLORS.accent.red})`,
-          animation: 'progressSlide 0.15s ease-out 0.2s both',
+          animation: 'progressSlide 0.08s ease-out 0.1s both',
           '@keyframes progressSlide': {
             '0%': {
               transform: 'translateX(-100%) scaleX(0.5)'
@@ -88,7 +88,7 @@ export const getDialogAnimationStyles = (variant = 'standard') => {
           right: 0,
           height: '3px',
           background: `linear-gradient(90deg, ${COLORS.primary.main}, ${COLORS.accent.blue})`,
-          animation: 'progressSlide 0.15s ease-out 0.2s both',
+          animation: 'progressSlide 0.08s ease-out 0.1s both',
           '@keyframes progressSlide': {
             '0%': {
               transform: 'translateX(-100%) scaleX(0.5)'
@@ -108,7 +108,7 @@ export const getDialogAnimationStyles = (variant = 'standard') => {
  * Standardized dialog title animation styles
  */
 export const getDialogTitleAnimationStyles = () => ({
-  animation: 'titleSlideIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
+  animation: 'titleSlideIn 0.08s cubic-bezier(0.4, 0, 0.2, 1) 0.05s both',
   '@keyframes titleSlideIn': {
     '0%': {
       opacity: 0,
@@ -125,7 +125,7 @@ export const getDialogTitleAnimationStyles = () => ({
  * Standardized dialog content animation styles
  */
 export const getDialogContentAnimationStyles = () => ({
-  animation: 'contentFadeIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
+  animation: 'contentFadeIn 0.08s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both',
   '@keyframes contentFadeIn': {
     '0%': {
       opacity: 0,
@@ -142,7 +142,7 @@ export const getDialogContentAnimationStyles = () => ({
  * Standardized dialog actions animation styles
  */
 export const getDialogActionsAnimationStyles = () => ({
-  animation: 'actionsSlideIn 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s both',
+  animation: 'actionsSlideIn 0.08s cubic-bezier(0.4, 0, 0.2, 1) 0.08s both',
   '@keyframes actionsSlideIn': {
     '0%': {
       opacity: 0,
@@ -162,7 +162,7 @@ export const getDialogBackdropStyles = () => ({
   '& .MuiBackdrop-root': {
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     backdropFilter: 'blur(10px)',
-    transition: 'all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+    transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
   }
 });
 
@@ -173,8 +173,8 @@ export const getStandardDialogProps = (variant = 'standard') => ({
   TransitionComponent: StandardDialogTransition,
   TransitionProps: {
     timeout: {
-      enter: 500,
-      exit: 350
+      enter: 150,
+      exit: 120
     }
   },
   PaperProps: {
