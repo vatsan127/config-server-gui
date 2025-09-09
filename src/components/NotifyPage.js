@@ -94,7 +94,7 @@ const NotifyPage = () => {
           bgcolor: '#ef444420',
           label: 'Failed'
         };
-      case 'inprogress':
+      case 'in_progress':
         return {
           icon: <HourglassEmptyIcon sx={{ fontSize: 20, color: '#f59e0b' }} />,
           color: '#f59e0b',
@@ -122,7 +122,7 @@ const NotifyPage = () => {
         No notifications found
       </Typography>
       <Typography variant="body2" sx={{ color: COLORS.text.secondary, fontSize: '0.85rem' }}>
-        No client app notifications have been recorded for this namespace
+        No notification events have been recorded for this namespace
       </Typography>
     </Box>
   );
@@ -223,7 +223,7 @@ const NotifyPage = () => {
               
               return (
                 <ListItem
-                  key={`${notification.appName}-${notification.triggeredAt}-${index}`}
+                  key={`${notification.id}-${index}`}
                   sx={{
                     borderBottom: index !== notifications.length - 1 ? `1px solid ${COLORS.grey[100]}` : 'none',
                     transform: 'translateX(0) scale(1)',
@@ -262,71 +262,117 @@ const NotifyPage = () => {
                       transform: 'translateX(4px) scale(1.005)',
                       transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                     },
-                    py: 2,
+                    py: 2.5,
                     px: 3,
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 2
                   }}
                 >
                   <ListItemIcon sx={{ 
-                    minWidth: 40,
-                    transition: 'transform 0.1s cubic-bezier(0.4, 0, 0.2, 1)'
+                    minWidth: 48,
+                    transition: 'transform 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
+                    alignSelf: 'flex-start',
+                    mt: 0.5
                   }}>
                     <Box sx={{
-                      p: 1,
+                      p: 1.2,
                       borderRadius: '50%',
                       bgcolor: statusDisplay.bgcolor,
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      minWidth: 40,
+                      minHeight: 40
                     }}>
                       {statusDisplay.icon}
                     </Box>
                   </ListItemIcon>
                   
-                  <ListItemText 
-                    primary={`${notification.operation.toUpperCase()} - ${notification.appName}`}
-                    secondary={
-                      <Box sx={{ mt: 0.5 }}>
-                        <Typography variant="caption" sx={{ color: COLORS.text.secondary, display: 'block' }}>
-                          {formatDate(notification.triggeredAt)} • Retry: {notification.retryCount}
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <ListItemText 
+                      primary={
+                        <Typography 
+                          variant="body1" 
+                          sx={{ 
+                            fontFamily: 'Monaco, "Cascadia Code", "Roboto Mono", monospace',
+                            fontSize: '0.9rem',
+                            fontWeight: 600,
+                            color: COLORS.text.primary,
+                            mb: 0.5
+                          }}
+                        >
+                          {notification.id.slice(0, 8)}
                         </Typography>
-                        {notification.errorMessage && (
-                          <Typography variant="caption" sx={{ color: '#ef4444', display: 'block', mt: 0.25 }}>
-                            {notification.errorMessage}
-                          </Typography>
-                        )}
-                        {notification.commitId && (
-                          <Chip
-                            label={notification.commitId.slice(0, 8)}
-                            size="small"
-                            sx={{
-                              height: 18,
-                              fontSize: '0.65rem',
-                              fontWeight: 600,
-                              bgcolor: COLORS.grey[100],
-                              color: COLORS.text.secondary,
-                              fontFamily: 'Monaco, "Cascadia Code", "Roboto Mono", monospace',
-                              mt: 0.5
-                            }}
-                          />
-                        )}
-                      </Box>
-                    }
-                    primaryTypographyProps={{
-                      sx: {
-                        color: COLORS.text.primary,
-                        fontWeight: 500,
-                        fontSize: '0.9rem',
-                        transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
-                        lineHeight: 1.4,
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1
                       }
-                    }}
-                  />
+                      secondary={
+                        <Box sx={{ mt: 0.5 }}>
+                          <Box sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: 2, 
+                            flexWrap: 'wrap',
+                            mb: 0.5
+                          }}>
+                            <Typography variant="caption" sx={{ 
+                              color: COLORS.text.secondary, 
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 0.5
+                            }}>
+                              <AppsIcon sx={{ fontSize: 12 }} />
+                              Initiated: {formatDate(notification.initiatedTime)}
+                            </Typography>
+                            {notification.completedTime && (
+                              <Typography variant="caption" sx={{ 
+                                color: COLORS.text.secondary, 
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5
+                              }}>
+                                <CheckCircleIcon sx={{ fontSize: 12 }} />
+                                Completed: {formatDate(notification.completedTime)}
+                              </Typography>
+                            )}
+                          </Box>
+                          {notification.status === 'FAILED' && (
+                            <Typography variant="caption" sx={{ 
+                              color: '#ef4444', 
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 0.5,
+                              fontWeight: 500
+                            }}>
+                              <ErrorIcon sx={{ fontSize: 12 }} />
+                              {(notification.totalCount || 0) - (notification.retryCount || 0)}/{notification.totalCount || 0} successful API calls
+                            </Typography>
+                          )}
+                        </Box>
+                      }
+                      primaryTypographyProps={{
+                        sx: {
+                          color: COLORS.text.primary,
+                          fontWeight: 500,
+                          fontSize: '0.9rem',
+                          transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
+                          lineHeight: 1.4,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1
+                        }
+                      }}
+                    />
+                  </Box>
                   
-                  <Box sx={{ ml: 2 }}>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'flex-end', 
+                    gap: 1,
+                    minWidth: 'fit-content',
+                    ml: 2
+                  }}>
                     <Chip
                       label={statusDisplay.label}
                       size="small"
@@ -335,9 +381,20 @@ const NotifyPage = () => {
                         color: statusDisplay.color,
                         fontWeight: 600,
                         fontSize: '0.7rem',
-                        height: 24
+                        height: 24,
+                        minWidth: 'fit-content'
                       }}
                     />
+                    {notification.status === 'IN_PROGRESS' && (
+                      <Typography variant="caption" sx={{ 
+                        color: COLORS.text.secondary, 
+                        fontSize: '0.65rem',
+                        fontStyle: 'italic',
+                        textAlign: 'right'
+                      }}>
+                        Processing...
+                      </Typography>
+                    )}
                   </Box>
                 </ListItem>
               );

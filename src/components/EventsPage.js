@@ -229,19 +229,24 @@ const EventsPage = () => {
                       transform: 'translateX(4px) scale(1.005)',
                       transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
                     },
-                    py: 2,
+                    py: 2.5,
                     px: 3,
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 2
                   }}
                 >
                   <ListItemIcon sx={{ 
-                    minWidth: 40,
-                    transition: 'transform 0.1s cubic-bezier(0.4, 0, 0.2, 1)'
+                    minWidth: 48,
+                    transition: 'transform 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
+                    alignSelf: 'flex-start',
+                    mt: 0.5
                   }}>
                     <Avatar 
                       sx={{ 
-                        width: 32,
-                        height: 32,
+                        width: 40,
+                        height: 40,
                         bgcolor: getAuthorColor(event.author),
                         fontSize: '0.875rem',
                         fontWeight: 600
@@ -251,27 +256,79 @@ const EventsPage = () => {
                     </Avatar>
                   </ListItemIcon>
                   
-                  <ListItemText 
-                    primary={event.commitMessage}
-                    secondary={`${event.author} • ${formatDate(event.date)} • ${event.commitId.slice(0, 8)}`}
-                    primaryTypographyProps={{
-                      sx: {
-                        color: COLORS.text.primary,
-                        fontWeight: 500,
-                        fontSize: '0.9rem',
-                        transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
-                        lineHeight: 1.4
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <ListItemText 
+                      primary={
+                        <Typography 
+                          variant="body1" 
+                          sx={{ 
+                            fontSize: '0.9rem',
+                            fontWeight: 600,
+                            color: COLORS.text.primary,
+                            mb: 0.5,
+                            lineHeight: 1.4,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}
+                        >
+                          {event.commitMessage}
+                        </Typography>
                       }
-                    }}
-                    secondaryTypographyProps={{
-                      sx: {
-                        color: COLORS.text.secondary,
-                        fontSize: '0.75rem',
-                        fontWeight: 400,
-                        mt: 0.25
+                      secondary={
+                        <Box sx={{ mt: 0.5 }}>
+                          <Box sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: 2, 
+                            flexWrap: 'wrap',
+                            mb: 0.5
+                          }}>
+                            <Typography variant="caption" sx={{ 
+                              color: COLORS.text.secondary, 
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 0.5
+                            }}>
+                              <PersonIcon sx={{ fontSize: 12 }} />
+                              {event.author}
+                            </Typography>
+                            <Typography variant="caption" sx={{ 
+                              color: COLORS.text.secondary, 
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 0.5
+                            }}>
+                              <ScheduleIcon sx={{ fontSize: 12 }} />
+                              {formatDate(event.date)}
+                            </Typography>
+                          </Box>
+                          <Typography variant="caption" sx={{ 
+                            color: COLORS.text.secondary, 
+                            fontFamily: 'Monaco, "Cascadia Code", "Roboto Mono", monospace',
+                            fontSize: '0.7rem',
+                            fontWeight: 500
+                          }}>
+                            {event.commitId.slice(0, 8)}
+                          </Typography>
+                        </Box>
                       }
-                    }}
-                  />
+                      primaryTypographyProps={{
+                        sx: {
+                          color: COLORS.text.primary,
+                          fontWeight: 500,
+                          fontSize: '0.9rem',
+                          transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
+                          lineHeight: 1.4,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1
+                        }
+                      }}
+                    />
+                  </Box>
                 </ListItem>
               ))}
             </List>
