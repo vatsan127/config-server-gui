@@ -4,29 +4,29 @@ import { COLORS, SIZES } from '../theme/colors';
 
 /**
  * Standardized dialog transition component
- * Uses slide-down animation like CreateFileButton for consistency
+ * Uses simple slide-down animation for better performance
  */
 export const StandardDialogTransition = forwardRef(function StandardDialogTransition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
 /**
- * Standardized dialog animation styles
- * Based on the create config dialog animation for consistency
+ * Optimized dialog animation styles
+ * Removed 3D transforms and complex animations for better performance
  */
 export const getDialogAnimationStyles = (variant = 'standard') => {
   const baseStyles = {
     position: 'relative',
     overflow: 'hidden',
-    animation: 'standardDialogSlideIn 0.08s cubic-bezier(0.4, 0, 0.2, 1)',
+    animation: 'standardDialogSlideIn 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
     '@keyframes standardDialogSlideIn': {
       '0%': {
         opacity: 0,
-        transform: 'translateY(-50px) scale(0.9) rotateX(15deg)'
+        transform: 'translate3d(0, -20px, 0)'
       },
       '100%': {
         opacity: 1,
-        transform: 'translateY(0) scale(1) rotateX(0deg)'
+        transform: 'translate3d(0, 0, 0)'
       }
     }
   };
@@ -43,13 +43,13 @@ export const getDialogAnimationStyles = (variant = 'standard') => {
           right: 0,
           height: '3px',
           background: `linear-gradient(90deg, ${COLORS.success.main}, ${COLORS.accent.green})`,
-          animation: 'progressSlide 0.08s ease-out 0.1s both',
+          animation: 'progressSlide 0.2s ease-out 0.1s both',
           '@keyframes progressSlide': {
             '0%': {
-              transform: 'translateX(-100%) scaleX(0.5)'
+              transform: 'translate3d(-100%, 0, 0)'
             },
             '100%': {
-              transform: 'translateX(0) scaleX(1)'
+              transform: 'translate3d(0, 0, 0)'
             }
           }
         }
@@ -66,13 +66,13 @@ export const getDialogAnimationStyles = (variant = 'standard') => {
           right: 0,
           height: '3px',
           background: `linear-gradient(90deg, ${COLORS.error.main}, ${COLORS.accent.red})`,
-          animation: 'progressSlide 0.08s ease-out 0.1s both',
+          animation: 'progressSlide 0.2s ease-out 0.1s both',
           '@keyframes progressSlide': {
             '0%': {
-              transform: 'translateX(-100%) scaleX(0.5)'
+              transform: 'translate3d(-100%, 0, 0)'
             },
             '100%': {
-              transform: 'translateX(0) scaleX(1)'
+              transform: 'translate3d(0, 0, 0)'
             }
           }
         }
@@ -88,13 +88,13 @@ export const getDialogAnimationStyles = (variant = 'standard') => {
           right: 0,
           height: '3px',
           background: `linear-gradient(90deg, ${COLORS.primary.main}, ${COLORS.accent.blue})`,
-          animation: 'progressSlide 0.08s ease-out 0.1s both',
+          animation: 'progressSlide 0.2s ease-out 0.1s both',
           '@keyframes progressSlide': {
             '0%': {
-              transform: 'translateX(-100%) scaleX(0.5)'
+              transform: 'translate3d(-100%, 0, 0)'
             },
             '100%': {
-              transform: 'translateX(0) scaleX(1)'
+              transform: 'translate3d(0, 0, 0)'
             }
           }
         }
@@ -105,64 +105,63 @@ export const getDialogAnimationStyles = (variant = 'standard') => {
 };
 
 /**
- * Standardized dialog title animation styles
+ * Optimized dialog title animation styles
  */
 export const getDialogTitleAnimationStyles = () => ({
-  animation: 'titleSlideIn 0.08s cubic-bezier(0.4, 0, 0.2, 1) 0.05s both',
+  animation: 'titleSlideIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.05s both',
   '@keyframes titleSlideIn': {
     '0%': {
       opacity: 0,
-      transform: 'translateX(-25px)'
+      transform: 'translate3d(-20px, 0, 0)'
     },
     '100%': {
       opacity: 1,
-      transform: 'translateX(0)'
+      transform: 'translate3d(0, 0, 0)'
     }
   }
 });
 
 /**
- * Standardized dialog content animation styles
+ * Optimized dialog content animation styles
  */
 export const getDialogContentAnimationStyles = () => ({
-  animation: 'contentFadeIn 0.08s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both',
+  animation: 'contentFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both',
   '@keyframes contentFadeIn': {
     '0%': {
       opacity: 0,
-      transform: 'translateY(15px)'
+      transform: 'translate3d(0, 10px, 0)'
     },
     '100%': {
       opacity: 1,
-      transform: 'translateY(0)'
+      transform: 'translate3d(0, 0, 0)'
     }
   }
 });
 
 /**
- * Standardized dialog actions animation styles
+ * Optimized dialog actions animation styles
  */
 export const getDialogActionsAnimationStyles = () => ({
-  animation: 'actionsSlideIn 0.08s cubic-bezier(0.4, 0, 0.2, 1) 0.08s both',
+  animation: 'actionsSlideIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.15s both',
   '@keyframes actionsSlideIn': {
     '0%': {
       opacity: 0,
-      transform: 'translateX(25px)'
+      transform: 'translate3d(20px, 0, 0)'
     },
     '100%': {
       opacity: 1,
-      transform: 'translateX(0)'
+      transform: 'translate3d(0, 0, 0)'
     }
   }
 });
 
 /**
- * Standardized backdrop styles
+ * Optimized backdrop styles - removed expensive blur
  */
 export const getDialogBackdropStyles = () => ({
   '& .MuiBackdrop-root': {
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    backdropFilter: 'blur(10px)',
-    transition: 'all 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    transition: 'opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1)'
   }
 });
 

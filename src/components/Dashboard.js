@@ -178,40 +178,14 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
 
   if (loading) {
     return (
-      <Box sx={{ 
-        p: SIZES.spacing.xs, 
-        bgcolor: 'background.default', 
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: 2
-      }}>
-        <Box
-          sx={{
-            animation: 'pulse 2s ease-in-out infinite',
-            '@keyframes pulse': {
-              '0%, 100%': { opacity: 1, transform: 'scale(1)' },
-              '50%': { opacity: 0.7, transform: 'scale(1.05)' }
-            }
-          }}
-        >
+      <div className="loading-container">
+        <div className="loading-spinner">
           <InlineSpinner size={32} color={COLORS.primary.main} />
-        </Box>
-        <Typography
-          sx={{
-            color: COLORS.text.secondary,
-            animation: 'fadeInSlide 1s ease-out',
-            '@keyframes fadeInSlide': {
-              '0%': { opacity: 0, transform: 'translateY(10px)' },
-              '100%': { opacity: 1, transform: 'translateY(0)' }
-            }
-          }}
-        >
+        </div>
+        <Typography className="loading-text">
           Loading namespaces...
         </Typography>
-      </Box>
+      </div>
     );
   }
 
@@ -220,39 +194,8 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
       <Box sx={{ p: SIZES.spacing.xs }}>
         <Alert 
           severity="error"
+          className="error-alert"
           sx={{
-            borderRadius: `${SIZES.borderRadius.large}px`,
-            border: `1px solid ${COLORS.error.main}`,
-            bgcolor: alpha(COLORS.error.light, 0.8),
-            backdropFilter: 'blur(10px)',
-            boxShadow: '0 4px 20px rgba(239, 68, 68, 0.15)',
-            animation: 'errorAlertBounceIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-            '@keyframes errorAlertBounceIn': {
-              '0%': {
-                opacity: 0,
-                transform: 'scale(0.3) translateY(-30px)',
-              },
-              '50%': {
-                transform: 'scale(1.05) translateY(5px)',
-              },
-              '100%': {
-                opacity: 1,
-                transform: 'scale(1) translateY(0)',
-              }
-            },
-            '& .MuiAlert-icon': {
-              animation: 'errorIconPulse 1.5s ease-in-out infinite 0.25s',
-              '@keyframes errorIconPulse': {
-                '0%, 100%': {
-                  transform: 'scale(1)',
-                  filter: 'drop-shadow(0 0 2px rgba(239, 68, 68, 0.3))'
-                },
-                '50%': {
-                  transform: 'scale(1.1)',
-                  filter: 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.6))'
-                }
-              }
-            },
             '& .MuiAlert-message': {
               fontWeight: 500
             }
@@ -267,218 +210,48 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
   return (
     <Box sx={{ p: SIZES.spacing.xs, bgcolor: 'background.default', height: '100%' }}>
       {/* Total Namespaces Count */}
-      <Box 
-        sx={{ 
-          mb: 3,
-          animation: 'slideInFromTop 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          '@keyframes slideInFromTop': {
-            '0%': {
-              opacity: 0,
-              transform: 'translateY(-20px)'
-            },
-            '100%': {
-              opacity: 1,
-              transform: 'translateY(0)'
-            }
-          }
-        }}
-      >
-        <Typography variant="h5" sx={{ 
-          color: COLORS.text.primary,
-          fontWeight: 600,
-          mb: 1,
-          position: 'relative',
-          '&::after': {
-            content: '""',
-            position: 'absolute',
-            bottom: -4,
-            left: 0,
-            width: 0,
-            height: 3,
-            bgcolor: COLORS.primary.main,
-            borderRadius: '2px',
-            transition: 'width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.15s',
-            animation: 'underlineExpand 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s both',
-          },
-          '@keyframes underlineExpand': {
-            '0%': { width: 0 },
-            '100%': { width: '60px' }
-          }
-        }}>
+      <div className="page-header">
+        <Typography variant="h5" className="page-title">
           Namespaces ({namespaces.length})
         </Typography>
-      </Box>
+      </div>
 
       {/* Namespace Cards Grid */}
       {filteredNamespaces.length > 0 && (
         <Grid container spacing={3}>
           {filteredNamespaces.map((namespace, index) => (
             <Grid item xs={6} sm={4} md={3} lg={2} key={namespace}>
-              <Card
-                sx={{
-                  height: '100%',
-                  bgcolor: COLORS.background.paper,
-                  border: `1px solid ${COLORS.grey[200]}`,
-                  borderRadius: `${SIZES.borderRadius.large}px`,
-                  boxShadow: SIZES.shadow.card,
-                  transform: 'translateY(0) scale(1)',
-                  opacity: 1,
-                  transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  transitionDelay: `${index * 0.08}s`,
-                  animation: `slideInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${index * 0.08}s both`,
-                  '@keyframes slideInUp': {
-                    '0%': {
-                      transform: 'translateY(40px) scale(0.9) rotateX(15deg)',
-                      opacity: 0
-                    },
-                    '50%': {
-                      transform: 'translateY(-5px) scale(1.02) rotateX(-2deg)',
-                      opacity: 0.7
-                    },
-                    '100%': {
-                      transform: 'translateY(0) scale(1) rotateX(0deg)',
-                      opacity: 1
-                    }
-                  },
-                  '&:hover': {
-                    transform: 'translateY(-8px) scale(1.02)',
-                    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.06)',
-                    borderColor: COLORS.primary.light,
-                  },
-                  '&:active': {
-                    transform: 'translateY(-4px) scale(1.01)',
-                    transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
-                  }
-                }}
-              >
+              <Card className="namespace-card" style={{animationDelay: `${index * 0.08}s`}}>
                 <Box
                   onClick={() => handleNamespaceClick(namespace)}
-                  sx={{
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start',
-                    p: 0,
-                    cursor: 'pointer'
-                  }}
+                  className="namespace-card-wrapper"
                 >
-                  <CardContent
-                    sx={{
-                      width: '100%',
-                      p: 3,
-                      pb: '16px !important',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      textAlign: 'center',
-                      position: 'relative'
-                    }}
-                  >
+                  <CardContent className="namespace-card-content">
                     {/* Options Menu Button */}
                     <IconButton
                       onClick={(e) => {
                         e.stopPropagation();
                         handleOptionsClick(e, namespace);
                       }}
-                      sx={{
-                        position: 'absolute',
-                        top: 8,
-                        right: 8,
-                        color: COLORS.text.secondary,
-                        bgcolor: 'transparent',
-                        width: 32,
-                        height: 32,
-                        opacity: 0,
-                        transform: 'scale(0.8) rotate(0deg)',
-                        transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                        '.MuiCard-root:hover &': {
-                          opacity: 1,
-                          transform: 'scale(1) rotate(0deg)',
-                        },
-                        '&:hover': {
-                          color: COLORS.text.primary,
-                          bgcolor: COLORS.grey[100],
-                          transform: 'scale(1.15) rotate(90deg)',
-                          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-                        },
-                        '&:active': {
-                          transform: 'scale(1.05) rotate(90deg)',
-                        }
-                      }}
+                      className="namespace-options-button"
                     >
                       <MoreVertIcon fontSize="small" />
                     </IconButton>
 
                     {/* Folder Icon */}
-                    <Box
-                      sx={{
-                        position: 'relative',
-                        mb: 2,
-                        '&::before': {
-                          content: '""',
-                          position: 'absolute',
-                          top: '50%',
-                          left: '50%',
-                          width: '120%',
-                          height: '120%',
-                          transform: 'translate(-50%, -50%) scale(0)',
-                          borderRadius: '50%',
-                          bgcolor: `${getNamespaceColor(namespace)}15`,
-                          transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                          zIndex: -1,
-                        },
-                        '.MuiCard-root:hover &::before': {
-                          transform: 'translate(-50%, -50%) scale(1)',
-                        }
-                      }}
-                    >
+                    <div className="namespace-icon-container">
                       <FolderIcon
                         sx={{
                           color: getNamespaceColor(namespace),
                           fontSize: 48,
-                          transform: 'rotate(0deg) scale(1)',
-                          transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                          filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1))',
-                          animation: `iconFloat 3s ease-in-out infinite ${index * 0.15}s`,
-                          '@keyframes iconFloat': {
-                            '0%, 100%': {
-                              transform: 'rotate(0deg) scale(1) translateY(0px)',
-                            },
-                            '50%': {
-                              transform: 'rotate(2deg) scale(1.02) translateY(-2px)',
-                            }
-                          },
-                          '.MuiCard-root:hover &': {
-                            transform: 'rotate(-5deg) scale(1.15)',
-                            filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2))',
-                            animation: 'none',
-                          },
-                          '.MuiCard-root:active &': {
-                            transform: 'rotate(-3deg) scale(1.1)',
-                            transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
-                          }
                         }}
                       />
-                    </Box>
+                    </div>
 
                     {/* Namespace Name */}
                     <Typography
                       variant="h6"
-                      sx={{
-                        color: COLORS.text.primary,
-                        fontWeight: 600,
-                        fontSize: '1.1rem',
-                        lineHeight: 1.2,
-                        wordBreak: 'break-word',
-                        textAlign: 'center',
-                        transform: 'translateY(0)',
-                        transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                        '.MuiCard-root:hover &': {
-                          transform: 'translateY(-2px)',
-                          color: COLORS.primary.main,
-                          textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                        }
-                      }}
+                      className="namespace-title"
                     >
                       {namespace}
                     </Typography>
@@ -496,26 +269,12 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
         open={Boolean(menuAnchorEl)}
         onClose={handleMenuClose}
         PaperProps={{
-          sx: {
-            bgcolor: COLORS.background.paper,
-            border: `1px solid ${COLORS.grey[200]}`,
-            borderRadius: `${SIZES.borderRadius.medium}px`,
-            boxShadow: SIZES.shadow.md,
-            minWidth: 150
-          }
+          className: "menu-paper"
         }}
       >
         <MenuItem
           onClick={handleDeleteClick}
-          sx={{
-            color: COLORS.error.main,
-            py: 1.5,
-            px: 2,
-            fontSize: '0.9rem',
-            '&:hover': {
-              bgcolor: COLORS.hover.error,
-            }
-          }}
+          className="menu-item"
         >
           <DeleteIcon sx={{ mr: 1.5, fontSize: 18 }} />
           Delete
@@ -552,30 +311,11 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
           ...getStandardDialogProps('primary').TransitionProps,
           onEntered: handleDialogEntered
         }}
+        PaperProps={{
+          className: "dialog-paper"
+        }}
       >
-        <DialogTitle sx={{ 
-          color: COLORS.text.primary, 
-          fontSize: '1.25rem', 
-          fontWeight: 600,
-          borderBottom: `1px solid ${COLORS.grey[200]}`,
-          px: 3,
-          py: 2.5,
-          bgcolor: alpha(COLORS.primary.light, 0.05),
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1.5,
-          animation: 'titleSlideInLeft 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
-          '@keyframes titleSlideInLeft': {
-            '0%': {
-              opacity: 0,
-              transform: 'translateX(-30px)'
-            },
-            '100%': {
-              opacity: 1,
-              transform: 'translateX(0)'
-            }
-          }
-        }}>
+        <DialogTitle className="dialog-title">
           <Box
             sx={{
               width: 32,
@@ -586,31 +326,13 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
               alignItems: 'center',
               justifyContent: 'center',
               border: `1px solid ${alpha(COLORS.primary.main, 0.2)}`,
-              animation: 'iconSpin 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both',
-              '@keyframes iconSpin': {
-                '0%': {
-                  transform: 'rotate(-180deg) scale(0.5)',
-                  opacity: 0
-                },
-                '100%': {
-                  transform: 'rotate(0deg) scale(1)',
-                  opacity: 1
-                }
-              }
             }}
           >
             <Box sx={{ fontSize: 16, color: COLORS.primary.main }}>✨</Box>
           </Box>
           {UI_CONSTANTS.DIALOG.CREATE_NAMESPACE.TITLE}
         </DialogTitle>
-        <DialogContent sx={{ 
-          px: 3,
-          py: 3,
-          '&.MuiDialogContent-root': {
-            paddingTop: 3
-          },
-          ...getDialogContentAnimationStyles()
-        }}>
+        <DialogContent className="dialog-content">
           <TextField
             inputRef={nameInputRef}
             autoFocus
@@ -673,38 +395,11 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
             }}
           />
         </DialogContent>
-        <DialogActions sx={{ 
-          px: 3, 
-          py: 2.5, 
-          borderTop: `1px solid ${COLORS.grey[200]}`,
-          bgcolor: alpha(COLORS.grey[25], 0.5),
-          gap: 1.5,
-          ...getDialogActionsAnimationStyles()
-        }}>
+        <DialogActions className="dialog-actions">
           <Button 
             onClick={closeCreateDialog} 
             disabled={creating}
-            sx={{ 
-              px: 2,
-              py: 1,
-              color: COLORS.text.secondary,
-              bgcolor: 'transparent',
-              border: `1px solid ${COLORS.grey[300]}`,
-              borderRadius: `${SIZES.borderRadius.medium}px`,
-              fontSize: '0.9rem',
-              fontWeight: 500,
-              transition: 'all 0.1s ease',
-              '&:hover': {
-                bgcolor: COLORS.grey[50],
-                borderColor: COLORS.grey[400],
-                color: COLORS.text.primary,
-              },
-              '&:disabled': {
-                color: COLORS.grey[400],
-                borderColor: COLORS.grey[200],
-                bgcolor: 'transparent',
-              }
-            }}
+            className="btn-secondary"
           >
             Cancel
           </Button>
@@ -712,33 +407,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
             onClick={() => handleDialogSubmit(handleCreateNamespace)} 
             variant="contained"
             disabled={creating || !namespaceName.trim()}
-            sx={{ 
-              px: 2,
-              py: 1,
-              minWidth: '120px',
-              bgcolor: COLORS.primary.main,
-              color: COLORS.text.white,
-              borderRadius: `${SIZES.borderRadius.medium}px`,
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              boxShadow: SIZES.shadow.card,
-              transition: 'all 0.1s ease',
-              '&:hover': {
-                bgcolor: COLORS.primary.dark,
-                boxShadow: SIZES.shadow.elevated,
-                transform: 'translateY(-1px)',
-              },
-              '&:active': {
-                transform: 'translateY(0)',
-                boxShadow: SIZES.shadow.card,
-              },
-              '&:disabled': {
-                bgcolor: COLORS.grey[300],
-                color: COLORS.grey[500],
-                transform: 'none',
-                boxShadow: 'none',
-              }
-            }}
+            className="btn-primary"
           >
             {creating ? (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -761,26 +430,10 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
         onKeyDown={deleteDialogKeyboard.handleKeyDown}
         {...getStandardDialogProps('delete')}
         PaperProps={{
-          ...getStandardDialogProps('delete').PaperProps,
-          sx: {
-            ...getStandardDialogProps('delete').PaperProps.sx,
-            border: `1px solid ${COLORS.error.light}`
-          }
+          className: "dialog-paper dialog-paper--delete"
         }}
       >
-        <DialogTitle sx={{
-          color: COLORS.text.primary,
-          fontSize: '1.25rem',
-          fontWeight: 600,
-          borderBottom: `1px solid ${COLORS.grey[200]}`,
-          px: 3,
-          py: 2.5,
-          bgcolor: alpha(COLORS.error.light, 0.05),
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1.5,
-          ...getDialogTitleAnimationStyles()
-        }}>
+        <DialogTitle className="dialog-title dialog-title--delete">
           <Box
             sx={{
               width: 32,
@@ -797,14 +450,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
           </Box>
           Delete Namespace
         </DialogTitle>
-        <DialogContent sx={{
-          px: 3,
-          py: 3,
-          '&.MuiDialogContent-root': {
-            paddingTop: 3
-          },
-          ...getDialogContentAnimationStyles()
-        }}>
+        <DialogContent className="dialog-content">
           <Typography variant="body1" sx={{ color: COLORS.text.primary, mb: 2 }}>
             Are you sure you want to delete the namespace <strong>"{namespaceToDelete}"</strong>?
           </Typography>
@@ -812,37 +458,11 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
             This action will permanently delete the namespace directory and all its contents. This cannot be undone.
           </Typography>
         </DialogContent>
-        <DialogActions sx={{
-          px: 3,
-          py: 2.5,
-          borderTop: `1px solid ${COLORS.grey[200]}`,
-          bgcolor: alpha(COLORS.grey[25], 0.5),
-          gap: 1.5,
-          ...getDialogActionsAnimationStyles()
-        }}>
+        <DialogActions className="dialog-actions">
           <Button
             onClick={handleDeleteDialogClose}
             disabled={isDeleting}
-            sx={{
-              px: 2,
-              py: 1,
-              color: COLORS.text.secondary,
-              bgcolor: 'transparent',
-              border: `1px solid ${COLORS.grey[300]}`,
-              borderRadius: `${SIZES.borderRadius.medium}px`,
-              fontSize: '0.9rem',
-              fontWeight: 500,
-              '&:hover': {
-                bgcolor: COLORS.grey[50],
-                borderColor: COLORS.grey[400],
-                color: COLORS.text.primary,
-              },
-              '&:disabled': {
-                color: COLORS.grey[400],
-                borderColor: COLORS.grey[200],
-                bgcolor: 'transparent',
-              }
-            }}
+            className="btn-secondary"
           >
             Cancel
           </Button>
@@ -850,26 +470,7 @@ const Dashboard = ({ searchQuery = '', onCreateNamespace }) => {
             onClick={handleDeleteNamespace}
             variant="contained"
             disabled={isDeleting}
-            sx={{
-              px: 2,
-              py: 1,
-              minWidth: '120px',
-              bgcolor: COLORS.error.main,
-              color: COLORS.text.white,
-              borderRadius: `${SIZES.borderRadius.medium}px`,
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              boxShadow: SIZES.shadow.card,
-              '&:hover': {
-                bgcolor: COLORS.error.dark,
-                boxShadow: SIZES.shadow.elevated,
-              },
-              '&:disabled': {
-                bgcolor: COLORS.grey[300],
-                color: COLORS.grey[500],
-                boxShadow: 'none',
-              }
-            }}
+            className="btn-danger"
           >
             {isDeleting ? (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
