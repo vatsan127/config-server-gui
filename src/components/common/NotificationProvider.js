@@ -10,7 +10,7 @@ const NOTIFICATION_CONFIG = {
     vertical: 'top',
     horizontal: 'right',
   },
-  autoHideDuration: 5000,
+  autoHideDuration: 2000,
   dense: false,
   preventDuplicate: true,
   persist: false,

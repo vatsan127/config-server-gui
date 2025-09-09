@@ -277,7 +277,7 @@ const VaultPage = () => {
       // Show warning about encrypted value placeholder
       enqueueSnackbar(
         `Secret "${secretToDelete}" removed. Remember to update any encrypted value placeholders in your config files.`, 
-        { variant: 'warning', autoHideDuration: 8000 }
+        { variant: 'warning', autoHideDuration: 2000 }
       );
       
       await fetchSecrets();
