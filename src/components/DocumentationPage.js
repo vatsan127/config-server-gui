@@ -163,7 +163,7 @@ const DocumentationPage = () => {
             color: COLORS.text.primary,
             fontSize: '1rem'
           }}>
-            Contents
+            Documentation
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
