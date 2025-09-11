@@ -73,13 +73,7 @@ const DocumentationPage = () => {
         setTableOfContents(extractTableOfContents(content));
       } catch (err) {
         setError(err.message);
-        setMarkdownContent(`
-# Config Server Documentation
-
-Unable to load the latest documentation from GitHub. Please visit the repository directly for the most up-to-date information.
-
-[View on GitHub](https://github.com/vatsan127/config-server)
-        `);
+        setMarkdownContent('# Config Server Documentation\n\nUnable to load documentation. Please visit [GitHub](https://github.com/vatsan127/config-server).');
       } finally {
         setLoading(false);
       }
@@ -105,12 +99,37 @@ Unable to load the latest documentation from GitHub. Please visit the repository
     }, 100);
   }, []);
 
-  // Helper function for item styles
-  const getItemStyles = useCallback((level) => ({
-    pl: level === 1 ? 2 : level === 2 ? 3 : 4,
-    fontSize: level === 1 ? '0.9rem' : level === 2 ? '0.85rem' : '0.8rem',
-    fontWeight: level === 1 ? 600 : level === 2 ? 500 : 400,
-    color: level === 1 ? COLORS.text.primary : level === 2 ? COLORS.text.secondary : alpha(COLORS.text.secondary, 0.8)
+  // Optimized item styles with memoization
+  const getItemStyles = useMemo(() => ({
+    1: { pl: 2, fontSize: '0.9rem', fontWeight: 600, color: COLORS.text.primary },
+    2: { pl: 3, fontSize: '0.85rem', fontWeight: 500, color: COLORS.text.secondary },
+    3: { pl: 4, fontSize: '0.8rem', fontWeight: 400, color: alpha(COLORS.text.secondary, 0.8) }
+  }), []);
+
+  // Memoized markdown preview styles
+  const markdownStyles = useMemo(() => ({ 
+    backgroundColor: 'transparent', 
+    color: COLORS.text.primary,
+    '--color-canvas-default': 'transparent',
+    '--color-canvas-subtle': '#1e1e1e',
+    '--color-border-default': '#444444',
+    '--color-fg-default': COLORS.text.primary,
+    '--color-fg-muted': COLORS.text.secondary,
+    '--color-neutral-emphasis-plus': '#2d2d2d',
+    '--color-neutral-subtle': 'transparent',
+    '--color-accent-subtle': 'transparent',
+    '--color-accent-emphasis': 'transparent',
+    '--color-prettylights-syntax-comment': '#7c7c7c',
+    '--color-prettylights-syntax-constant': '#79b8ff',
+    '--color-prettylights-syntax-entity': '#b392f0',
+    '--color-prettylights-syntax-storage-modifier-import': '#f6f8fa',
+    '--color-prettylights-syntax-entity-tag': '#85e89d',
+    '--color-prettylights-syntax-keyword': '#f97583',
+    '--color-prettylights-syntax-string': '#9ecbff',
+    '--color-prettylights-syntax-variable': '#ffab70',
+    '--color-prettylights-syntax-markup-heading': '#79b8ff',
+    '--color-prettylights-syntax-markup-italic': '#f6f8fa',
+    '--color-prettylights-syntax-markup-bold': '#f6f8fa'
   }), []);
 
   // Sidebar content component
@@ -203,7 +222,7 @@ Unable to load the latest documentation from GitHub. Please visit the repository
                 setTimeout(() => scrollToHeading(item.title), 150);
               }}
               sx={{
-                pl: getItemStyles(item.level).pl,
+                pl: getItemStyles[item.level].pl,
                 py: 1,
                 minHeight: 'auto',
                 '&:hover': {
@@ -214,7 +233,7 @@ Unable to load the latest documentation from GitHub. Please visit the repository
               <ListItemText
                 primary={item.title}
                 primaryTypographyProps={{
-                  ...getItemStyles(item.level),
+                  ...getItemStyles[item.level],
                   sx: {
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -327,63 +346,23 @@ Unable to load the latest documentation from GitHub. Please visit the repository
           )}
           
           <Box sx={{
-            '& pre': {
+            '& pre, & code, & pre code': {
               fontFamily: '"Consolas", "Monaco", "Courier New", monospace !important',
+              color: '#f6f8fa !important'
+            },
+            '& pre': {
               fontSize: '14px !important',
               lineHeight: '1.4 !important',
               whiteSpace: 'pre !important',
-              fontVariantLigatures: 'none !important',
-              color: '#f6f8fa !important'
+              fontVariantLigatures: 'none !important'
             },
-            '& code': {
-              fontFamily: '"Consolas", "Monaco", "Courier New", monospace !important',
-              color: '#f6f8fa !important'
-            },
-            '& pre code': {
-              color: '#f6f8fa !important'
+            '& table tr': {
+              backgroundColor: 'transparent !important'
             }
           }}>
             <MarkdownPreview 
               source={markdownContent}
-              style={{ 
-                backgroundColor: 'transparent', 
-                color: COLORS.text.primary,
-                '--color-canvas-default': 'transparent',
-                '--color-canvas-subtle': '#1e1e1e',
-                '--color-border-default': '#444444',
-                '--color-fg-default': COLORS.text.primary,
-                '--color-fg-muted': COLORS.text.secondary,
-                '--color-neutral-emphasis-plus': '#2d2d2d',
-                // High contrast syntax highlighting for dark code blocks
-                '--color-prettylights-syntax-comment': '#7c7c7c',
-                '--color-prettylights-syntax-constant': '#79b8ff',
-                '--color-prettylights-syntax-entity': '#b392f0',
-                '--color-prettylights-syntax-storage-modifier-import': '#f6f8fa',
-                '--color-prettylights-syntax-entity-tag': '#85e89d',
-                '--color-prettylights-syntax-keyword': '#f97583',
-                '--color-prettylights-syntax-string': '#9ecbff',
-                '--color-prettylights-syntax-variable': '#ffab70',
-                '--color-prettylights-syntax-brackethighlighter-unmatched': '#f97583',
-                '--color-prettylights-syntax-invalid-illegal-text': '#f6f8fa',
-                '--color-prettylights-syntax-invalid-illegal-bg': '#b31d28',
-                '--color-prettylights-syntax-carriage-return-text': '#f6f8fa',
-                '--color-prettylights-syntax-carriage-return-bg': '#f97583',
-                '--color-prettylights-syntax-string-regexp': '#85e89d',
-                '--color-prettylights-syntax-markup-list': '#ffab70',
-                '--color-prettylights-syntax-markup-heading': '#79b8ff',
-                '--color-prettylights-syntax-markup-italic': '#f6f8fa',
-                '--color-prettylights-syntax-markup-bold': '#f6f8fa',
-                '--color-prettylights-syntax-markup-deleted-text': '#f97583',
-                '--color-prettylights-syntax-markup-deleted-bg': '#86181d',
-                '--color-prettylights-syntax-markup-inserted-text': '#85e89d',
-                '--color-prettylights-syntax-markup-inserted-bg': '#144620',
-                '--color-prettylights-syntax-markup-changed-text': '#ffab70',
-                '--color-prettylights-syntax-markup-changed-bg': '#c24e00',
-                '--color-prettylights-syntax-markup-ignored-text': '#f6f8fa',
-                '--color-prettylights-syntax-markup-ignored-bg': '#79b8ff',
-                '--color-prettylights-syntax-meta-diff-range': '#b392f0',
-                '--color-prettylights-syntax-sublimelinter-gutter-mark': '#6a737d'
-              }}
+              style={markdownStyles}
               data-color-mode="light"
             />
           </Box>
