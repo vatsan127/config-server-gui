@@ -328,7 +328,44 @@ Unable to load the latest documentation from GitHub. Please visit the repository
           
           <MarkdownPreview 
             source={markdownContent}
-            style={{ backgroundColor: 'transparent', color: COLORS.text.primary }}
+            style={{ 
+              backgroundColor: 'transparent', 
+              color: COLORS.text.primary,
+              '--color-canvas-default': 'transparent',
+              '--color-canvas-subtle': alpha(COLORS.grey[100], 0.5),
+              '--color-border-default': alpha(COLORS.grey[300], 0.3),
+              '--color-fg-default': COLORS.text.primary,
+              '--color-fg-muted': COLORS.text.secondary,
+              '--color-neutral-emphasis-plus': alpha(COLORS.grey[200], 0.8),
+              '--color-prettylights-syntax-comment': '#6a737d',
+              '--color-prettylights-syntax-constant': '#005cc5',
+              '--color-prettylights-syntax-entity': '#6f42c1',
+              '--color-prettylights-syntax-storage-modifier-import': '#24292e',
+              '--color-prettylights-syntax-entity-tag': '#22863a',
+              '--color-prettylights-syntax-keyword': '#d73a49',
+              '--color-prettylights-syntax-string': '#032f62',
+              '--color-prettylights-syntax-variable': '#e36209',
+              '--color-prettylights-syntax-brackethighlighter-unmatched': '#b31d28',
+              '--color-prettylights-syntax-invalid-illegal-text': '#fafbfc',
+              '--color-prettylights-syntax-invalid-illegal-bg': '#b31d28',
+              '--color-prettylights-syntax-carriage-return-text': '#fafbfc',
+              '--color-prettylights-syntax-carriage-return-bg': '#d73a49',
+              '--color-prettylights-syntax-string-regexp': '#22863a',
+              '--color-prettylights-syntax-markup-list': '#735c0f',
+              '--color-prettylights-syntax-markup-heading': '#005cc5',
+              '--color-prettylights-syntax-markup-italic': '#24292e',
+              '--color-prettylights-syntax-markup-bold': '#24292e',
+              '--color-prettylights-syntax-markup-deleted-text': '#b31d28',
+              '--color-prettylights-syntax-markup-deleted-bg': '#ffeef0',
+              '--color-prettylights-syntax-markup-inserted-text': '#22863a',
+              '--color-prettylights-syntax-markup-inserted-bg': '#f0fff4',
+              '--color-prettylights-syntax-markup-changed-text': '#e36209',
+              '--color-prettylights-syntax-markup-changed-bg': '#ffebda',
+              '--color-prettylights-syntax-markup-ignored-text': '#f6f8fa',
+              '--color-prettylights-syntax-markup-ignored-bg': '#005cc5',
+              '--color-prettylights-syntax-meta-diff-range': '#6f42c1',
+              '--color-prettylights-syntax-sublimelinter-gutter-mark': '#959da5'
+            }}
             data-color-mode="light"
           />
         </Box>
