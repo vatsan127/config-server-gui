@@ -22,11 +22,11 @@ export const getDialogAnimationStyles = (variant = 'standard') => {
     '@keyframes standardDialogSlideIn': {
       '0%': {
         opacity: 0,
-        transform: 'translate3d(0, -20px, 0)'
+        transform: 'translateY(-20px)'
       },
       '100%': {
         opacity: 1,
-        transform: 'translate3d(0, 0, 0)'
+        transform: 'translateY(0)'
       }
     }
   };
@@ -46,10 +46,10 @@ export const getDialogAnimationStyles = (variant = 'standard') => {
           animation: 'progressSlide 0.2s ease-out 0.1s both',
           '@keyframes progressSlide': {
             '0%': {
-              transform: 'translate3d(-100%, 0, 0)'
+              transform: 'translateX(-100%)'
             },
             '100%': {
-              transform: 'translate3d(0, 0, 0)'
+              transform: 'translateX(0)'
             }
           }
         }
@@ -69,10 +69,10 @@ export const getDialogAnimationStyles = (variant = 'standard') => {
           animation: 'progressSlide 0.2s ease-out 0.1s both',
           '@keyframes progressSlide': {
             '0%': {
-              transform: 'translate3d(-100%, 0, 0)'
+              transform: 'translateX(-100%)'
             },
             '100%': {
-              transform: 'translate3d(0, 0, 0)'
+              transform: 'translateX(0)'
             }
           }
         }
@@ -91,10 +91,10 @@ export const getDialogAnimationStyles = (variant = 'standard') => {
           animation: 'progressSlide 0.2s ease-out 0.1s both',
           '@keyframes progressSlide': {
             '0%': {
-              transform: 'translate3d(-100%, 0, 0)'
+              transform: 'translateX(-100%)'
             },
             '100%': {
-              transform: 'translate3d(0, 0, 0)'
+              transform: 'translateX(0)'
             }
           }
         }
@@ -112,11 +112,11 @@ export const getDialogTitleAnimationStyles = () => ({
   '@keyframes titleSlideIn': {
     '0%': {
       opacity: 0,
-      transform: 'translate3d(-20px, 0, 0)'
+      transform: 'translateX(-20px)'
     },
     '100%': {
       opacity: 1,
-      transform: 'translate3d(0, 0, 0)'
+      transform: 'translateX(0)'
     }
   }
 });
@@ -129,11 +129,11 @@ export const getDialogContentAnimationStyles = () => ({
   '@keyframes contentFadeIn': {
     '0%': {
       opacity: 0,
-      transform: 'translate3d(0, 10px, 0)'
+      transform: 'translateY(10px)'
     },
     '100%': {
       opacity: 1,
-      transform: 'translate3d(0, 0, 0)'
+      transform: 'translateY(0)'
     }
   }
 });
@@ -146,11 +146,11 @@ export const getDialogActionsAnimationStyles = () => ({
   '@keyframes actionsSlideIn': {
     '0%': {
       opacity: 0,
-      transform: 'translate3d(20px, 0, 0)'
+      transform: 'translateX(20px)'
     },
     '100%': {
       opacity: 1,
-      transform: 'translate3d(0, 0, 0)'
+      transform: 'translateX(0)'
     }
   }
 });

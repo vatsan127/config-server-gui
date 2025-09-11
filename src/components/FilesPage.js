@@ -604,15 +604,15 @@ const FilesPage = () => {
                     '@keyframes slideInScale': {
                       '0%': {
                         opacity: 0,
-                        transform: 'translateX(-30px) scale(0.9) rotateY(-15deg)'
+                        transform: 'translateX(-30px) scale(0.95)'
                       },
                       '50%': {
                         opacity: 0.7,
-                        transform: 'translateX(3px) scale(1.02) rotateY(2deg)'
+                        transform: 'translateX(3px) scale(1.01)'
                       },
                       '100%': {
                         opacity: 1,
-                        transform: 'translateX(0) scale(1) rotateY(0deg)'
+                        transform: 'translateX(0) scale(1)'
                       }
                     },
                     '&:hover': {

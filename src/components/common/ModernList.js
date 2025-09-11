@@ -119,15 +119,15 @@ const ModernListItem = ({
         '@keyframes slideInModern': {
           '0%': {
             opacity: 0,
-            transform: 'translateX(-25px) scale(0.92) rotateZ(-2deg)'
+            transform: 'translateX(-25px) scale(0.95)'
           },
           '40%': {
             opacity: 0.6,
-            transform: 'translateX(3px) scale(1.02) rotateZ(0.5deg)'
+            transform: 'translateX(3px) scale(1.01)'
           },
           '100%': {
             opacity: 1,
-            transform: 'translateX(0) scale(1) rotateZ(0deg)'
+            transform: 'translateX(0) scale(1)'
           }
         },
         '&:hover': {

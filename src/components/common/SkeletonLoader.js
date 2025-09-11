@@ -23,12 +23,12 @@ export const NamespaceCardSkeleton = () => (
       bottom: 0,
       left: 0,
       background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)',
-      transform: 'translate3d(-100%, 0, 0)',
+      transform: 'translateX(-100%)',
       animation: 'shimmer 1.5s infinite',
     },
     '@keyframes shimmer': {
       '100%': {
-        transform: 'translate3d(100%, 0, 0)',
+        transform: 'translateX(100%)',
       },
     },
   }}>

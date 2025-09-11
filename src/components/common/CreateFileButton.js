@@ -257,15 +257,8 @@ const CreateFileButton = ({ onCreateConfigFile, currentPath = '/' }) => {
             <Box sx={{ 
               fontSize: 16, 
               color: COLORS.success.main,
-              animation: 'configIconGlow 2s ease-in-out infinite 1s',
-              '@keyframes configIconGlow': {
-                '0%, 100%': {
-                  filter: 'drop-shadow(0 0 2px rgba(16, 185, 129, 0.4))'
-                },
-                '50%': {
-                  filter: 'drop-shadow(0 0 8px rgba(16, 185, 129, 0.8))'
-                }
-              }
+              /* Removed infinite glow animation for better performance */
+              filter: 'drop-shadow(0 0 2px rgba(16, 185, 129, 0.4))'
             }}>
               📄
             </Box>

@@ -30,7 +30,6 @@ import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
 import { FileListSkeleton } from './common/SkeletonLoader';
 import { useSearchShortcut } from '../hooks/useKeyboardShortcut';
 import { getStandardDialogProps, getDialogTitleAnimationStyles, getDialogContentAnimationStyles, getDialogActionsAnimationStyles } from '../utils/dialogAnimations';
-import HistoryPanel from './common/HistoryPanel';
 import PageHeader from './common/PageHeader';
 import SearchResultInfo from './common/SearchResultInfo';
 import ModernList, { ModernActionButton } from './common/ModernList';
@@ -54,14 +53,6 @@ const VaultPage = () => {
   const [saving, setSaving] = useState(false);
   const [showValue, setShowValue] = useState(false);
   
-  // History states
-  const [historyPanelOpen, setHistoryPanelOpen] = useState(false);
-  const [historyData, setHistoryData] = useState(null);
-  const [historyLoading, setHistoryLoading] = useState(false);
-  const [changesData, setChangesData] = useState(null);
-  const [changesLoading, setChangesLoading] = useState(false);
-  const [showChanges, setShowChanges] = useState(false);
-  const [selectedCommitId, setSelectedCommitId] = useState(null);
   
   // Add secret dialog
   const [addDialogOpen, setAddDialogOpen] = useState(false);
@@ -170,55 +161,6 @@ const VaultPage = () => {
     }
   };
 
-  const handleHistoryClick = useCallback(async () => {
-    setHistoryLoading(true);
-    setHistoryPanelOpen(true);
-    
-    try {
-      const data = await apiService.getVaultHistory(namespace);
-      setHistoryData({
-        ...data,
-        filePath: data.vaultFile || 'Vault'
-      });
-    } catch (err) {
-      console.error('Error fetching vault history:', err);
-    } finally {
-      setHistoryLoading(false);
-    }
-  }, [namespace]);
-
-  const handleCommitSelect = async (commitId) => {
-    if (selectedCommitId === commitId && showChanges) {
-      return;
-    }
-
-    setSelectedCommitId(commitId);
-    setChangesLoading(true);
-    setShowChanges(true);
-
-    try {
-      const data = await apiService.getVaultChanges(namespace, commitId);
-      setChangesData(data);
-    } catch (err) {
-      console.error('Error fetching vault changes:', err);
-      setChangesData(null);
-    } finally {
-      setChangesLoading(false);
-    }
-  };
-
-  const handleBackToHistory = () => {
-    setShowChanges(false);
-    setChangesData(null);
-    setSelectedCommitId(null);
-  };
-
-  const handleCloseHistory = () => {
-    setHistoryPanelOpen(false);
-    setShowChanges(false);
-    setChangesData(null);
-    setSelectedCommitId(null);
-  };
 
   const handleAddSecret = async () => {
     if (!newSecretKey.trim() || !newSecretValue.trim()) {
@@ -843,20 +785,6 @@ const VaultPage = () => {
         </DialogActions>
       </Dialog>
 
-      {/* History Panel */}
-      <HistoryPanel
-        isOpen={historyPanelOpen}
-        onClose={handleCloseHistory}
-        fileName="Vault"
-        historyData={historyData}
-        historyLoading={historyLoading}
-        changesData={changesData}
-        changesLoading={changesLoading}
-        showChanges={showChanges}
-        onBackToHistory={handleBackToHistory}
-        onCommitSelect={handleCommitSelect}
-        selectedCommitId={selectedCommitId}
-      />
     </Box>
   );
 };

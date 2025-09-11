@@ -189,15 +189,15 @@ const EventsPage = () => {
                     '@keyframes slideInEvent': {
                       '0%': {
                         opacity: 0,
-                        transform: 'translateX(-40px) scale(0.85) rotateZ(-3deg)'
+                        transform: 'translateX(-40px) scale(0.9)'
                       },
                       '60%': {
                         opacity: 0.8,
-                        transform: 'translateX(5px) scale(1.03) rotateZ(1deg)'
+                        transform: 'translateX(5px) scale(1.02)'
                       },
                       '100%': {
                         opacity: 1,
-                        transform: 'translateX(0) scale(1) rotateZ(0deg)'
+                        transform: 'translateX(0) scale(1)'
                       }
                     },
                     '&:hover': {

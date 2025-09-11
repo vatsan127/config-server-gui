@@ -55,7 +55,7 @@ const FilesSidebar = ({ namespace }) => {
         width: SIZES.sidebar.width,
         height: '100vh',
         background: `linear-gradient(180deg, ${alpha(COLORS.background.sidebar, 0.98)} 0%, ${alpha(COLORS.background.sidebar, 0.92)} 100%)`,
-        backdropFilter: 'blur(24px) saturate(1.2)',
+        /* Removed expensive backdrop-filter for better performance */
         borderRight: `1px solid ${alpha(COLORS.grey[300], 0.2)}`,
         boxShadow: '0 8px 32px rgba(6, 57, 112, 0.15), 0 4px 16px rgba(0, 0, 0, 0.1)',
         '&::before': {
@@ -100,7 +100,7 @@ const FilesSidebar = ({ namespace }) => {
           mr: 1.5,
           boxShadow: `0 0 12px ${alpha('#4ade80', 0.6)}, 0 0 24px ${alpha('#4ade80', 0.3)}`,
           position: 'relative',
-          animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          /* Removed infinite pulse animation for better performance */
           '@keyframes pulse': {
             '0%, 100%': {
               opacity: 1,
@@ -120,7 +120,7 @@ const FilesSidebar = ({ namespace }) => {
             bottom: -2,
             borderRadius: '50%',
             border: `1px solid ${alpha('#4ade80', 0.3)}`,
-            animation: 'ripple 3s linear infinite',
+            /* Removed infinite ripple animation for better performance */
             '@keyframes ripple': {
               '0%': {
                 transform: 'scale(0.8)',
