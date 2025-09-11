@@ -143,7 +143,7 @@ const FilesSidebar = ({ namespace }) => {
             margin: 0
           }}
         >
-          Configuration
+          {namespace}
         </Typography>
       </Box>
 
@@ -300,7 +300,7 @@ const FilesSidebar = ({ namespace }) => {
             />
           </ListItemIcon>
           <ListItemText 
-            primary={`${namespace || 'Files'}`}
+            primary="Files"
             primaryTypographyProps={{
               sx: {
                 color: (isFilesActive || isFileViewActive) ? '#e2e8f0' : alpha(COLORS.text.white, 0.9),
