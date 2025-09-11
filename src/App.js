@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import FilesLayout from './components/FilesLayout';
+import DocumentationPage from './components/DocumentationPage';
 import NotificationProvider from './components/common/NotificationProvider';
 import { useSearch } from './hooks/useSearch';
 import { useUniversalKeyboardShortcuts } from './hooks/useKeyboardShortcut';
@@ -28,6 +29,7 @@ const AppContent = () => {
   };
 
   const isDashboard = location.pathname === '/';
+  const isDocumentation = location.pathname === '/docs';
 
   // Reference to store the Dashboard's openCreateDialog function
   const createDialogRef = useRef(null);
@@ -57,6 +59,14 @@ const AppContent = () => {
           <Route path="/" element={<Dashboard searchQuery={searchQuery} onCreateNamespace={setCreateDialogFunction} />} />
         </Routes>
       </Layout>
+    );
+  }
+
+  if (isDocumentation) {
+    return (
+      <Routes>
+        <Route path="/docs" element={<DocumentationPage />} />
+      </Routes>
     );
   }
 

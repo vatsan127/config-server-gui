@@ -12,12 +12,14 @@ import {
   IconButton,
   alpha,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { 
   Search as SearchIcon,
   Clear as ClearIcon,
   Logout as LogoutIcon,
   Add as AddIcon,
-  Dashboard as DashboardIcon
+  Dashboard as DashboardIcon,
+  Article as ArticleIcon
 } from '@mui/icons-material';
 import { theme } from '../theme/theme';
 import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
@@ -26,6 +28,7 @@ import ErrorBoundary from './common/ErrorBoundary';
 
 const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCreateNamespace, showCreateButton = false }) => {
   const searchInputRef = useRef(null);
+  const navigate = useNavigate();
 
   // Global keyboard shortcuts
   useEffect(() => {
@@ -324,6 +327,29 @@ const Layout = ({ children, onSearchChange, searchQuery, searchPlaceholder, onCr
 
             {/* Right side - Actions */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {/* Documentation Button */}
+              <Button 
+                startIcon={<ArticleIcon sx={{ fontSize: 18 }} />}
+                onClick={() => navigate('/docs')}
+                sx={{ 
+                  color: COLORS.text.white,
+                  bgcolor: alpha(COLORS.text.white, 0.1),
+                  px: 2,
+                  py: 1,
+                  fontSize: '0.8rem',
+                  border: `1px solid ${alpha(COLORS.text.white, 0.3)}`,
+                  borderRadius: `${SIZES.borderRadius.medium}px`,
+                  transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': {
+                    bgcolor: alpha(COLORS.text.white, 0.2),
+                    borderColor: alpha(COLORS.text.white, 0.5),
+                    transform: 'translateY(-1px)',
+                  }
+                }}
+              >
+                Docs
+              </Button>
+
               {/* Create Namespace Button */}
               {showCreateButton && (
                 <Button 
