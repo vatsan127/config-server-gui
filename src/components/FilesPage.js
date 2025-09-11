@@ -38,6 +38,7 @@ import { FileListSkeleton } from './common/SkeletonLoader';
 import { useSearchShortcut } from '../hooks/useKeyboardShortcut';
 import { getStandardDialogProps, getDialogTitleAnimationStyles, getDialogContentAnimationStyles, getDialogActionsAnimationStyles } from '../utils/dialogAnimations';
 import HistoryPanel from './common/HistoryPanel';
+import PageHeader from './common/PageHeader';
 
 
 
@@ -318,28 +319,22 @@ const FilesPage = () => {
         flexDirection: 'column',
         p: SIZES.spacing.xs,
         bgcolor: 'background.default',
-        height: '100%'
+        height: '100vh',
+        overflow: 'hidden'
       }}>
-        <Box mb={0.5}>
-          <Breadcrumbs
-            aria-label="breadcrumb"
-            separator="/"
-            sx={{
-              '& .MuiBreadcrumbs-separator': {
-                color: COLORS.text.muted,
-                mx: 0.5,
-              },
-            }}
-          >
-            <Typography variant="h5" sx={{
-              color: COLORS.text.primary,
-              fontWeight: 700,
-              fontSize: '1.5rem',
-            }}>
-              {namespace || ''}
-            </Typography>
-          </Breadcrumbs>
-        </Box>
+        <PageHeader
+          title={namespace || ''}
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          searchPlaceholder="Search"
+          actions={[
+            <CreateFileButton
+              key="create-file"
+              onCreateConfigFile={handleCreateConfigFile}
+              currentPath={currentPath}
+            />
+          ]}
+        />
         <FileListSkeleton count={6} />
       </Box>
     );
@@ -348,28 +343,27 @@ const FilesPage = () => {
   if (error) {
     return (
       <Box sx={{ 
-        p: SIZES.spacing.xs
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: 'column',
+        p: SIZES.spacing.xs,
+        bgcolor: 'background.default',
+        height: '100vh',
+        overflow: 'hidden'
       }}>
-        <Box mb={0.5}>
-          <Breadcrumbs
-            aria-label="breadcrumb"
-            separator="/"
-            sx={{
-              '& .MuiBreadcrumbs-separator': {
-                color: COLORS.text.muted,
-                mx: 0.5,
-              },
-            }}
-          >
-            <Typography variant="h5" sx={{
-              color: COLORS.text.primary,
-              fontWeight: 700,
-              fontSize: '1.5rem',
-            }}>
-              {namespace || ''}
-            </Typography>
-          </Breadcrumbs>
-        </Box>
+        <PageHeader
+          title={namespace || ''}
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          searchPlaceholder="Search"
+          actions={[
+            <CreateFileButton
+              key="create-file"
+              onCreateConfigFile={handleCreateConfigFile}
+              currentPath={currentPath}
+            />
+          ]}
+        />
         <Alert 
           severity="error"
           sx={{
@@ -446,89 +440,36 @@ const FilesPage = () => {
         }
       }
     }}>
-        <Box 
-          mb={0.5}
-          sx={{
-            width: '100%',
-            maxWidth: '100%',
-            overflowX: 'hidden',
-            animation: 'slideInFromTop 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.08s both',
-            '@keyframes slideInFromTop': {
-              '0%': {
-                opacity: 0,
-                transform: 'translateY(-15px)'
-              },
-              '100%': {
-                opacity: 1,
-                transform: 'translateY(0)'
-              }
-            }
-          }}
-        >
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center', 
-            mb: 0.5,
-            width: '100%',
-            minWidth: 0,
-            gap: 2
-          }}>
-            <Breadcrumbs
-              aria-label="breadcrumb"
-              separator="/"
-              sx={{
-                flex: 1,
-                minWidth: 0,
-                '& .MuiBreadcrumbs-separator': {
-                  color: COLORS.text.muted,
-                  mx: 0.5,
-                },
-                '& .MuiBreadcrumbs-ol': {
-                  flexWrap: 'nowrap',
-                  overflow: 'hidden',
-                },
-              }}
-            >
-              <Link
-                component="button"
-                variant="h5"
-                onClick={() => handleBreadcrumbClick(-1)}
+        <PageHeader
+          title={
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Breadcrumbs
+                aria-label="breadcrumb"
+                separator="/"
                 sx={{
-                  color: currentPath === '/' ? COLORS.text.primary : COLORS.primary.main,
-                  fontWeight: currentPath === '/' ? 700 : 500,
-                  fontSize: '1.5rem',
-                  textDecoration: 'none',
-                  cursor: currentPath === '/' ? 'default' : 'pointer',
-                  '&:hover': {
-                    textDecoration: currentPath === '/' ? 'none' : 'underline',
-                    color: currentPath === '/' ? COLORS.text.primary : COLORS.primary.dark,
+                  '& .MuiBreadcrumbs-separator': {
+                    color: COLORS.text.muted,
+                    mx: 0.5,
                   },
-                  background: 'none',
-                  border: 'none',
-                  padding: 0,
-                  margin: 0,
-                  display: 'inline-flex',
-                  alignItems: 'center',
+                  '& .MuiBreadcrumbs-ol': {
+                    flexWrap: 'nowrap',
+                    overflow: 'hidden',
+                  },
                 }}
               >
-                {namespace || ''}
-              </Link>
-              {pathSegments.map((segment, index) => (
                 <Link
-                  key={index}
                   component="button"
                   variant="h5"
-                  onClick={() => handleBreadcrumbClick(index)}
+                  onClick={() => handleBreadcrumbClick(-1)}
                   sx={{
-                    color: index === pathSegments.length - 1 ? COLORS.text.primary : COLORS.primary.main,
-                    fontWeight: index === pathSegments.length - 1 ? 700 : 500,
+                    color: currentPath === '/' ? COLORS.text.primary : COLORS.primary.main,
+                    fontWeight: currentPath === '/' ? 700 : 500,
                     fontSize: '1.5rem',
                     textDecoration: 'none',
-                    cursor: index === pathSegments.length - 1 ? 'default' : 'pointer',
+                    cursor: currentPath === '/' ? 'default' : 'pointer',
                     '&:hover': {
-                      textDecoration: index === pathSegments.length - 1 ? 'none' : 'underline',
-                      color: index === pathSegments.length - 1 ? COLORS.text.primary : COLORS.primary.dark,
+                      textDecoration: currentPath === '/' ? 'none' : 'underline',
+                      color: currentPath === '/' ? COLORS.text.primary : COLORS.primary.dark,
                     },
                     background: 'none',
                     border: 'none',
@@ -538,111 +479,49 @@ const FilesPage = () => {
                     alignItems: 'center',
                   }}
                 >
-                  {segment}
+                  {namespace || ''}
                 </Link>
-              ))}
-            </Breadcrumbs>
-            <Box 
-              sx={{ 
-                display: 'flex', 
-                gap: 1, 
-                alignItems: 'center',
-                flexShrink: 0,
-                minWidth: 'min-content',
-                animation: 'fadeInScale 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s both',
-                '@keyframes fadeInScale': {
-                  '0%': {
-                    opacity: 0,
-                    transform: 'scale(0.98)'
-                  },
-                  '100%': {
-                    opacity: 1,
-                    transform: 'scale(1)'
-                  }
-                }
-              }}
-            >
-              <TextField
-                inputRef={searchInputRef}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search"
-                size="small"
-                sx={{ 
-                  width: 200,
-                  minWidth: 150,
-                  maxWidth: 250,
-                  flexShrink: 1,
-                  transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: `${SIZES.borderRadius.medium}px`,
-                    bgcolor: COLORS.background.paper,
-                    transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                    '& fieldset': {
-                      transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                    },
-                    '&:hover fieldset': {
-                      borderColor: COLORS.grey[400],
-                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: COLORS.primary.main,
-                      borderWidth: 2,
-                      boxShadow: `0 0 0 3px ${COLORS.primary.main}20`,
-                    }
-                  }
-                }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ color: COLORS.text.muted, fontSize: 18 }} />
-                    </InputAdornment>
-                  ),
-                  endAdornment: searchQuery && (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setSearchQuery('')}
-                        size="small"
-                        sx={{ 
-                          color: COLORS.text.muted,
-                          p: 0.5,
-                          '&:hover': {
-                            color: COLORS.text.primary,
-                            bgcolor: COLORS.grey[100]
-                          }
-                        }}
-                      >
-                        <ClearIcon fontSize="small" />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <Box
-                sx={{
-                  transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                  flexShrink: 0,
-                  padding: '4px 0',
-                  display: 'flex',
-                  alignItems: 'center'
-                }}
-              >
-                <CreateFileButton
-                  onCreateConfigFile={handleCreateConfigFile}
-                  currentPath={currentPath}
-                />
-              </Box>
+                {pathSegments.map((segment, index) => (
+                  <Link
+                    key={index}
+                    component="button"
+                    variant="h5"
+                    onClick={() => handleBreadcrumbClick(index)}
+                    sx={{
+                      color: index === pathSegments.length - 1 ? COLORS.text.primary : COLORS.primary.main,
+                      fontWeight: index === pathSegments.length - 1 ? 700 : 500,
+                      fontSize: '1.5rem',
+                      textDecoration: 'none',
+                      cursor: index === pathSegments.length - 1 ? 'default' : 'pointer',
+                      '&:hover': {
+                        textDecoration: index === pathSegments.length - 1 ? 'none' : 'underline',
+                        color: index === pathSegments.length - 1 ? COLORS.text.primary : COLORS.primary.dark,
+                      },
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      margin: 0,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {segment}
+                  </Link>
+                ))}
+              </Breadcrumbs>
             </Box>
-          </Box>
-
-          <Divider sx={{ 
-            mt: 1.5,
-            mb: 1.5,
-            borderColor: COLORS.grey[300],
-            opacity: 0.6
-          }} />
-
-        </Box>
+          }
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          searchPlaceholder="Search"
+          actions={[
+            <CreateFileButton
+              key="create-file"
+              onCreateConfigFile={handleCreateConfigFile}
+              currentPath={currentPath}
+            />
+          ]}
+        />
 
 
         {searchQuery && (
