@@ -326,48 +326,67 @@ Unable to load the latest documentation from GitHub. Please visit the repository
             </Box>
           )}
           
-          <MarkdownPreview 
-            source={markdownContent}
-            style={{ 
-              backgroundColor: 'transparent', 
-              color: COLORS.text.primary,
-              '--color-canvas-default': 'transparent',
-              '--color-canvas-subtle': alpha(COLORS.grey[100], 0.5),
-              '--color-border-default': alpha(COLORS.grey[300], 0.3),
-              '--color-fg-default': COLORS.text.primary,
-              '--color-fg-muted': COLORS.text.secondary,
-              '--color-neutral-emphasis-plus': alpha(COLORS.grey[200], 0.8),
-              '--color-prettylights-syntax-comment': '#6a737d',
-              '--color-prettylights-syntax-constant': '#005cc5',
-              '--color-prettylights-syntax-entity': '#6f42c1',
-              '--color-prettylights-syntax-storage-modifier-import': '#24292e',
-              '--color-prettylights-syntax-entity-tag': '#22863a',
-              '--color-prettylights-syntax-keyword': '#d73a49',
-              '--color-prettylights-syntax-string': '#032f62',
-              '--color-prettylights-syntax-variable': '#e36209',
-              '--color-prettylights-syntax-brackethighlighter-unmatched': '#b31d28',
-              '--color-prettylights-syntax-invalid-illegal-text': '#fafbfc',
-              '--color-prettylights-syntax-invalid-illegal-bg': '#b31d28',
-              '--color-prettylights-syntax-carriage-return-text': '#fafbfc',
-              '--color-prettylights-syntax-carriage-return-bg': '#d73a49',
-              '--color-prettylights-syntax-string-regexp': '#22863a',
-              '--color-prettylights-syntax-markup-list': '#735c0f',
-              '--color-prettylights-syntax-markup-heading': '#005cc5',
-              '--color-prettylights-syntax-markup-italic': '#24292e',
-              '--color-prettylights-syntax-markup-bold': '#24292e',
-              '--color-prettylights-syntax-markup-deleted-text': '#b31d28',
-              '--color-prettylights-syntax-markup-deleted-bg': '#ffeef0',
-              '--color-prettylights-syntax-markup-inserted-text': '#22863a',
-              '--color-prettylights-syntax-markup-inserted-bg': '#f0fff4',
-              '--color-prettylights-syntax-markup-changed-text': '#e36209',
-              '--color-prettylights-syntax-markup-changed-bg': '#ffebda',
-              '--color-prettylights-syntax-markup-ignored-text': '#f6f8fa',
-              '--color-prettylights-syntax-markup-ignored-bg': '#005cc5',
-              '--color-prettylights-syntax-meta-diff-range': '#6f42c1',
-              '--color-prettylights-syntax-sublimelinter-gutter-mark': '#959da5'
-            }}
-            data-color-mode="light"
-          />
+          <Box sx={{
+            '& pre': {
+              fontFamily: '"Consolas", "Monaco", "Courier New", monospace !important',
+              fontSize: '14px !important',
+              lineHeight: '1.4 !important',
+              whiteSpace: 'pre !important',
+              fontVariantLigatures: 'none !important',
+              color: '#f6f8fa !important'
+            },
+            '& code': {
+              fontFamily: '"Consolas", "Monaco", "Courier New", monospace !important',
+              color: '#f6f8fa !important'
+            },
+            '& pre code': {
+              color: '#f6f8fa !important'
+            }
+          }}>
+            <MarkdownPreview 
+              source={markdownContent}
+              style={{ 
+                backgroundColor: 'transparent', 
+                color: COLORS.text.primary,
+                '--color-canvas-default': 'transparent',
+                '--color-canvas-subtle': '#1e1e1e',
+                '--color-border-default': '#444444',
+                '--color-fg-default': COLORS.text.primary,
+                '--color-fg-muted': COLORS.text.secondary,
+                '--color-neutral-emphasis-plus': '#2d2d2d',
+                // High contrast syntax highlighting for dark code blocks
+                '--color-prettylights-syntax-comment': '#7c7c7c',
+                '--color-prettylights-syntax-constant': '#79b8ff',
+                '--color-prettylights-syntax-entity': '#b392f0',
+                '--color-prettylights-syntax-storage-modifier-import': '#f6f8fa',
+                '--color-prettylights-syntax-entity-tag': '#85e89d',
+                '--color-prettylights-syntax-keyword': '#f97583',
+                '--color-prettylights-syntax-string': '#9ecbff',
+                '--color-prettylights-syntax-variable': '#ffab70',
+                '--color-prettylights-syntax-brackethighlighter-unmatched': '#f97583',
+                '--color-prettylights-syntax-invalid-illegal-text': '#f6f8fa',
+                '--color-prettylights-syntax-invalid-illegal-bg': '#b31d28',
+                '--color-prettylights-syntax-carriage-return-text': '#f6f8fa',
+                '--color-prettylights-syntax-carriage-return-bg': '#f97583',
+                '--color-prettylights-syntax-string-regexp': '#85e89d',
+                '--color-prettylights-syntax-markup-list': '#ffab70',
+                '--color-prettylights-syntax-markup-heading': '#79b8ff',
+                '--color-prettylights-syntax-markup-italic': '#f6f8fa',
+                '--color-prettylights-syntax-markup-bold': '#f6f8fa',
+                '--color-prettylights-syntax-markup-deleted-text': '#f97583',
+                '--color-prettylights-syntax-markup-deleted-bg': '#86181d',
+                '--color-prettylights-syntax-markup-inserted-text': '#85e89d',
+                '--color-prettylights-syntax-markup-inserted-bg': '#144620',
+                '--color-prettylights-syntax-markup-changed-text': '#ffab70',
+                '--color-prettylights-syntax-markup-changed-bg': '#c24e00',
+                '--color-prettylights-syntax-markup-ignored-text': '#f6f8fa',
+                '--color-prettylights-syntax-markup-ignored-bg': '#79b8ff',
+                '--color-prettylights-syntax-meta-diff-range': '#b392f0',
+                '--color-prettylights-syntax-sublimelinter-gutter-mark': '#6a737d'
+              }}
+              data-color-mode="light"
+            />
+          </Box>
         </Box>
       </Box>
     </Box>
