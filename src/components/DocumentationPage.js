@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Box,
   Typography,
-  Chip,
   IconButton,
   Tooltip,
   alpha,
@@ -19,7 +18,6 @@ import {
   GitHub as GitHubIcon,
   Launch as LaunchIcon,
   ArrowBack as ArrowBackIcon,
-  Article as ArticleIcon,
   Menu as MenuIcon,
   Close as CloseIcon
 } from '@mui/icons-material';
@@ -36,41 +34,31 @@ const DocumentationPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  // Extract table of contents from markdown content (H1 and H2 only)
-  const extractTableOfContents = (content) => {
+  // Extract table of contents from markdown content (H1, H2, and H3)
+  const extractTableOfContents = useCallback((content) => {
     const headings = [];
     const lines = content.split('\n');
     let inCodeBlock = false;
     
-    lines.forEach((line) => {
-      // Check if we're entering or exiting a code block
+    for (const line of lines) {
       if (line.trim().startsWith('```')) {
         inCodeBlock = !inCodeBlock;
-        return;
+        continue;
       }
       
-      // Skip lines inside code blocks
-      if (inCodeBlock) {
-        return;
-      }
+      if (inCodeBlock) continue;
       
-      // Check for headings only outside code blocks
-      const h1Match = line.match(/^# (.+)$/);
-      const h2Match = line.match(/^## (.+)$/);
-      
-      if (h1Match) {
-        const title = h1Match[1].trim();
+      const headingMatch = line.match(/^(#{1,3}) (.+)$/);
+      if (headingMatch) {
+        const level = headingMatch[1].length;
+        const title = headingMatch[2].trim();
         const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        headings.push({ level: 1, title, id });
-      } else if (h2Match) {
-        const title = h2Match[1].trim();
-        const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        headings.push({ level: 2, title, id });
+        headings.push({ level, title, id });
       }
-    });
+    }
     
     return headings;
-  };
+  }, []);
 
   useEffect(() => {
     const fetchReadme = async () => {
@@ -82,10 +70,7 @@ const DocumentationPage = () => {
         }
         const content = await response.text();
         setMarkdownContent(content);
-        
-        // Extract table of contents
-        const toc = extractTableOfContents(content);
-        setTableOfContents(toc);
+        setTableOfContents(extractTableOfContents(content));
       } catch (err) {
         setError(err.message);
         setMarkdownContent(`
@@ -101,7 +86,32 @@ Unable to load the latest documentation from GitHub. Please visit the repository
     };
 
     fetchReadme();
+  }, [extractTableOfContents]);
+
+  // Scroll to heading function
+  const scrollToHeading = useCallback((title) => {
+    setTimeout(() => {
+      const allHeadings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      const targetHeading = Array.from(allHeadings).find(h => 
+        h.textContent.trim().toLowerCase() === title.toLowerCase()
+      );
+      
+      if (targetHeading) {
+        targetHeading.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      }
+    }, 100);
   }, []);
+
+  // Helper function for item styles
+  const getItemStyles = useCallback((level) => ({
+    pl: level === 1 ? 2 : level === 2 ? 3 : 4,
+    fontSize: level === 1 ? '0.9rem' : level === 2 ? '0.85rem' : '0.8rem',
+    fontWeight: level === 1 ? 600 : level === 2 ? 500 : 400,
+    color: level === 1 ? COLORS.text.primary : level === 2 ? COLORS.text.secondary : alpha(COLORS.text.secondary, 0.8)
+  }), []);
 
   // Sidebar content component
   const SidebarContent = () => (
@@ -113,22 +123,75 @@ Unable to load the latest documentation from GitHub. Please visit the repository
         alignItems: 'center',
         justifyContent: 'space-between'
       }}>
-        <Typography variant="h6" sx={{ 
-          fontWeight: 600,
-          color: COLORS.text.primary,
-          fontSize: '1rem'
-        }}>
-          Contents
-        </Typography>
-        {isMobile && (
-          <IconButton 
-            onClick={() => setSidebarOpen(false)}
-            size="small"
-            sx={{ color: COLORS.text.secondary }}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        )}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Tooltip title="Back to Dashboard">
+            <IconButton
+              onClick={() => navigate('/')}
+              size="small"
+              sx={{
+                color: COLORS.text.secondary,
+                '&:hover': {
+                  color: COLORS.text.primary,
+                  backgroundColor: alpha(COLORS.grey[100], 0.8)
+                }
+              }}
+            >
+              <ArrowBackIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Typography variant="h6" sx={{ 
+            fontWeight: 600,
+            color: COLORS.text.primary,
+            fontSize: '1rem'
+          }}>
+            Contents
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Tooltip title="View on GitHub">
+            <IconButton
+              href="https://github.com/vatsan127/config-server"
+              target="_blank"
+              rel="noopener noreferrer"
+              size="small"
+              sx={{
+                color: COLORS.text.secondary,
+                '&:hover': {
+                  color: COLORS.text.primary,
+                  backgroundColor: alpha(COLORS.grey[100], 0.8)
+                }
+              }}
+            >
+              <GitHubIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Open in new tab">
+            <IconButton
+              href="https://github.com/vatsan127/config-server/blob/master/Readme.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              size="small"
+              sx={{
+                color: COLORS.text.secondary,
+                '&:hover': {
+                  color: COLORS.text.primary,
+                  backgroundColor: alpha(COLORS.grey[100], 0.8)
+                }
+              }}
+            >
+              <LaunchIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+          {isMobile && (
+            <IconButton 
+              onClick={() => setSidebarOpen(false)}
+              size="small"
+              sx={{ color: COLORS.text.secondary }}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          )}
+        </Box>
       </Box>
       
       <List sx={{ p: 0 }}>
@@ -136,26 +199,11 @@ Unable to load the latest documentation from GitHub. Please visit the repository
           <ListItem key={index} sx={{ p: 0 }}>
             <ListItemButton
               onClick={() => {
-                // Find heading by text content
-                const allHeadings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-                const targetHeading = Array.from(allHeadings).find(h => 
-                  h.textContent.trim().toLowerCase() === item.title.toLowerCase()
-                );
-                
-                if (targetHeading) {
-                  targetHeading.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start',
-                    inline: 'nearest'
-                  });
-                }
-                
-                if (isMobile) {
-                  setSidebarOpen(false);
-                }
+                if (isMobile) setSidebarOpen(false);
+                setTimeout(() => scrollToHeading(item.title), 150);
               }}
               sx={{
-                pl: item.level === 1 ? 2 : 3,
+                pl: getItemStyles(item.level).pl,
                 py: 1,
                 minHeight: 'auto',
                 '&:hover': {
@@ -166,9 +214,7 @@ Unable to load the latest documentation from GitHub. Please visit the repository
               <ListItemText
                 primary={item.title}
                 primaryTypographyProps={{
-                  fontSize: item.level === 1 ? '0.9rem' : '0.85rem',
-                  fontWeight: item.level === 1 ? 600 : 500,
-                  color: item.level === 1 ? COLORS.text.primary : COLORS.text.secondary,
+                  ...getItemStyles(item.level),
                   sx: {
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -232,116 +278,32 @@ Unable to load the latest documentation from GitHub. Please visit the repository
         flex: 1,
         height: '100vh',
         overflow: 'auto',
-        backgroundColor: COLORS.background.default
+        backgroundColor: COLORS.background.default,
+        position: 'relative'
       }}>
-        {/* Header */}
-        <Box sx={{ 
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-          backgroundColor: alpha(COLORS.background.paper, 0.95),
-          backdropFilter: 'blur(20px)',
-          borderBottom: `1px solid ${alpha(COLORS.grey[300], 0.3)}`,
-          px: 4,
-          py: 2
-        }}>
-          <Box sx={{ 
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            maxWidth: '1200px',
-            mx: 'auto'
-          }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              {isMobile && (
-                <IconButton
-                  onClick={() => setSidebarOpen(true)}
-                  sx={{
-                    color: COLORS.text.secondary,
-                    mr: 1,
-                    '&:hover': {
-                      color: COLORS.text.primary,
-                      backgroundColor: alpha(COLORS.grey[100], 0.8)
-                    }
-                  }}
-                >
-                  <MenuIcon />
-                </IconButton>
-              )}
-              <Tooltip title="Back to Dashboard">
-                <IconButton
-                  onClick={() => navigate('/')}
-                  sx={{
-                    color: COLORS.text.secondary,
-                    '&:hover': {
-                      color: COLORS.text.primary,
-                      backgroundColor: alpha(COLORS.grey[100], 0.8)
-                    }
-                  }}
-                >
-                  <ArrowBackIcon />
-                </IconButton>
-              </Tooltip>
-              <ArticleIcon sx={{ 
-                fontSize: 28,
-                color: COLORS.primary.main
-              }} />
-              <Typography variant="h5" sx={{ 
-                fontWeight: 600,
+        {/* Mobile Menu Button - Floating */}
+        {isMobile && (
+          <IconButton
+            onClick={() => setSidebarOpen(true)}
+            sx={{
+              position: 'fixed',
+              top: 16,
+              left: 16,
+              zIndex: 1000,
+              backgroundColor: alpha(COLORS.background.paper, 0.9),
+              backdropFilter: 'blur(10px)',
+              border: `1px solid ${alpha(COLORS.grey[300], 0.3)}`,
+              boxShadow: `0 4px 12px ${alpha(COLORS.grey[500], 0.15)}`,
+              color: COLORS.text.secondary,
+              '&:hover': {
                 color: COLORS.text.primary,
-                fontSize: { xs: '1.1rem', sm: '1.25rem' }
-              }}>
-                Config Server Documentation
-              </Typography>
-              <Chip 
-                label="Live from GitHub"
-                size="small"
-                variant="outlined"
-                sx={{
-                  borderColor: COLORS.success.main,
-                  color: COLORS.success.main,
-                  fontSize: '0.75rem',
-                  display: { xs: 'none', sm: 'inline-flex' }
-                }}
-              />
-            </Box>
-            
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Tooltip title="View on GitHub">
-                <IconButton
-                  href="https://github.com/vatsan127/config-server"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    color: COLORS.text.secondary,
-                    '&:hover': {
-                      color: COLORS.text.primary,
-                      backgroundColor: alpha(COLORS.grey[100], 0.8)
-                    }
-                  }}
-                >
-                  <GitHubIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Open in new tab">
-                <IconButton
-                  href="https://github.com/vatsan127/config-server/blob/master/Readme.md"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    color: COLORS.text.secondary,
-                    '&:hover': {
-                      color: COLORS.text.primary,
-                      backgroundColor: alpha(COLORS.grey[100], 0.8)
-                    }
-                  }}
-                >
-                  <LaunchIcon />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </Box>
-        </Box>
+                backgroundColor: COLORS.background.paper
+              }
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
 
         {/* Content */}
         <Box sx={{ 
@@ -366,14 +328,8 @@ Unable to load the latest documentation from GitHub. Please visit the repository
           
           <MarkdownPreview 
             source={markdownContent}
-            style={{
-              backgroundColor: 'transparent',
-              color: COLORS.text.primary
-            }}
+            style={{ backgroundColor: 'transparent', color: COLORS.text.primary }}
             data-color-mode="light"
-            wrapperElement={{
-              "data-color-mode": "light"
-            }}
           />
         </Box>
       </Box>
