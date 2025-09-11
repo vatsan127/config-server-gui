@@ -265,14 +265,14 @@ const EventsPage = () => {
                         </Typography>
                       }
                       secondary={
-                        <Box sx={{ 
+                        <Box component="span" sx={{ 
                           mt: 0.25,
                           display: 'flex', 
                           alignItems: 'center', 
                           gap: 2, 
                           flexWrap: 'wrap'
                         }}>
-                          <Typography variant="caption" sx={{ 
+                          <Typography variant="caption" component="span" sx={{ 
                             color: COLORS.text.secondary, 
                             display: 'flex',
                             alignItems: 'center',
@@ -281,7 +281,7 @@ const EventsPage = () => {
                             <PersonIcon sx={{ fontSize: 12 }} />
                             {event.author}
                           </Typography>
-                          <Typography variant="caption" sx={{ 
+                          <Typography variant="caption" component="span" sx={{ 
                             color: COLORS.text.secondary, 
                             display: 'flex',
                             alignItems: 'center',
@@ -290,7 +290,7 @@ const EventsPage = () => {
                             <ScheduleIcon sx={{ fontSize: 12 }} />
                             {formatDate(event.date)}
                           </Typography>
-                          <Typography variant="caption" sx={{ 
+                          <Typography variant="caption" component="span" sx={{ 
                             color: COLORS.text.secondary, 
                             fontSize: '0.7rem',
                             fontWeight: 500

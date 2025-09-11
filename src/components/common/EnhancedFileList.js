@@ -187,21 +187,21 @@ const FileItem = ({
             </Box>
           }
           secondary={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 0.5 }}>
+            <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 0.5 }}>
               {item.size && !isFolder && (
-                <Typography variant="caption" sx={{ color: COLORS.text.secondary }}>
+                <Typography variant="caption" component="span" sx={{ color: COLORS.text.secondary }}>
                   {formatFileSize(item.size)}
                 </Typography>
               )}
               
               {item.lastModified && (
-                <Typography variant="caption" sx={{ color: COLORS.text.secondary }}>
+                <Typography variant="caption" component="span" sx={{ color: COLORS.text.secondary }}>
                   {formatLastModified(item.lastModified)}
                 </Typography>
               )}
 
               {item.author && (
-                <Typography variant="caption" sx={{ color: COLORS.text.muted }}>
+                <Typography variant="caption" component="span" sx={{ color: COLORS.text.muted }}>
                   by {item.author}
                 </Typography>
               )}
