@@ -8,22 +8,97 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  IconButton,
 } from '@mui/material';
 import {
   Notifications as NotificationsIcon,
   CheckCircle as CheckCircleIcon,
   Error as ErrorIcon,
   HourglassEmpty as HourglassEmptyIcon,
-  Apps as AppsIcon,
-  Refresh as RefreshIcon,
-  Replay as RetryIcon
+  Schedule as ScheduleIcon,
+  Refresh as RefreshIcon
 } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { apiService, setNotificationHandler } from '../services/api';
 import { COLORS, SIZES, BUTTON_STYLES } from '../theme/colors';
 import { FileListSkeleton } from './common/SkeletonLoader';
 import PageHeader from './common/PageHeader';
+
+// Memoized notification item component
+const NotificationItem = React.memo(({ notification, index, isLast, getStatusDisplay, formatDate }) => {
+  const statusDisplay = getStatusDisplay(notification.status);
+  
+  return (
+    <ListItem
+      sx={{
+        borderBottom: !isLast ? `1px solid ${COLORS.grey?.[100] || '#f3f4f6'}` : 'none',
+        py: 1.5,
+        px: 2,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2,
+        '&:hover': {
+          bgcolor: COLORS.hover?.card || 'rgba(0, 0, 0, 0.04)'
+        }
+      }}
+    >
+      <ListItemIcon sx={{ minWidth: 32 }}>
+        <Box sx={{
+          p: 0.5,
+          borderRadius: '50%',
+          bgcolor: statusDisplay.bgcolor,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 32,
+          height: 32
+        }}>
+          {statusDisplay.icon}
+        </Box>
+      </ListItemIcon>
+      
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Typography 
+          variant="body2" 
+          sx={{ 
+            fontFamily: 'Monaco, "Cascadia Code", "Roboto Mono", monospace',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            color: COLORS.text?.primary || '#111827',
+            mb: 0.5,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis'
+          }}
+          title={notification.id}
+        >
+          {notification.id.slice(0, 8)}
+        </Typography>
+        
+        <Typography variant="caption" sx={{ 
+          color: COLORS.text?.secondary || '#6b7280',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 0.5
+        }}>
+          <ScheduleIcon sx={{ fontSize: 12 }} />
+          {formatDate(notification.initiatedTime)}
+        </Typography>
+      </Box>
+      
+      <Chip
+        label={statusDisplay.label}
+        size="small"
+        sx={{
+          bgcolor: statusDisplay.bgcolor,
+          color: statusDisplay.color,
+          fontWeight: 600,
+          fontSize: '0.7rem',
+          height: 24,
+          minWidth: 'fit-content'
+        }}
+      />
+    </ListItem>
+  );
+});
 
 const NotifyPage = () => {
   const { namespace } = useParams();
@@ -32,8 +107,6 @@ const NotifyPage = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [totalNotifications, setTotalNotifications] = useState(0);
-  const [maxNotifications, setMaxNotifications] = useState(0);
 
   // Set up notification handler
   const notificationRef = useRef();
@@ -52,8 +125,6 @@ const NotifyPage = () => {
     try {
       const data = await apiService.getNamespaceNotifications(namespace);
       setNotifications(data.notifications || []);
-      setTotalNotifications(data.totalNotifications || 0);
-      setMaxNotifications(data.maxNotifications || 0);
     } catch (err) {
       console.error('Error fetching namespace notifications:', err);
       setError('Failed to load namespace notifications');
@@ -66,73 +137,67 @@ const NotifyPage = () => {
     fetchNotifications();
   }, [fetchNotifications]);
 
-  // Format date for display
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
+  const formatDate = useCallback((dateString) => {
+    try {
+      return new Date(dateString).toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+    } catch {
+      return 'Invalid date';
+    }
+  }, []);
 
-  // Get status icon and color
-  const getStatusDisplay = (status) => {
-    switch (status.toLowerCase()) {
-      case 'success':
+  const getStatusDisplay = useCallback((status) => {
+    const normalizedStatus = status?.toUpperCase();
+    
+    switch (normalizedStatus) {
+      case 'SUCCESS':
         return {
           icon: <CheckCircleIcon sx={{ fontSize: 20, color: '#10b981' }} />,
           color: '#10b981',
-          bgcolor: '#10b98120',
+          bgcolor: 'rgba(16, 185, 129, 0.1)',
           label: 'Success'
         };
-      case 'failed':
+      case 'FAILED':
         return {
           icon: <ErrorIcon sx={{ fontSize: 20, color: '#ef4444' }} />,
           color: '#ef4444',
-          bgcolor: '#ef444420',
+          bgcolor: 'rgba(239, 68, 68, 0.1)',
           label: 'Failed'
         };
-      case 'in_progress':
+      case 'IN_PROGRESS':
         return {
           icon: <HourglassEmptyIcon sx={{ fontSize: 20, color: '#f59e0b' }} />,
           color: '#f59e0b',
-          bgcolor: '#f59e0b20',
+          bgcolor: 'rgba(245, 158, 11, 0.1)',
           label: 'In Progress'
         };
       default:
         return {
           icon: <NotificationsIcon sx={{ fontSize: 20, color: COLORS.text.secondary }} />,
           color: COLORS.text.secondary,
-          bgcolor: COLORS.grey[100],
-          label: status
+          bgcolor: COLORS.grey?.[100] || 'rgba(0, 0, 0, 0.05)',
+          label: status || 'Unknown'
         };
     }
-  };
+  }, []);
 
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     fetchNotifications();
-  };
+  }, [fetchNotifications]);
 
-  const handleRetry = async (notification) => {
-    try {
-      await apiService.retryNotification(namespace, notification.id);
-      // Refresh the notifications list to get updated status
-      fetchNotifications();
-    } catch (error) {
-      console.error('Error retrying notification:', error);
-    }
-  };
 
   const EmptyState = () => (
-    <Box sx={{ textAlign: 'center' }}>
+    <Box sx={{ textAlign: 'center', py: 6 }}>
       <NotificationsIcon sx={{ fontSize: 64, mb: 2, opacity: 0.3, color: COLORS.text.secondary }} />
       <Typography variant="h6" sx={{ mb: 1, color: COLORS.text.primary, fontWeight: 500 }}>
         No notifications found
       </Typography>
-      <Typography variant="body2" sx={{ color: COLORS.text.secondary, fontSize: '0.85rem' }}>
+      <Typography variant="body2" sx={{ color: COLORS.text.secondary }}>
         No notification events have been recorded for this namespace
       </Typography>
     </Box>
@@ -166,7 +231,7 @@ const NotifyPage = () => {
     }}>
       <PageHeader
         title="Notifications"
-        subtitle=""
+        subtitle={`${notifications.length} notification${notifications.length !== 1 ? 's' : ''}`}
         icon={NotificationsIcon}
         actions={[
           {
@@ -178,214 +243,35 @@ const NotifyPage = () => {
         ]}
       />
 
-      <Box 
-        key={`content-${notifications.length}-${loading}`}
-        sx={{ 
-          flex: 1,
-          animation: loading ? 'none' : 'slideUpFade 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-          '@keyframes slideUpFade': {
-            '0%': {
-              opacity: 0,
-              transform: 'translateY(15px)'
-            },
-            '100%': {
-              opacity: 1,
-              transform: 'translateY(0)'
-            }
-          }
-        }}
-      >
+      <Box sx={{ flex: 1 }}>
         {notifications.length === 0 ? (
-          <Box sx={{ 
-            py: 4, 
-            px: 3, 
-            textAlign: 'center',
-            color: COLORS.text.secondary
-          }}>
-            <EmptyState />
-          </Box>
+          <EmptyState />
         ) : (
           <Box 
             sx={{ 
-              bgcolor: COLORS.background.paper,
-              border: `1px solid ${COLORS.grey[200]}`,
-              borderRadius: `${SIZES.borderRadius.large}px`,
-              boxShadow: SIZES.shadow.card,
+              bgcolor: COLORS.background?.paper || '#ffffff',
+              border: `1px solid ${COLORS.grey?.[200] || '#e5e7eb'}`,
+              borderRadius: `${SIZES.borderRadius?.large || 8}px`,
+              boxShadow: SIZES.shadow?.card || '0 1px 3px rgba(0, 0, 0, 0.1)',
               overflow: 'hidden',
               flex: 1
             }}
           >
-          <List sx={{ 
-            py: 0,
-            overflow: 'auto',
-            overflowX: 'hidden',
-            height: '100%'
-          }}>
-            {notifications.map((notification, index) => {
-              const statusDisplay = getStatusDisplay(notification.status);
-              
-              return (
-                <ListItem
-                  key={`${notification.id}-${index}`}
-                  sx={{
-                    borderBottom: index !== notifications.length - 1 ? `1px solid ${COLORS.grey[100]}` : 'none',
-                    transform: 'translateX(0) scale(1)',
-                    opacity: 1,
-                    transition: 'all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                    animation: `slideInNotification 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) ${0.18 + index * 0.06}s both`,
-                    '@keyframes slideInNotification': {
-                      '0%': {
-                        opacity: 0,
-                        transform: 'translateX(-35px) scale(0.92)'
-                      },
-                      '50%': {
-                        opacity: 0.7,
-                        transform: 'translateX(4px) scale(1.02)'
-                      },
-                      '100%': {
-                        opacity: 1,
-                        transform: 'translateX(0) scale(1)'
-                      }
-                    },
-                    '&:hover': {
-                      bgcolor: COLORS.hover.card,
-                      transform: 'translateX(8px) scale(1.01)',
-                      borderColor: COLORS.primary.light,
-                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-                      '& .MuiListItemIcon-root': {
-                        transform: 'scale(1.15)',
-                      },
-                    },
-                    '&:active': {
-                      transform: 'translateX(4px) scale(1.005)',
-                      transition: 'all 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
-                    },
-                    py: 1.5,
-                    px: 2,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 2
-                  }}
-                >
-                  <ListItemIcon sx={{ 
-                    minWidth: 24,
-                    transition: 'transform 0.1s cubic-bezier(0.4, 0, 0.2, 1)',
-                    alignSelf: 'center'
-                  }}>
-                    <Box sx={{
-                      p: 0.5,
-                      borderRadius: '50%',
-                      bgcolor: statusDisplay.bgcolor,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      minWidth: 20,
-                      minHeight: 20
-                    }}>
-                      {statusDisplay.icon}
-                    </Box>
-                  </ListItemIcon>
-                  
-                  <Box sx={{ 
-                    flex: 1, 
-                    minWidth: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 2
-                  }}>
-                    <Typography 
-                      variant="body1" 
-                      sx={{ 
-                        fontFamily: 'Monaco, "Cascadia Code", "Roboto Mono", monospace',
-                        fontSize: '0.9rem',
-                        fontWeight: 600,
-                        color: COLORS.text.primary,
-                        flexShrink: 0
-                      }}
-                    >
-                      {notification.id.slice(0, 8)}
-                    </Typography>
-                    
-                    <Typography variant="caption" sx={{ 
-                      color: COLORS.text.secondary, 
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 0.5,
-                      flexShrink: 0
-                    }}>
-                      <AppsIcon sx={{ fontSize: 12 }} />
-                      {formatDate(notification.initiatedTime)}
-                    </Typography>
-                    
-                    {notification.completedTime && (
-                      <Typography variant="caption" sx={{ 
-                        color: COLORS.text.secondary, 
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 0.5,
-                        flexShrink: 0
-                      }}>
-                        <CheckCircleIcon sx={{ fontSize: 12 }} />
-                        {formatDate(notification.completedTime)}
-                      </Typography>
-                    )}
-                    
-                    {notification.status === 'FAILED' && (
-                      <Typography variant="caption" sx={{ 
-                        color: '#ef4444', 
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 0.5,
-                        fontWeight: 500,
-                        flexShrink: 0
-                      }}>
-                        <ErrorIcon sx={{ fontSize: 12 }} />
-                        {(notification.totalCount || 0) - (notification.retryCount || 0)}/{notification.totalCount || 0}
-                      </Typography>
-                    )}
-                  </Box>
-                  
-                  <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: 0.5,
-                    minWidth: 'fit-content',
-                    ml: 2
-                  }}>
-                    <Chip
-                      label={statusDisplay.label}
-                      size="small"
-                      sx={{
-                        bgcolor: statusDisplay.bgcolor,
-                        color: statusDisplay.color,
-                        fontWeight: 600,
-                        fontSize: '0.7rem',
-                        height: 24,
-                        minWidth: 'fit-content'
-                      }}
-                    />
-                    {notification.status === 'FAILED' && (
-                      <IconButton
-                        size="small"
-                        onClick={() => handleRetry(notification)}
-                        sx={{
-                          p: 0.5,
-                          color: COLORS.primary.main,
-                          '&:hover': {
-                            bgcolor: COLORS.primary.light + '20',
-                            color: COLORS.primary.dark
-                          }
-                        }}
-                        title="Retry notification"
-                      >
-                        <RetryIcon sx={{ fontSize: 14 }} />
-                      </IconButton>
-                    )}
-                  </Box>
-                </ListItem>
-              );
-            })}
+            <List sx={{ 
+              py: 0,
+              overflow: 'auto',
+              height: '100%'
+            }}>
+            {notifications.map((notification, index) => (
+              <NotificationItem
+                key={notification.id}
+                notification={notification}
+                index={index}
+                isLast={index === notifications.length - 1}
+                getStatusDisplay={getStatusDisplay}
+                formatDate={formatDate}
+              />
+            ))}
           </List>
           </Box>
         )}
